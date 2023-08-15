@@ -8,8 +8,6 @@ services:
       dockerfile: Dockerfile
       args:
         - GITHUB_TOKEN=${GITHUB_TOKEN}
-    env_file:
-      - .env
     environment:
       - PORT=3000
       - MONGODB_HOST=mongo
