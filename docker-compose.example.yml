@@ -6,6 +6,7 @@ services:
       context: .
       target: prod
       dockerfile: Dockerfile
+    command: python3 start_rabbit_mq.py
   worker:
     build:
       context: .
