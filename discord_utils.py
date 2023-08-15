@@ -1,8 +1,10 @@
-from analyzer_init import AnalyzerInit
-from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
 import logging
-from utils.transactions_ordering import sort_transactions
+
+from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
+
+from analyzer_init import AnalyzerInit
 from utils.get_rabbitmq import prepare_rabbit_mq
+from utils.transactions_ordering import sort_transactions
 
 
 def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, any]):

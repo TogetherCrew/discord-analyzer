@@ -48,7 +48,7 @@ def test_analyzer_init():
     mongo_client[guildId]["guildmembers"].insert_one(
         {
             "discordId": "user1",
-            "username": f"sample_user1",
+            "username": "sample_user1",
             "roles": ["1012430565959553145"],
             "joinedAt": datetime.now() - timedelta(days=5),
             "avatar": "3ddd6e429f75d6a711d0a58ba3060694",

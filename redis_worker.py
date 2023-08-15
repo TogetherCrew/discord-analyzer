@@ -1,7 +1,9 @@
+import logging
+
 import redis
 from rq import Worker
+
 from utils.daolytics_uitls import get_redis_credentials
-import logging
 
 
 def worker_exception_handler(job, exc_type, exc_value, traceback):

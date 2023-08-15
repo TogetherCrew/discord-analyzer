@@ -2,9 +2,9 @@ from utils.daolytics_uitls import (
     get_mongo_credentials,
     get_neo4j_credentials,
     get_rabbit_mq_credentials,
+    get_redis_credentials,
     get_saga_db_location,
     get_sentryio_service_creds,
-    get_redis_credentials,
 )
 
 
