@@ -16,7 +16,7 @@ class AnalyzerInit:
     def __init__(self) -> None:
         pass
 
-    def get_analyzer(self) -> (RnDaoAnalyzer, dict[str, Any]):
+    def get_analyzer(self) -> [RnDaoAnalyzer, dict[str, Any]]:
         """
         Returns:
         ---------
