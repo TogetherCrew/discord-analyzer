@@ -4,6 +4,7 @@ start the project using rabbitMQ
 import functools
 import logging
 from typing import Any
+
 from discord_utils import analyzer_recompute, analyzer_run_once, publish_on_success
 from redis import Redis
 from rq import Queue as RQ_Queue

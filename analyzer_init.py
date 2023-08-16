@@ -1,3 +1,5 @@
+from typing import Any
+
 from rndao_analyzer import RnDaoAnalyzer
 from utils.daolytics_uitls import (
     get_mongo_credentials,
@@ -14,12 +16,12 @@ class AnalyzerInit:
     def __init__(self) -> None:
         pass
 
-    def get_analyzer(self):
+    def get_analyzer(self) -> (RnDaoAnalyzer, dict[str, Any]):
         """
         Returns:
         ---------
         analyzer : RnDaoAnalyzer
-        mongo_creds : dict[str, any]
+        mongo_creds : dict[str, Any]
         """
         analyzer = RnDaoAnalyzer()
 
@@ -44,7 +46,7 @@ class AnalyzerInit:
 
         return analyzer, mongo_creds
 
-    def _get_mongo_connection(self, mongo_creds: dict[str, any]):
+    def _get_mongo_connection(self, mongo_creds: dict[str, Any]):
         user = mongo_creds["user"]
         password = mongo_creds["password"]
         host = mongo_creds["host"]

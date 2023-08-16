@@ -1,7 +1,7 @@
 import os
+from typing import Any
 
 from dotenv import load_dotenv
-from typing import Any
 
 
 def get_rabbit_mq_credentials() -> dict[str, Any]:
