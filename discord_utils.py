@@ -1,13 +1,12 @@
 import logging
-
-from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
-
+from typing import Any
 from analyzer_init import AnalyzerInit
+from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
 from utils.get_rabbitmq import prepare_rabbit_mq
 from utils.transactions_ordering import sort_transactions
 
 
-def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, any]):
+def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, Any]):
     analyzer_init = AnalyzerInit()
     analyzer, mongo_creds = analyzer_init.get_analyzer()
 
@@ -39,7 +38,7 @@ def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, any]):
     return rabbit_creds, sagaId, mongo_creds
 
 
-def analyzer_run_once(sagaId: str, rabbit_creds: dict[str, any]):
+def analyzer_run_once(sagaId: str, rabbit_creds: dict[str, Any]):
     analyzer_init = AnalyzerInit()
     analyzer, mongo_creds = analyzer_init.get_analyzer()
 
@@ -79,7 +78,7 @@ def get_saga_instance(sagaId: str, connection: str, saga_db: str, saga_collectio
 
 
 def publish_on_success(connection, result, *args, **kwargs):
-    ## we must get these three things
+    # we must get these three things
     try:
         rabbit_creds = args[0][0]
         sagaId = args[0][1]

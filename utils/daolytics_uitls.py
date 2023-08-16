@@ -1,15 +1,16 @@
 import os
 
 from dotenv import load_dotenv
+from typing import Any
 
 
-def get_rabbit_mq_credentials() -> dict[str, any]:
+def get_rabbit_mq_credentials() -> dict[str, Any]:
     """
     returns the rabbitMQ connection credentials
 
     Retuns:
     ----------
-    rabbit_mq_creds : dict[str, any]
+    rabbit_mq_creds : dict[str, Any]
         rabbitMQ credentials,
         a dictionary representive of
             `broker_url` : str
@@ -35,7 +36,7 @@ def get_mongo_credentials():
 
     Returns:
     ---------
-    mongo_creds : dict[str, any]
+    mongo_creds : dict[str, Any]
         mongodb credentials
         a dictionary representive of
             `user`: str
@@ -61,7 +62,7 @@ def get_neo4j_credentials():
 
     Returns:
     ---------
-    neo4j_creds : dict[str, any]
+    neo4j_creds : dict[str, Any]
         neo4j credentials
         a dictionary representive of
             `user` : str

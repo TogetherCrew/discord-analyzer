@@ -3,14 +3,13 @@ start the project using rabbitMQ
 """
 import functools
 import logging
-
+from typing import Any
+from discord_utils import analyzer_recompute, analyzer_run_once, publish_on_success
 from redis import Redis
 from rq import Queue as RQ_Queue
 from tc_messageBroker.message_broker import RabbitMQ
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
-
-from discord_utils import analyzer_recompute, analyzer_run_once, publish_on_success
 from utils.daolytics_uitls import (
     get_rabbit_mq_credentials,
     get_redis_credentials,
@@ -23,7 +22,7 @@ def analyzer():
     rabbit_mq_creds = get_rabbit_mq_credentials()
     sentry_creds = get_sentryio_service_creds()
 
-    ## sentryio service
+    # sentryio service
     set_up_sentryio(sentry_creds["dsn"], sentry_creds["env"])
     redis_creds = get_redis_credentials()
 
@@ -40,7 +39,7 @@ def analyzer():
         password=redis_creds["pass"],
     )
 
-    ## 24 hours equal to 86400 seconds
+    # 24 hours equal to 86400 seconds
     rq_queue = RQ_Queue(connection=redis, default_timeout=86400)
 
     analyzer_recompute = functools.partial(
@@ -63,7 +62,7 @@ def analyzer():
 
 
 def recompute_wrapper(
-    body: dict[str, any], redis_queue: RQ_Queue, rabbit_mq_creds: dict[str, any]
+    body: dict[str, Any], redis_queue: RQ_Queue, rabbit_mq_creds: dict[str, Any]
 ):
     sagaId = body["content"]["uuid"]
     logging.info(f"SAGAID:{sagaId} recompute job Adding to queue")
@@ -77,7 +76,7 @@ def recompute_wrapper(
 
 
 def run_once_wrapper(
-    body: dict[str, any], redis_queue: RQ_Queue, rabbit_mq_creds: dict[str, any]
+    body: dict[str, Any], redis_queue: RQ_Queue, rabbit_mq_creds: dict[str, Any]
 ):
     sagaId = body["content"]["uuid"]
     logging.info(f"SAGAID:{sagaId} run_once job Adding to queue")

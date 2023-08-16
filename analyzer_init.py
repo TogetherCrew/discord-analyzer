@@ -1,5 +1,4 @@
 from rndao_analyzer import RnDaoAnalyzer
-
 from utils.daolytics_uitls import (
     get_mongo_credentials,
     get_neo4j_credentials,
@@ -24,7 +23,7 @@ class AnalyzerInit:
         """
         analyzer = RnDaoAnalyzer()
 
-        ## credentials
+        # credentials
         mongo_creds = get_mongo_credentials()
         neo4j_creds = get_neo4j_credentials()
         saga_mongo_location = get_saga_db_location()

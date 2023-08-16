@@ -1,8 +1,6 @@
 from datetime import datetime, timedelta
-
-from pymongo import MongoClient
-
 from analyzer_init import AnalyzerInit
+from pymongo import MongoClient
 from utils.daolytics_uitls import get_mongo_credentials
 
 
