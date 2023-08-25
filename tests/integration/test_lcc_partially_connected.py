@@ -1,6 +1,4 @@
 # the nodes of the graph are partially connected
-import pytest
-
 # fmt: off
 from discord_analyzer.analysis.neo4j_analysis.local_clustering_coefficient import \
     LocalClusteringCoeff
@@ -10,7 +8,6 @@ from .utils.neo4j_conn import neo4j_setup
 # fmt: on
 
 
-@pytest.mark.skip("No Neo4J instance on GitHub actions!")
 def test_partially_connected_coeffs():
     """
     5 nodes partially connected

@@ -1,11 +1,8 @@
-import pytest
-
 from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
 
 from .utils.neo4j_conn import neo4j_setup
 
 
-@pytest.mark.skip("No Neo4j instance on GitHub!")
 def test_interacted_in_deletion():
     """
     test whether we're deleting the INTERACTED_IN relations or not

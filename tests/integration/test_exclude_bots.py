@@ -1,13 +1,11 @@
 from datetime import datetime, timedelta
 
 import numpy as np
-import pytest
 
 from .utils.analyzer_setup import launch_db_access, setup_analyzer
 from .utils.remove_and_setup_guild import setup_db_guild
 
 
-@pytest.mark.skip("No mongo and Neo4j instance on GitHub Actions")
 def test_excluding_bots_heatmaps():
     """
     test if we're excluding bots from analyzer pipeline

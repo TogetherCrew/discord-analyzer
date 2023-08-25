@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
 import numpy as np
-import pytest
 
 from .utils.analyzer_setup import launch_db_access, setup_analyzer
 from .utils.mock_heatmaps import create_empty_heatmaps_data
@@ -10,7 +9,6 @@ from .utils.neo4j_conn import neo4j_setup
 from .utils.remove_and_setup_guild import setup_db_guild
 
 
-@pytest.mark.skip("No Neo4j instance on GitHub!")
 def test_networkgraph_35_days_period_run_once_available_analytics():
     """
     test the network graph for the whole analyzer pipeline

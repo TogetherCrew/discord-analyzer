@@ -1,6 +1,4 @@
 # test out local clustering coefficient with all nodes connected
-import pytest
-
 # fmt: off
 from discord_analyzer.analysis.neo4j_analysis.analyzer_node_stats import \
     NodeStats
@@ -9,7 +7,6 @@ from discord_analyzer.analysis.neo4j_analysis.analyzer_node_stats import \
 from .utils.neo4j_conn import neo4j_setup
 
 
-@pytest.mark.skip("No Neo4J instance on GitHub actions!")
 def test_node_stats():
     """
     5 nodes partially connected

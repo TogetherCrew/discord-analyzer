@@ -1,13 +1,10 @@
 from datetime import datetime, timedelta
 
-import pytest
-
 from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
 
 from .utils.neo4j_conn import neo4j_setup
 
 
-@pytest.mark.skip("No Neo4J instance available on Github Actions")
 def test_avg_clustering_coeff_from_start():
     """
     test scaling of the avgClusteringCoefficient (a.k.a fragmentation score)

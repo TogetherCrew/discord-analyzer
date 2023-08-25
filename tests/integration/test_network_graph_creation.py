@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 
 import networkx as nx
 import numpy as np
-import pytest
 
 from discord_analyzer.analysis.utils.activity import Activity
 
@@ -11,7 +10,6 @@ from .utils.mock_graph import generate_mock_graph, store_mock_data_in_neo4j
 from .utils.neo4j_conn import neo4j_setup
 
 
-@pytest.mark.skip("No Neo4J instance on GitHub actions!")
 def test_network_graph_create():
     """ """
     neo4j_utils = neo4j_setup()

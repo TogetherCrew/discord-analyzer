@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
 
-import pytest
-
 from .utils.analyzer_setup import launch_db_access, setup_analyzer
 from .utils.remove_and_setup_guild import setup_db_guild
 
@@ -10,7 +8,6 @@ from discord_analyzer.analyzer.memberactivity_utils import (  # isort: skip
 )
 
 
-@pytest.mark.skip("No MongoDB instance!")
 def test_utils_get_members():
     analyzer = setup_analyzer()
     guildId = "1012430565959553145"

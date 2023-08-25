@@ -1,7 +1,5 @@
 # we have nodes of a community is connected to another one
 # meaning we have nodes available in more than one community
-import pytest
-
 from .utils.neo4j_conn import neo4j_setup
 
 from discord_analyzer.analysis.neo4j_analysis.centrality import (  # isort: skip
@@ -9,7 +7,6 @@ from discord_analyzer.analysis.neo4j_analysis.centrality import (  # isort: skip
 )
 
 
-@pytest.mark.skip("No Neo4J instance available on GitHub actions!")
 def test_multiple_guilds_preserve_parallel():
     """
     5 nodes connected to guild 1234

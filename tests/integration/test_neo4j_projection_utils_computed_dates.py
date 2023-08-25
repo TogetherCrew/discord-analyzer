@@ -1,5 +1,3 @@
-import pytest
-
 from .utils.neo4j_conn import neo4j_setup
 
 from discord_analyzer.analysis.neo4j_utils.projection_utils import (  # isort: skip
@@ -7,7 +5,6 @@ from discord_analyzer.analysis.neo4j_utils.projection_utils import (  # isort: s
 )
 
 
-@pytest.mark.skip("No Neo4j instance on Github actions!")
 def test_neo4j_projection_utils_get_computed_dates():
     """
     testing the projection utils get_computed_dates

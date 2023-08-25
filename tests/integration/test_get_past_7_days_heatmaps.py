@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 import numpy as np
-import pytest
 
 from .utils.analyzer_setup import launch_db_access
 
@@ -10,7 +9,6 @@ from discord_analyzer.analysis.utils.member_activity_utils import (  # isort: sk
 )
 
 
-@pytest.mark.skip("No MongoDB instance!")
 def test_get_past_7_days_heatmap_users_available_users():
     """
     test if we're getting the right heatmap users
@@ -64,7 +62,6 @@ def test_get_past_7_days_heatmap_users_available_users():
     assert set(user_names) == set(acc_names[-7:])
 
 
-@pytest.mark.skip("No MongoDB instance!")
 def test_get_past_7_days_heatmap_users_no_users():
     """
     test if we're getting the right heatmap users

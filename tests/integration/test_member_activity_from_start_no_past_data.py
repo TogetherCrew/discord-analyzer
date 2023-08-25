@@ -1,12 +1,9 @@
 # test analyzing memberactivities
 from datetime import datetime, timedelta
 
-import pytest
-
 from .utils.analyzer_setup import launch_db_access, setup_analyzer
 
 
-@pytest.mark.skip("No Mongo instance on GitHub actions!")
 def test_analyzer_member_activities_from_start_empty_memberactivities():
     """
     run the analyzer for a specific guild with from_start option equal to True

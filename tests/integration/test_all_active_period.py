@@ -6,7 +6,6 @@ from .utils.analyzer_setup import launch_db_access, setup_analyzer
 from .utils.remove_and_setup_guild import setup_db_guild
 
 
-@pytest.mark.skip("No Mongo & Neo4j instance on Github!")
 def test_two_weeks_period_active_members():
     """
     test all_active members for the two weeks period in the new schema

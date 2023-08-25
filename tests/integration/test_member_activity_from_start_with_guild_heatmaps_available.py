@@ -1,15 +1,12 @@
 # test analyzing memberactivities
 from datetime import datetime, timedelta
 
-import pytest
-
 from .utils.analyzer_setup import launch_db_access, setup_analyzer
 from .utils.mock_heatmaps import create_empty_heatmaps_data
 from .utils.mock_memberactivities import create_empty_memberactivities_data
 from .utils.remove_and_setup_guild import setup_db_guild
 
 
-@pytest.mark.skip("No Mongo instance on GitHub actions!")
 def test_analyzer_member_activities_from_start_available_heatmaps():
     """
     run the analyzer for a specific guild with from_start option equal to True
