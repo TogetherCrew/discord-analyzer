@@ -305,10 +305,10 @@ if __name__ == "__main__":
     # logging.getLogger().setLevel(logging.INFO)
     analyzer = RnDaoAnalyzer()
 
-    user = os.getenv("DB_USER")
-    password = os.getenv("DB_PASSWORD")
-    host = os.getenv("DB_HOST")
-    port = os.getenv("DB_PORT")
+    user = os.getenv("MONGODB_USER")
+    password = os.getenv("MONGODB_PASS")
+    host = os.getenv("MONGODB_HOST")
+    port = os.getenv("MONGODB_PORT")
 
     neo4j_creds = {}
     neo4j_creds["db_name"] = os.getenv("NEO4J_DB")

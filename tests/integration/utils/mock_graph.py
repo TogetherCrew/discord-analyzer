@@ -57,10 +57,10 @@ def generate_mock_graph(int_matrix, acc_names):
 def store_mock_data_in_neo4j(graph_dict, guildId):
     # CREDS
     load_dotenv()
-    user = os.getenv("DB_USER")
-    password = os.getenv("DB_PASSWORD")
-    host = os.getenv("DB_HOST")
-    port = os.getenv("DB_PORT")
+    user = os.getenv("MONGODB_USER")
+    password = os.getenv("MONGODB_PASS")
+    host = os.getenv("MONGODB_HOST")
+    port = os.getenv("MONGODB_PORT")
 
     neo4j_creds = {}
     neo4j_creds["db_name"] = os.getenv("NEO4J_DB")
