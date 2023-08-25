@@ -2,14 +2,12 @@
 import logging
 from datetime import datetime
 
-# fmt: off
-from discord_analyzer.analysis.neo4j_analysis.analyzer_node_stats import \
-    NodeStats
-from discord_analyzer.analysis.neo4j_analysis.local_clustering_coefficient import \
-    LocalClusteringCoeff
+from discord_analyzer.analysis.neo4j_analysis.analyzer_node_stats import NodeStats
+from discord_analyzer.analysis.neo4j_analysis.local_clustering_coefficient import (
+    LocalClusteringCoeff,
+)
 from discord_analyzer.DB_operations.neo4j_utils import Neo4jUtils
 
-# fmt: on
 from discord_analyzer.analysis.neo4j_analysis.centrality import (  # isort: skip
     Centerality,
 )
@@ -98,8 +96,8 @@ class Neo4JAnalytics:
             MATCH ()-[r:INTERACTED_IN]->(g:Guild {guildId: $guildId })
             WHERE r.date >= $past_date
             WITH r.date as date, r.localClusteringCoefficient as lcc
-            RETURN 
-                avg(lcc) * $scale AS fragmentation_score, 
+            RETURN
+                avg(lcc) * $scale AS fragmentation_score,
                 date
         """
         records, _, _ = self.neo4j_utils.neo4j_driver.execute_query(

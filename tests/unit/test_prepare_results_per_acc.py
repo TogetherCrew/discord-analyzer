@@ -1,8 +1,6 @@
-# fmt: off
-from discord_analyzer.analysis.utils.compute_interaction_mtx_utils import \
-    prepare_per_account
-
-# fmt: on
+from discord_analyzer.analysis.utils.compute_interaction_mtx_utils import (
+    prepare_per_account,
+)
 
 
 def test_empty_db_results():

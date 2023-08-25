@@ -75,7 +75,7 @@ class LocalClusteringCoeff:
             # dropping the computed date
             _ = self.gds.run_cypher(
                 f"""
-                CALL gds.graph.drop("{subgraph_name}") 
+                CALL gds.graph.drop("{subgraph_name}")
                 """
             )
 
@@ -132,13 +132,13 @@ class LocalClusteringCoeff:
         try:
             _ = self.gds.run_cypher(
                 f"""
-                    // Doing the operation for the day 
+                    // Doing the operation for the day
                     // and saving the localClustering Coeffs
                     CALL gds.localClusteringCoefficient.stream(
                         "{subgraph_name}"
                     ) YIELD nodeId, localClusteringCoefficient
-                    WITH 
-                        gds.util.asNode(nodeId) as userNode, 
+                    WITH
+                        gds.util.asNode(nodeId) as userNode,
                         localClusteringCoefficient
                     MATCH (g:Guild {{guildId: '{guildId}'}})
                     MERGE (userNode) -[r:INTERACTED_IN  {{date: {date}}}]-> (g)

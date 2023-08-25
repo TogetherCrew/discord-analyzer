@@ -1,8 +1,7 @@
 import os
 
-from dotenv import load_dotenv
-
 from discord_analyzer.DB_operations.neo4j_utils import Neo4jUtils
+from dotenv import load_dotenv
 
 
 def neo4j_setup() -> Neo4jUtils:

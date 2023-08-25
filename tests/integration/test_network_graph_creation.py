@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 
 import networkx as nx
 import numpy as np
-
 from discord_analyzer.analysis.utils.activity import Activity
 
 from .utils.mock_graph import generate_mock_graph, store_mock_data_in_neo4j
@@ -165,7 +164,7 @@ def test_network_graph_create():
         f"""
         MATCH (a:DiscordAccount) -[:IS_MEMBER] -> (g:Guild {{guildId: '{guildId}'}})
         MATCH (a)-[r:INTERACTED_WITH]-> (b:DiscordAccount)
-        RETURN 
+        RETURN
             a.userId as fromUserId,
             r.weight as weight,
             r.date as date,

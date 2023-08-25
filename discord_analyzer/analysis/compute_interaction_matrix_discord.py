@@ -5,10 +5,9 @@
 #
 #  Author Ene SS Rawa / Tjitse van der Molen
 
-from numpy import ndarray
-
 from discord_analyzer.analysis.utils.activity import Activity
 from discord_analyzer.DB_operations.mongodb_query import MongodbQuery
+from numpy import ndarray
 
 from .utils.compute_interaction_mtx_utils import (  # isort: skip
     generate_interaction_matrix,
@@ -78,7 +77,7 @@ def compute_interaction_matrix_discord(
 
     per_acc_query_result = prepare_per_account(db_results=db_results)
 
-    ###### And now compute the interactions per account_name (`acc`) ######
+    # And now compute the interactions per account_name (`acc`)
     int_mat = {}
     # computing `int_mat` per activity
     for activity in activities:

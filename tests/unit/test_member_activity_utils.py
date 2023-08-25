@@ -1,10 +1,7 @@
 from datetime import datetime, timedelta
-
-# fmt: off
-from discord_analyzer.analysis.utils.member_activity_history_utils import \
-    MemberActivityPastUtils
-
-# fmt: on
+from discord_analyzer.analysis.utils.member_activity_history_utils import (
+    MemberActivityPastUtils,
+)
 
 
 def test_zero_joined():
@@ -15,9 +12,9 @@ def test_zero_joined():
 
     all_joined_day = {}
     joined_acc = [
-        {"joinedAt": (start_dt + timedelta(days=5)), "discordId": "973993299281076285"},
-        {"joinedAt": (start_dt + timedelta(days=6)), "discordId": "973993299281076286"},
-        {"joinedAt": (start_dt + timedelta(days=8)), "discordId": "973993299281076287"},
+        {"joinedAt": (start_dt + timedelta(days=5)), "discordId": "000000000"},
+        {"joinedAt": (start_dt + timedelta(days=6)), "discordId": "000000001"},
+        {"joinedAt": (start_dt + timedelta(days=8)), "discordId": "000000002"},
     ]
 
     member_activitiy_utils = MemberActivityPastUtils(db_access=db_access)
@@ -36,10 +33,10 @@ def test_zero_joined():
     assert all_joined_day["2"] == set([])
     assert all_joined_day["3"] == set([])
     assert all_joined_day["4"] == set([])
-    assert all_joined_day["5"] == set(["973993299281076285"])
-    assert all_joined_day["6"] == set(["973993299281076286"])
+    assert all_joined_day["5"] == set(["000000000"])
+    assert all_joined_day["6"] == set(["000000001"])
     assert all_joined_day["7"] == set([])
-    assert all_joined_day["8"] == set(["973993299281076287"])
+    assert all_joined_day["8"] == set(["000000002"])
     for i in range(9, (end_dt - start_dt).days):
         assert all_joined_day[str(i)] == set([])
 
@@ -54,13 +51,13 @@ def test_single_joined():
     end_dt = datetime(2023, 4, 15)
 
     all_joined_day = {
-        "0": set(["973993299281076285", "973993299281076286"]),
+        "0": set(["000000000", "000000001"]),
     }
 
     joined_acc = [
-        {"joinedAt": (start_dt + timedelta(days=0)), "discordId": "973993299281076287"},
-        {"joinedAt": (start_dt + timedelta(days=1)), "discordId": "973993299281076288"},
-        {"joinedAt": (start_dt + timedelta(days=2)), "discordId": "973993299281076289"},
+        {"joinedAt": (start_dt + timedelta(days=0)), "discordId": "000000002"},
+        {"joinedAt": (start_dt + timedelta(days=1)), "discordId": "000000003"},
+        {"joinedAt": (start_dt + timedelta(days=2)), "discordId": "000000004"},
     ]
 
     member_activitiy_utils = MemberActivityPastUtils(db_access=db_access)
@@ -74,10 +71,10 @@ def test_single_joined():
         joined_acc=joined_acc,
     )
 
-    assert all_joined_day["0"] == set(["973993299281076285", "973993299281076286"])
-    assert all_joined_day["1"] == set(["973993299281076287"])
-    assert all_joined_day["2"] == set(["973993299281076288"])
-    assert all_joined_day["3"] == set(["973993299281076289"])
+    assert all_joined_day["0"] == set(["000000000", "000000001"])
+    assert all_joined_day["1"] == set(["000000002"])
+    assert all_joined_day["2"] == set(["000000003"])
+    assert all_joined_day["3"] == set(["000000004"])
     for i in range(4, (end_dt - start_dt).days):
         assert all_joined_day[str(i)] == set([])
 
@@ -93,16 +90,16 @@ def test_multiple_joined():
     end_dt = datetime(2023, 4, 15)
 
     all_joined_day = {
-        "0": set(["973993299281076285", "973993299281076286"]),
-        "1": set(["973993299281076287", "973993299281076288"]),
+        "0": set(["000000000", "000000001"]),
+        "1": set(["000000002", "000000003"]),
     }
 
     joined_acc = [
-        {"joinedAt": (start_dt + timedelta(days=0)), "discordId": "973993299281076289"},
-        {"joinedAt": (start_dt + timedelta(days=0)), "discordId": "973993299281076290"},
-        {"joinedAt": (start_dt + timedelta(days=2)), "discordId": "973993299281076291"},
-        {"joinedAt": (start_dt + timedelta(days=2)), "discordId": "973993299281076292"},
-        {"joinedAt": (start_dt + timedelta(days=2)), "discordId": "973993299281076293"},
+        {"joinedAt": (start_dt + timedelta(days=0)), "discordId": "000000004"},
+        {"joinedAt": (start_dt + timedelta(days=0)), "discordId": "000000005"},
+        {"joinedAt": (start_dt + timedelta(days=2)), "discordId": "000000006"},
+        {"joinedAt": (start_dt + timedelta(days=2)), "discordId": "000000007"},
+        {"joinedAt": (start_dt + timedelta(days=2)), "discordId": "000000008"},
     ]
 
     member_activitiy_utils = MemberActivityPastUtils(db_access=db_access)
@@ -116,13 +113,11 @@ def test_multiple_joined():
         joined_acc=joined_acc,
     )
 
-    assert all_joined_day["0"] == set(["973993299281076285", "973993299281076286"])
-    assert all_joined_day["1"] == set(["973993299281076287", "973993299281076288"])
-    assert all_joined_day["2"] == set(["973993299281076289", "973993299281076290"])
+    assert all_joined_day["0"] == set(["000000000", "000000001"])
+    assert all_joined_day["1"] == set(["000000002", "000000003"])
+    assert all_joined_day["2"] == set(["000000004", "000000005"])
     assert all_joined_day["3"] == set([])
-    assert all_joined_day["4"] == set(
-        ["973993299281076291", "973993299281076292", "973993299281076293"]
-    )
+    assert all_joined_day["4"] == set(["000000006", "000000007", "000000008"])
 
     for i in range(5, (end_dt - start_dt).days):
         assert all_joined_day[str(i)] == set([])

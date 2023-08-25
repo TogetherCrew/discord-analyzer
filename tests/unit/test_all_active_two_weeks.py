@@ -1,6 +1,5 @@
 # testing all_active category for past 2 weeks
 import numpy as np
-
 from discord_analyzer.analysis.assess_engagement import assess_engagement
 from discord_analyzer.analysis.utils.activity import Activity
 

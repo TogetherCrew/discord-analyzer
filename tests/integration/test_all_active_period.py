@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
 
-import pytest
-
 from .utils.analyzer_setup import launch_db_access, setup_analyzer
 from .utils.remove_and_setup_guild import setup_db_guild
 

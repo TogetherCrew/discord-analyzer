@@ -57,7 +57,7 @@ class Base_analyzer:
         """
         """ Connection String will be modified once the url is provided"""
 
-        self.DB_connections = MongoNeo4jDB(logging=logging, testing=self.testing)
+        self.DB_connections = MongoNeo4jDB(logging=logging, testing=False)
         self.DB_connections.set_mongo_db_ops(
             mongo_user=self.mongo_user,
             mongo_pass=self.mongo_pass,

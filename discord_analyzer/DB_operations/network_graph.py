@@ -156,7 +156,7 @@ def create_network_query(
         node_str_query += (
             f"MERGE (a{node_num}:{nodes_type} {{userId: '{node_acc_name}'}})   "
         )
-        node_str_query += f"""ON CREATE SET a{node_num}.createdAt = 
+        node_str_query += f"""ON CREATE SET a{node_num}.createdAt =
                                     {int(date_now_timestamp)}
                             """
 
@@ -168,9 +168,9 @@ def create_network_query(
                             """
 
             node_str_query += f"""
-                MERGE (a{node_num}) 
+                MERGE (a{node_num})
                         -[rel_guild{node_num}:{toGuildRelation}]-> (g)
-                    ON CREATE SET 
+                    ON CREATE SET
                         rel_guild{node_num}.createdAt = {int(date_now_timestamp)}
             """
 
@@ -192,11 +192,11 @@ def create_network_query(
         # the interaction count between them
         interaction_count = edge[2]["weight"]
 
-        rel_str_query += f"""MATCH (a{starting_acc_num}:{nodes_type} 
-                            {{userId: \'{starting_node_acc_name}\'}}) 
-                                MATCH (a{ending_acc_num}:{nodes_type} 
+        rel_str_query += f"""MATCH (a{starting_acc_num}:{nodes_type}
+                            {{userId: \'{starting_node_acc_name}\'}})
+                                MATCH (a{ending_acc_num}:{nodes_type}
                                   {{userId: \'{ending_node_acc_name}\'}})
-                                MERGE 
+                                MERGE
                                 (a{starting_acc_num}) -[rel{idx}:{rel_type}
                                     {{
                                         date: {int(graph_date_timestamp)},

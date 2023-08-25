@@ -24,14 +24,10 @@ class BaseModel:
         else:
             return False
 
-    def insert_one(self, obj_dict, create=False):
+    def insert_one(self, obj_dict):
         """
         Inserts one document into the defined collection
-        If create is True then a new collection is created
         """
-        if create:
-            if not self.exists:
-                self._create_collection_if_not_else()
 
         if not self.collection_exists():
             msg = "Inserting guild object into the"
@@ -46,14 +42,11 @@ class BaseModel:
 
         return self.collection.insert_one(obj_dict)
 
-    def insert_many(self, obj_dict_arr, create=False):
+    def insert_many(self, obj_dict_arr):
         """
         Inserts one document into the defined collection
         If create is True then a new collection is created
         """
-        if create:
-            if not self.exists:
-                self._create_collection_if_not_else()
 
         if not self.collection_exists():
             msg = "Inserting many guild objects into the"
@@ -79,7 +72,7 @@ class BaseModel:
             logging.info(f"Collection {self.collection_name} doesn't exist")
             result = self.database.create_collection(self.collection_name)
             logging.info(result)
-        self.database.command("collMod", self.collection_name, validator=self.validator)
+        self.database.command("collMod", self.collection_name)
         self.collection = self.database[self.collection_name]
         self.exists = True
 

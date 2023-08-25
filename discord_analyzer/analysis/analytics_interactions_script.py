@@ -220,7 +220,7 @@ def filter_channel_thread(
         else:
             warn("Messages is not ascending ordered!")
 
-    ######## First we're filtering the records via their channel name #########
+    # First we're filtering the records via their channel name
     channels_dict = {}
     # create an empty array of each channel
     # for chId in channels_id:
@@ -237,7 +237,7 @@ def filter_channel_thread(
     #     # ch = channels_id_name[chId]
     #     channels_dict[ch].append(record)
 
-    ######## and the adding the filtering of thread id #########
+    # and the adding the filtering of thread id
     channel_thread_dict = {}
 
     # filtering threads

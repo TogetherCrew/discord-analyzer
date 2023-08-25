@@ -1,6 +1,5 @@
 # test all_active members using the interaction matrix
 import numpy as np
-
 from discord_analyzer.analysis.assess_engagement import assess_engagement
 from discord_analyzer.analysis.utils.activity import Activity
 

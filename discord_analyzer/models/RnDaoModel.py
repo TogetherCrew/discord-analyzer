@@ -3,7 +3,7 @@
 
 import logging
 
-from discord_analyzer.analyzer.BaseModel import BaseModel
+from discord_analyzer.models.BaseModel import BaseModel
 
 
 class RnDaoModel(BaseModel):

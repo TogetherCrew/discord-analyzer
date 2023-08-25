@@ -78,7 +78,7 @@ class Neo4JMetrics:
         isolated_nodes = self.gds.run_cypher(
             f"""
             MATCH (isolated_nodes:{nodeType}) -[:IS_MEMBER]->(guild:Guild)
-            WHERE 
+            WHERE
                 NOT (isolated_nodes)-[:{relType}]-() AND
                 guild.guildId IN {guildId}
             RETURN DISTINCT (isolated_nodes).userId AS userId
@@ -121,7 +121,6 @@ class Neo4JMetrics:
             f"""
             MATCH (isolated_nodes:{nodeType}) -[:IS_MEMBER]->(guild:Guild)
             WHERE not (isolated_nodes)-[:{relType}]-() AND guild.guildId in {guildId}
-            
             WITH COUNT(isolated_nodes) * 1.0 as isolated_nodes_count
             MATCH (nodes:DiscordAccount) -[:IS_MEMBER]-> (guild:Guild)
             WHERE guild.guildId in {guildId}
@@ -178,14 +177,14 @@ class Neo4JMetrics:
             f"""
             MATCH (nodes:{nodeType}) -[:IS_MEMBER]->(guild:Guild)
             WHERE guild.guildId in {guildId}
-            WITH 
-                COUNT(DISTINCT(nodes)) * 1.0 * (COUNT(DISTINCT(nodes)) - 1) * 2 
+            WITH
+                COUNT(DISTINCT(nodes)) * 1.0 * (COUNT(DISTINCT(nodes)) - 1) * 2
                 AS potential_connection_count
-            MATCH (nodes)-[r:{relType}]-()  
-            WITH COUNT(DISTINCT(r)) * 1.0 AS actual_connection_count, 
+            MATCH (nodes)-[r:{relType}]-()
+            WITH COUNT(DISTINCT(r)) * 1.0 AS actual_connection_count,
             potential_connection_count
-            RETURN 
-                actual_connection_count / potential_connection_count 
+            RETURN
+                actual_connection_count / potential_connection_count
                 AS network_density
         """
         )

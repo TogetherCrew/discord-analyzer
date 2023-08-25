@@ -173,8 +173,8 @@ class Neo4jUtils:
         """
 
         delete_relationship_query = f"""
-          MATCH 
-            (:DiscordAccount) 
+          MATCH
+            (:DiscordAccount)
                 -[r:{relation_name} {{guildId: '{guildId}'}}]-(:DiscordAccount)
             DETACH DELETE r"""
 

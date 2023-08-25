@@ -1,9 +1,8 @@
 import os
 
-from dotenv import load_dotenv
-
 from discord_analyzer import RnDaoAnalyzer
 from discord_analyzer.analysis.assess_engagement import assess_engagement
+from dotenv import load_dotenv
 
 from .activity_params import prepare_activity_params
 

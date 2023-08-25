@@ -10,13 +10,15 @@ from datetime import datetime, timedelta
 import networkx as nx
 import numpy as np
 from dateutil.relativedelta import relativedelta
-
+# fmt: off
+from discord_analyzer.analysis.assess_engagement import assess_engagement
+from discord_analyzer.analysis.member_activity_history import \
+    check_past_history
+from discord_analyzer.analysis.utils.member_activity_history_utils import \
+    MemberActivityPastUtils
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 
-from .assess_engagement import assess_engagement
-from .member_activity_history import check_past_history
-from .utils.member_activity_history_utils import MemberActivityPastUtils
-
+# fmt: on
 from discord_analyzer.analysis.utils.member_activity_utils import (  # isort: skip
     convert_to_dict,
     get_joined_accounts,

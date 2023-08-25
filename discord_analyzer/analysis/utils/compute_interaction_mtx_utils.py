@@ -2,7 +2,6 @@ import logging
 from typing import Any
 
 import numpy as np
-
 from discord_analyzer.analysis.utils.activity import Activity
 
 from discord_analyzer.analysis.analytics_interactions_script import (  # isort: skip
@@ -26,7 +25,7 @@ def prepare_per_account(db_results: list) -> dict[str, list[dict]]:
         key is the account name
         and values are the docuemnts of database
     """
-    ###### Cetegorize per account_name ######
+    # Cetegorize per account_name
     per_acc_query_result = {}
 
     # a dictionary for results of each account

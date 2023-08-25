@@ -16,7 +16,7 @@ class MongodbQuery:
         """
         just check whether the inputs are correctly entered or not
         """
-        ### checking the length of arrays ####
+        # checking the length of arrays
         if len(acc_names) < 1:
             raise ValueError("acc_names array is empty!")
         if len(channels) < 1:
@@ -95,7 +95,7 @@ class MongodbQuery:
             the query to get access
         """
 
-        ### creating each part of query seperately ####
+        # creating each part of query seperately ##
 
         # creating date query
         date_query = []
@@ -114,7 +114,7 @@ class MongodbQuery:
         for account in acc_names:
             account_query.append({account_key: account})
 
-        ### creating the query ####
+        # creating the query
         query = {
             "$"
             + variable_aggregation_type: [
@@ -173,7 +173,7 @@ class MongodbQuery:
         query : dictionary
             a dictionary that query the database
         """
-        ### Array inputs checking ####
+        # Array inputs checking
         if len(channels_id) < 1:
             raise ValueError("channels_id array is empty!")
         if len(dates) < 1:

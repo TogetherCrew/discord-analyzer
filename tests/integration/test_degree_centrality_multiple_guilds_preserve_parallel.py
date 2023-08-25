@@ -39,10 +39,9 @@ def test_multiple_guilds_preserve_parallel():
         CREATE (c:DiscordAccount) -[:IS_MEMBER]->(g)
         CREATE (d:DiscordAccount) -[:IS_MEMBER]->(g)
         CREATE (e:DiscordAccount) -[:IS_MEMBER]->(g)
-        CREATE (f2:DiscordAccount) 
+        CREATE (f2:DiscordAccount)
             -[:IS_MEMBER]->(guild2:Guild {{guildId: '{guildId2}'}})
         CREATE (g2:DiscordAccount) -[:IS_MEMBER]->(guild2)
-        
         SET a.userId = "1000"
         SET b.userId = "1001"
         SET c.userId = "1002"
@@ -50,7 +49,6 @@ def test_multiple_guilds_preserve_parallel():
         SET e.userId = "1004"
         SET f2.userId = "1005"
         SET g2.userId = "1006"
-
         MERGE (a) -[r:INTERACTED_WITH {{date: {yesterday}, weight: 1}}]->(b)
         MERGE (a) -[r2:INTERACTED_WITH {{date: {today}, weight: 2}}]->(b)
         MERGE (a) -[r3:INTERACTED_WITH {{date: {yesterday}, weight: 3}}]->(d)
@@ -65,8 +63,6 @@ def test_multiple_guilds_preserve_parallel():
         MERGE (e) -[r12:INTERACTED_WITH {{date: {today}, weight: 3}}]->(b)
         MERGE (f2) -[r13:INTERACTED_WITH {{date: {yesterday}, weight: 3}}]->(g2)
         MERGE (g2) -[r14:INTERACTED_WITH {{date: {yesterday}, weight: 3}}]->(f2)
-
-
         SET r.guildId = '{guildId}'
         SET r2.guildId = '{guildId}'
         SET r3.guildId = '{guildId}'

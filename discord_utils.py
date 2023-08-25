@@ -1,9 +1,9 @@
 import logging
 from typing import Any
 
+from analyzer_init import AnalyzerInit
 from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
 
-from analyzer_init import AnalyzerInit
 from utils.get_rabbitmq import prepare_rabbit_mq
 from utils.transactions_ordering import sort_transactions
 

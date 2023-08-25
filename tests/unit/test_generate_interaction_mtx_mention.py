@@ -1,9 +1,7 @@
 from discord_analyzer.analysis.utils.activity import Activity
-# fmt: off
-from discord_analyzer.analysis.utils.compute_interaction_mtx_utils import \
-    generate_interaction_matrix
-
-# fmt: on
+from discord_analyzer.analysis.utils.compute_interaction_mtx_utils import (
+    generate_interaction_matrix,
+)
 
 
 def test_single_account_mention():

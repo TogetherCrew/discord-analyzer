@@ -33,13 +33,11 @@ def test_decentralization_score():
         CREATE (c:DiscordAccount) -[:IS_MEMBER]->(g)
         CREATE (d:DiscordAccount) -[:IS_MEMBER]->(g)
         CREATE (e:DiscordAccount) -[:IS_MEMBER]->(g)
-        
         SET a.userId = "1000"
         SET b.userId = "1001"
         SET c.userId = "1002"
         SET d.userId = "1003"
         SET e.userId = "1004"
-
         MERGE (a) -[r:INTERACTED_WITH {{date: {yesterday}, weight: 1}}]->(b)
         MERGE (a) -[r2:INTERACTED_WITH {{date: {today}, weight: 2}}]->(b)
         MERGE (a) -[r3:INTERACTED_WITH {{date: {yesterday}, weight: 3}}]->(d)
@@ -52,8 +50,6 @@ def test_decentralization_score():
         MERGE (b) -[r10:INTERACTED_WITH {{date: {today}, weight: 2}}]->(d)
         MERGE (d) -[r11:INTERACTED_WITH {{date: {today}, weight: 1}}]->(c)
         MERGE (e) -[r12:INTERACTED_WITH {{date: {today}, weight: 3}}]->(b)
-
-
         SET r.guildId = '{guildId}'
         SET r2.guildId = '{guildId}'
         SET r3.guildId = '{guildId}'

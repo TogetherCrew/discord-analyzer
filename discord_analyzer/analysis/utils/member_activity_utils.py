@@ -2,7 +2,6 @@ from datetime import timedelta
 
 import numpy as np
 import pymongo
-
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 
 

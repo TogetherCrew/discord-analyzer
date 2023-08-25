@@ -1,5 +1,4 @@
 import numpy as np
-
 from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
 
 from .utils.neo4j_conn import neo4j_setup
@@ -70,10 +69,10 @@ def test_guild_results_available_from_start():
     accounts_result = neo4j_utils.gds.run_cypher(
         f"""
         MATCH (a:DiscordAccount) -[r:INTERACTED_IN]-> (g:Guild {{guildId: '{guildId}'}})
-        RETURN 
-            a.userId AS userId, 
-            r.date AS date, 
-            r.localClusteringCoefficient AS localClusteringCoefficient, 
+        RETURN
+            a.userId AS userId,
+            r.date AS date,
+            r.localClusteringCoefficient AS localClusteringCoefficient,
             r.status AS status
         """
     )

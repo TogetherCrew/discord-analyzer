@@ -11,15 +11,13 @@ from tc_messageBroker.message_broker import RabbitMQ
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
 
-# fmt: off
-from discord_utils import (analyzer_recompute, analyzer_run_once,
-                           publish_on_success)
-from utils.daolytics_uitls import (get_rabbit_mq_credentials,
-                                   get_redis_credentials,
-                                   get_sentryio_service_creds)
+from discord_utils import analyzer_recompute, analyzer_run_once, publish_on_success
+from utils.daolytics_uitls import (
+    get_rabbit_mq_credentials,
+    get_redis_credentials,
+    get_sentryio_service_creds,
+)
 from utils.sentryio_service import set_up_sentryio
-
-# fmt: on
 
 
 def analyzer():

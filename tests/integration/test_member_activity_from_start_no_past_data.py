@@ -19,7 +19,7 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
     db_access.db_mongo_client["RnDAO"]["guilds"].insert_one(
         {
             "guildId": guildId,
-            "user": "876487027099582524",
+            "user": "1223455",
             "name": "Loud place",
             "connectedAt": (datetime.now() - timedelta(days=10)),
             "isInProgress": True,
@@ -29,7 +29,7 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
             "action": [1, 1, 1, 4, 3, 5, 5, 4, 3, 3, 2, 2, 1],
             "selectedChannels": [
                 {
-                    "channelId": "1020707129214111827",
+                    "channelId": "41414262",
                     "channelName": "general",
                 },
             ],
@@ -41,9 +41,9 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
 
     db_access.db_mongo_client[guildId]["guildmembers"].insert_one(
         {
-            "discordId": "973993299281076285",
+            "discordId": "3451791",
             "username": "sample_user",
-            "roles": ["1012430565959553145"],
+            "roles": ["99909821"],
             "joinedAt": (datetime.now() - timedelta(days=10)),
             "avatar": "3ddd6e429f75d6a711d0a58ba3060694",
             "isBot": False,
@@ -56,15 +56,15 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
     for i in range(150):
         sample = {
             "type": 0,
-            "author": "973993299281076285",
+            "author": "3451791",
             "content": "test10",
             "user_mentions": [],
             "role_mentions": [],
             "reactions": [],
             "replied_user": None,
             "createdDate": (datetime.now() - timedelta(hours=i)),
-            "messageId": f"11188143219343360{i}",
-            "channelId": "1020707129214111827",
+            "messageId": f"77776325{i}",
+            "channelId": "41414262",
             "channelName": "general",
             "threadId": None,
             "threadName": None,

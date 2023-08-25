@@ -1,7 +1,6 @@
 import logging
 
 import pandas as pd
-
 from discord_analyzer.analysis.neo4j_metrics import Neo4JMetrics
 from discord_analyzer.DB_operations.neo4j_utils import Neo4jUtils
 
@@ -86,7 +85,7 @@ class Centerality:
 
         if weighted and not preserve_parallel:
             logging.warn(
-                """preserver_parallel=False with weighted=True 
+                """preserver_parallel=False with weighted=True
                 could produce wrong results!"""
             )
 
@@ -102,9 +101,9 @@ class Centerality:
             f"""
                 {query}
                 WHERE r.guildId = '{guildId}'
-                RETURN 
-                    a.userId as a_userId, 
-                    r.date as date, 
+                RETURN
+                    a.userId as a_userId,
+                    r.date as date,
                     r.weight as weight,
                     b.userId as b_userId
             """
@@ -149,7 +148,7 @@ class Centerality:
             the guildId to get computations date
         """
         query = f"""
-            MATCH (g:Guild {{guildId: '{guildId}'}}) 
+            MATCH (g:Guild {{guildId: '{guildId}'}})
                 -[r:HAVE_METRICS] -> (g)
             RETURN r.date as date, r.decentralizationScore as dc
             """

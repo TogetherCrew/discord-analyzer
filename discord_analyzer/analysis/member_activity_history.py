@@ -5,11 +5,9 @@ import datetime
 
 from dateutil import parser
 
-# fmt: off
-from discord_analyzer.analysis.utils.member_activity_history_utils import \
-    MemberActivityPastUtils
-
-# fmt: on
+from discord_analyzer.analysis.utils.member_activity_history_utils import (
+    MemberActivityPastUtils,
+)
 
 
 # the main script function
@@ -55,7 +53,7 @@ def check_past_history(
     if len(date_range) != 2:
         raise ValueError(
             f"""date_range should have the length of two,
-          first index is the start of the interval and the 
+          first index is the start of the interval and the
           second index is the end of the interval
           its length is: {len(date_range)}"""
         )

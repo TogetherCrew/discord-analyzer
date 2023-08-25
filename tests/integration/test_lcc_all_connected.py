@@ -1,9 +1,8 @@
 # test out local clustering coefficient with all nodes connected
-# fmt: off
-from discord_analyzer.analysis.neo4j_analysis.local_clustering_coefficient import \
-    LocalClusteringCoeff
+from discord_analyzer.analysis.neo4j_analysis.local_clustering_coefficient import (
+    LocalClusteringCoeff,
+)
 
-# fmt: on
 from .utils.neo4j_conn import neo4j_setup
 
 
@@ -52,9 +51,9 @@ def test_all_connected_coeffs():
     results = neo4j_utils.gds.run_cypher(
         f"""
         MATCH (a:DiscordAccount) -[r:INTERACTED_IN]-> (:Guild {{guildId: '{guildId}'}})
-        RETURN 
+        RETURN
             a.userId as userId,
-            r.date as date, 
+            r.date as date,
             r.localClusteringCoefficient as lcc
         """
     )

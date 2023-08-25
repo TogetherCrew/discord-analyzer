@@ -3,7 +3,6 @@ import logging
 from uuid import uuid1
 
 import pandas as pd
-
 from discord_analyzer.DB_operations.neo4j_utils import Neo4jUtils
 
 from discord_analyzer.analysis.neo4j_utils.projection_utils import (  # isort: skip
@@ -78,10 +77,10 @@ class NodeStats:
                 f"""
                 CALL gds.degree.stream(
                     '{subgraph_name}',
-                    {{ 
+                    {{
                         orientation: 'REVERSE',
                         relationshipWeightProperty: 'weight'
-                    }}    
+                    }}
                 )
                 YIELD nodeId, score
                 RETURN gds.util.asNode(nodeId).userId AS userId, score

@@ -13,7 +13,6 @@ from collections import Counter
 
 import networkx as nx
 import numpy as np
-
 from discord_analyzer.analysis.utils.activity import Activity
 
 # # # # # main function # # # # #
@@ -854,7 +853,7 @@ def make_graph(mat):
     graph - graph object: interaction graph
     """
 
-    ###### The commented codes were written for creating undirected graph
+    # The commented codes were written for creating undirected graph
     # # make empty result matrix (for undirected matrix)
     # new_mat = np.zeros_like(mat)
 
