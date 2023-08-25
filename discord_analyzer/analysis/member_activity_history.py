@@ -5,7 +5,11 @@ import datetime
 
 from dateutil import parser
 
-from .utils.member_activity_history_past_utils import MemberActivityPastUtils
+# fmt: off
+from discord_analyzer.analysis.utils.member_activity_history_utils import \
+    MemberActivityPastUtils
+
+# fmt: on
 
 
 # the main script function
