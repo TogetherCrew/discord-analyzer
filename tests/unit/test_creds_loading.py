@@ -1,4 +1,4 @@
-from utils.daolytics_uitls import (
+from utils.daolytics_uitls import (  # isort: skip
     get_mongo_credentials,
     get_neo4j_credentials,
     get_rabbit_mq_credentials,
