@@ -29,15 +29,10 @@ class Neo4JAnalytics:
         ------------
         guildId : str
             the specific guild we want to compute metrics for
-        neo4j_creds : dict[str, any]
-            a dictionary of credentials for neo4j
         from_start : bool
             compute metrics from start or not
             Note: only some metrics support this
             others would be computed from_start=True
-        scale_fragmentation_score : int
-            scale the fragmentation score
-            default is 1 meaning no scaling
         """
         if from_start:
             self._remove_analytics_interacted_in(guildId)
@@ -58,10 +53,6 @@ class Neo4JAnalytics:
         ------------
         guildId : str
             the specific guild we want to compute metrics for
-        neo4j_creds : dict[str, any]
-            a dictionary of credentials for neo4j
-        scale_fragmentation_score : int
-            scale the fragmentation score
         from_start : bool
             compute metrics from start or not
             Note: only some metrics support this

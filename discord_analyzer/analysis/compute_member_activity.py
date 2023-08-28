@@ -12,14 +12,16 @@ import numpy as np
 from dateutil.relativedelta import relativedelta
 # fmt: off
 from discord_analyzer.analysis.assess_engagement import assess_engagement
-from discord_analyzer.analysis.member_activity_history import \
+from discord_analyzer.analysis.member_activity_history import (
     check_past_history
-from discord_analyzer.analysis.utils.member_activity_history_utils import \
+)
+from discord_analyzer.analysis.utils.member_activity_history_utils import (
     MemberActivityPastUtils
+)
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 
 # fmt: on
-from discord_analyzer.analysis.utils.member_activity_utils import (  # isort: skip
+from discord_analyzer.analysis.utils.member_activity_utils import (
     convert_to_dict,
     get_joined_accounts,
     get_latest_joined_users,
@@ -29,7 +31,7 @@ from discord_analyzer.analysis.utils.member_activity_utils import (  # isort: sk
 )
 
 
-from .compute_interaction_matrix_discord import (  # isort: skip
+from discord_analyzer.analysis.compute_interaction_matrix_discord import (
     compute_interaction_matrix_discord,
 )
 

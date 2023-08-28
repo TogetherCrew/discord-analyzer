@@ -22,7 +22,7 @@ class Centerality:
         direction: str,
         from_start: bool,
         **kwargs,
-    ) -> dict[str, dict[float, int]]:
+    ) -> dict[float, dict[str, float]]:
         """
         compute the weighted count of edges coming to a node
         it would be based on the date
@@ -66,8 +66,11 @@ class Centerality:
 
         Returns:
         ----------
-        degree_centerality : dict[str, dict[float, int]]
+        degree_centerality : dict[float, dict[str, float]]
             the degree centerality per date for each user
+            the `float` keys are representative of the timestamp date
+            the `str` is representative userId
+            and the last `float` is represantative of user centrality value
         """
 
         node = "DiscordAccount" if "node" not in kwargs.keys() else kwargs["node"]
@@ -165,7 +168,7 @@ class Centerality:
         weighted: bool,
         normalize: bool,
         preserve_parallel: bool,
-    ) -> dict[str, dict[float, int]]:
+    ) -> dict[float, dict[str, float]]:
         """
         count the degree of nodes
         (the direction of the relation depends on the results)
@@ -189,10 +192,10 @@ class Centerality:
 
         Returns:
         -----------
-        per_acc_date_weights : dict[str, dict[float, int]]
+        per_acc_date_weights : dict[float, dict[str, float]]
             the results per date degrees of each user
         """
-        per_date_acc_weights = {}
+        per_date_acc_weights: dict[float, dict[str, float]] = {}
 
         userIds = set(results["a_userId"].value_counts().index).union(
             results["b_userId"].value_counts().index
@@ -200,7 +203,7 @@ class Centerality:
 
         # a variable for normalizing
         # saving max value of each date
-        date_max_values = {}
+        date_max_values: dict[float, float] = {}
 
         for date in computation_date:
             per_date_acc_weights[date] = {}
@@ -249,9 +252,9 @@ class Centerality:
 
     def normalize_degree_centrality(
         self,
-        per_date_acc_weights: dict[float, dict[str, int]],
-        date_max_values: dict[float, int],
-    ) -> dict[float, dict[str, int]]:
+        per_date_acc_weights: dict[float, dict[str, float]],
+        date_max_values: dict[float, float],
+    ) -> dict[float, dict[str, float]]:
         """
         normalize the per_acc_date_weights of degree centrality
 
@@ -267,7 +270,7 @@ class Centerality:
 
         Returns:
         ----------
-        per_date_acc_weights : dict[float, dict[str, int]]
+        per_date_acc_weights : dict[float, dict[str, float]]
             the normalized version of `per_date_acc_weights`
         """
         for date in per_date_acc_weights.keys():
@@ -323,7 +326,7 @@ class Centerality:
         neo4j_metrics = Neo4JMetrics(self.neo4j_utils.gds)
 
         # saving each date network decentrality
-        network_decentrality = {}
+        network_decentrality: dict[float, float] = {}
         for date in results_undirected.keys():
             centerality = list(results_undirected[date].values())
             network_decentrality[date] = neo4j_metrics.compute_decentralization(

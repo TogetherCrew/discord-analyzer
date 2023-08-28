@@ -1,3 +1,4 @@
+from typing import Any
 from datetime import timedelta
 
 import numpy as np
@@ -150,7 +151,7 @@ def update_activities(past_activities, activities_list):
     return activity_dictionaries
 
 
-def convert_to_dict(data: list[any], dict_keys: list[str]) -> dict:
+def convert_to_dict(data: list[Any], dict_keys: list[str]) -> dict:
     """
     convert data into dictionary
     Note: the length of data and dict_keys always must be the same

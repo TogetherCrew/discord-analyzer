@@ -212,19 +212,22 @@ class NodeStats:
         date : float
             the date in timestamp format
         """
-        with self.driver.session() as session:
-            for _, row in user_status.iterrows():
-                userId = row["userId"]
-                status = row["stats"]
+        if self.driver is None:
+            with self.driver.session() as session:
+                for _, row in user_status.iterrows():
+                    userId = row["userId"]
+                    status = row["stats"]
 
-                query = """
-                    MATCH (a:DiscordAccount {userId: $userId})
-                    MATCH (g:Guild {guildId: $guildId})
-                    MERGE (a) -[r:INTERACTED_IN {
-                        date: $date
-                    }] -> (g)
-                    SET r.status = $status
-                """
-                session.run(
-                    query, userId=userId, guildId=guildId, status=status, date=date
-                )
+                    query = """
+                        MATCH (a:DiscordAccount {userId: $userId})
+                        MATCH (g:Guild {guildId: $guildId})
+                        MERGE (a) -[r:INTERACTED_IN {
+                            date: $date
+                        }] -> (g)
+                        SET r.status = $status
+                    """
+                    session.run(
+                        query, userId=userId, guildId=guildId, status=status, date=date
+                    )
+        else:
+            logging.error("neo4j driver not connected!")

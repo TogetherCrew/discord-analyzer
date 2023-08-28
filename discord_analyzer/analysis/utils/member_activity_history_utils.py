@@ -15,7 +15,7 @@ class MemberActivityPastUtils:
         self,
         start_dt: datetime,
         end_dt: datetime,
-        all_joined_day: list[dict[str, list]],
+        all_joined_day: dict[str, set[str]],
         starting_key: int,
         window_d: int = 7,
     ):
@@ -26,7 +26,7 @@ class MemberActivityPastUtils:
             the starting point of looking into joined accounts
         end_dt : datetime
             the ending point of looking into joined accounts
-        all_joined_day : list[dict[str, list]]
+        all_joined_day : dict[str, set[str]]
             dictionary of `all_joined_day` from before
             we should update this dict based on the new joined accounts
             difference between this one and `all_joined` is
@@ -41,9 +41,9 @@ class MemberActivityPastUtils:
 
         Returns:
         ---------
-        all_joined : list(dict[str, list])
+        all_joined : dict[str, set[str]]
             the updated joined dictionary for past 7 days
-        all_joined_day : list(dict[str, list])
+        all_joined_day : dict[str, set[str]]
             the updated joined dictionary for past 1 day
         """
         # to get the data in end_date we should plus it to one
@@ -60,24 +60,24 @@ class MemberActivityPastUtils:
         return all_joined, all_joined_day
 
     def get_users_past_days(
-        self, all_joined_day: list[dict[str, list]], window_d: int
-    ) -> list[dict[str, list]]:
+        self, all_joined_day: dict[str, set[str]], window_d: int
+    ) -> dict[str, list[str]]:
         """
         get the users from past `window_d` days
 
         Parameters:
         --------------
-        all_joined_day : list[dict[str, list]]
+        all_joined_day : dict[str, set[str]]
             the users joining in one day
         window_d : int
             the number of days look into past for getting users
 
         Returns:
         ----------
-        all_joined : list[dict[str, list]]
+        all_joined : dict[str, list[str]]
             the users joining in, withing `window_d` past days
         """
-        all_joined = {}
+        all_joined: dict[str, set[str]] = {}
 
         # looping up to the max key
         loop_max = array(list(all_joined_day.keys()), dtype=int).max() + 1
@@ -103,10 +103,10 @@ class MemberActivityPastUtils:
         self,
         start_dt: datetime,
         end_dt: datetime,
-        all_joined_day: datetime,
+        all_joined_day: dict[str, set[str]],
         starting_key: int,
         joined_acc: list[dict[str, str]],
-    ) -> list[dict[str, list]]:
+    ) -> dict[str, set[str]]:
         """
         update the all_joined_day dict with new retrieved data
 
@@ -116,7 +116,7 @@ class MemberActivityPastUtils:
             the starting point of looking into joined accounts
         end_dt : datetime
             the ending point of looking into joined accounts
-        all_joined_day : list(dict[str, list])
+        all_joined_day : dict[str, set[str]]
             dictionary of joined accounts from before
             we should update this dict based on the new joined accounts
         starting_key : int
@@ -128,7 +128,7 @@ class MemberActivityPastUtils:
 
         Returns:
         ---------
-        all_joined_day : list(dict[str, list])
+        all_joined_day : dict[str, set[str]]
             the updated joined dictionary
         """
 

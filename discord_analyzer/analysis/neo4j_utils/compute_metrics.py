@@ -1,4 +1,5 @@
 # Computation of Neo4j analytics
+from typing import Literal
 import numpy as np
 
 
@@ -193,16 +194,20 @@ class Neo4JMetrics:
         # with column name `network_density`
         return result["network_density"].values[0]
 
-    def compute_decentralization(self, centrality):
+    def compute_decentralization(self, centrality: list[float]) -> float | Literal[-1]:
         """
         Computes degree decentralization score of a graph
         Note: the degreeCenterality must be computed before to comute descenterality
 
-        Input:
-        centrality - list[float]: list of centrality scores per node
+        Parameters:
+        -------------
+        centrality : list[float]
+            list of centrality scores per node
 
-        Output:
-        network_decentrality - float: decentrality score
+        Returns:
+        ----------
+        network_decentrality : float
+            the decentrality score
         """
         # converting to numpy
         centrality_np = np.array(centrality)
