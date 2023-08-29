@@ -212,7 +212,7 @@ class NodeStats:
         date : float
             the date in timestamp format
         """
-        if self.driver is None:
+        if self.driver is not None:
             with self.driver.session() as session:
                 for _, row in user_status.iterrows():
                     userId = row["userId"]

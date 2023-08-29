@@ -4,7 +4,7 @@ from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
 from .utils.neo4j_conn import neo4j_setup
 
 
-def test_guild_results_available_from_start():
+def test_neo4j_compute_metrics_from_start():
     """
     test with default behaviour
 

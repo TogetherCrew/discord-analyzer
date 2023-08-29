@@ -1,7 +1,8 @@
 import os
 
 from discord_analyzer import RnDaoAnalyzer
-from discord_analyzer.analysis.assess_engagement import assess_engagement
+from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
+from tc_core_analyzer_lib.utils.activity import DiscordActivity
 from dotenv import load_dotenv
 
 from .activity_params import prepare_activity_params
@@ -41,7 +42,17 @@ def generate_mock_graph(int_matrix, acc_names):
 
     act_param = prepare_activity_params()
 
-    (graph, *computed_activities) = assess_engagement(
+    assess_engagment = EngagementAssessment(
+        activities=[
+            DiscordActivity.Mention,
+            DiscordActivity.Reply,
+            DiscordActivity.Reaction,
+        ],
+        activities_ignore_0_axis=[DiscordActivity.Mention],
+        activities_ignore_1_axis=[],
+    )
+
+    (graph, *computed_activities) = assess_engagment.compute(
         int_mat=int_matrix,
         w_i=w_i,
         acc_names=acc_names,

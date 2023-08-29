@@ -168,3 +168,6 @@ cython_debug/
 .org
 
 coverage/*
+
+analyzer_lib
+main.ipynb

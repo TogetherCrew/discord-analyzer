@@ -10,17 +10,14 @@ from datetime import datetime, timedelta
 import networkx as nx
 import numpy as np
 from dateutil.relativedelta import relativedelta
-# fmt: off
-from discord_analyzer.analysis.assess_engagement import assess_engagement
-from discord_analyzer.analysis.member_activity_history import (
-    check_past_history
-)
+from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
+from tc_core_analyzer_lib.utils.activity import DiscordActivity
+from discord_analyzer.analysis.member_activity_history import check_past_history
 from discord_analyzer.analysis.utils.member_activity_history_utils import (
-    MemberActivityPastUtils
+    MemberActivityPastUtils,
 )
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 
-# fmt: on
 from discord_analyzer.analysis.utils.member_activity_utils import (
     convert_to_dict,
     get_joined_accounts,
@@ -225,6 +222,16 @@ def compute_member_activity(
 
         # # # ACTUAL ANALYSIS # # #
 
+        assess_engagment = EngagementAssessment(
+            activities=[
+                DiscordActivity.Mention,
+                DiscordActivity.Reply,
+                DiscordActivity.Reaction,
+            ],
+            activities_ignore_0_axis=[DiscordActivity.Mention],
+            activities_ignore_1_axis=[],
+        )
+
         # for every window index
         max_range = int(np.floor(last_start.days / window_param[1]) + 1)
         # if max range was chosen negative,
@@ -291,7 +298,7 @@ def compute_member_activity(
                     int_mat[key][np.diag_indices_from(int_mat[key])] = 0
 
                 # assess engagement
-                (graph_out, *activity_dict) = assess_engagement(
+                (graph_out, *activity_dict) = assess_engagment.compute(
                     int_mat=int_mat,
                     w_i=new_window_i,
                     acc_names=np.asarray(acc_names),
@@ -338,73 +345,3 @@ def compute_member_activity(
     )
 
     return [network_dict, activity_dict_per_date]
-
-
-if __name__ == "__main__":
-    # sample entries
-    channels = ["968110585264898048", "1083353697746161774"]
-
-    acc_names = [
-        "danielo#2815",
-        "Ashish G#1920",
-        "katerinabc#6667",
-        "Ene SS Rawa#0855",
-        "sepehr#3795",
-        "mehrdad_mms#8600",
-        "MagicPalm#5706",
-        "Tanusree#3121",
-        "SimonSekavcnik#2162",
-        "Behzad#1761",
-        "DenisFox.#1743",
-        "nimatorabiv#2903",
-    ]
-
-    date_range = [
-        "22/01/01",
-        "23/04/14",
-    ]  # example for longer range of dates (use this for first extraction)
-    CONNECTION_STRING = "mongodb://tcmongo:T0g3th3rCr3wM0ng0P55@104.248.137.224:1547/"
-    # DB_NAME = '596752664906432522'
-    DB_NAME = "915914985140531240"
-
-    # analysis parameters
-    WINDOW_D = 7  # window size in days
-    STEP_D = 1  # step size of sliding window in days
-
-    # Default values are set
-    INT_THR = 1  # minimum number of interactions to be active
-    UW_DEG_THR = 1  # minimum number of accounts interacted with to be active
-    PAUSED_T_THR = 1  # time period to remain paused
-    CON_T_THR = 4  # time period to be consistent active
-    CON_O_THR = 3  # time period to be consistent active
-    EDGE_STR_THR = 5  # minimum number of interactions for connected
-    UW_THR_DEG_THR = 5  # minimum number of accounts for connected
-    VITAL_T_THR = 4  # time period to assess for vital
-    VITAL_O_THR = 3  # times to be connected within VITAL_T_THR to be vital
-    STILL_T_THR = 3  # time period to assess for still active
-    STILL_O_THR = 2  # times to be active within STILL_T_THR to be still active
-
-    # call function
-    data_network_dict, data_activity_dict = compute_member_activity(
-        DB_NAME,
-        CONNECTION_STRING,
-        channels,
-        acc_names,
-        date_range,
-        [WINDOW_D, STEP_D],
-        [
-            INT_THR,
-            UW_DEG_THR,
-            PAUSED_T_THR,
-            CON_T_THR,
-            CON_O_THR,
-            EDGE_STR_THR,
-            UW_THR_DEG_THR,
-            VITAL_T_THR,
-            VITAL_O_THR,
-            STILL_T_THR,
-            STILL_O_THR,
-        ],
-    )
-
-    print(data_network_dict, data_activity_dict)
