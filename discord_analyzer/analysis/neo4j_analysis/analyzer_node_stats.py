@@ -48,10 +48,16 @@ class NodeStats:
         # possible dates to do the computations
         possible_dates = projection_utils.get_dates(guildId=guildId)
 
-        # if we didn't want to compute from the day start
-        if not from_start:
-            computed_dates = self.get_computed_dates(projection_utils, guildId)
-            possible_dates = possible_dates - computed_dates
+        try:
+            ## if we didn't want to compute from the day start
+            if not from_start:
+                computed_dates = self.get_computed_dates(projection_utils, guildId)
+                possible_dates = possible_dates - computed_dates
+        except Exception as exp:
+            msg = f"GUILDID: {guildId}: "
+            msg += f"Exception during node stats computations, exp: {exp}"
+            msg += "Computing from scratch!"
+            logging.warning(msg)
 
         for date in possible_dates:
             subgraph_name = f"SubGraphStats_{uuid1()}"
@@ -231,3 +237,6 @@ class NodeStats:
                     )
         else:
             logging.error("neo4j driver not connected!")
+        
+        prefix = f"GUILDID: {guildId}: "
+        logging.info(f"{prefix}Node stats saved for the date: {date}")
