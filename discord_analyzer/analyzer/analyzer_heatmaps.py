@@ -4,15 +4,14 @@ from datetime import datetime, timedelta
 
 # from analyzer.analyzer.base_analyzer import Base_analyzer
 from discord_analyzer.analysis.activity_hourly import activity_hourly
-from discord_analyzer.models.GuildsRnDaoModel import GuildsRnDaoModel
-from discord_analyzer.models.HeatMapModel import HeatMapModel
-from discord_analyzer.models.RawInfoModel import RawInfoModel
-
 from discord_analyzer.analyzer.heatmaps_utils import (
     get_bot_id,
     getNumberOfActions,
     store_counts_dict,
 )
+from discord_analyzer.models.GuildsRnDaoModel import GuildsRnDaoModel
+from discord_analyzer.models.HeatMapModel import HeatMapModel
+from discord_analyzer.models.RawInfoModel import RawInfoModel
 
 
 class Heatmaps:

@@ -1,5 +1,5 @@
 from discord_analyzer.analysis.utils.compute_interaction_mtx_utils import (
-    prepare_per_account
+    prepare_per_account,
 )
 
 

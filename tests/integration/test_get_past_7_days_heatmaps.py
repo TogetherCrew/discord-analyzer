@@ -1,12 +1,9 @@
 from datetime import datetime, timedelta
 
 import numpy as np
+from discord_analyzer.analysis.utils.member_activity_utils import get_users_past_window
 
 from .utils.analyzer_setup import launch_db_access
-
-from discord_analyzer.analysis.utils.member_activity_utils import (
-    get_users_past_window,
-)
 
 
 def test_get_past_7_days_heatmap_users_available_users():

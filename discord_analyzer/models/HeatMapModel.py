@@ -3,7 +3,6 @@ import logging
 from datetime import datetime, timedelta, timezone
 
 import pymongo
-
 from discord_analyzer.models.BaseModel import BaseModel
 
 

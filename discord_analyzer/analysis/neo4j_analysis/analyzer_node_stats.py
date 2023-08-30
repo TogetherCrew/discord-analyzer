@@ -7,7 +7,6 @@ from discord_analyzer.analysis.neo4j_utils.projection_utils import ProjectionUti
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
-
 class NodeStats:
     def __init__(self, neo4j_ops: Neo4jOps, threshold: int = 2) -> None:
         """

@@ -1,11 +1,9 @@
 from datetime import datetime, timedelta
 
+from discord_analyzer.analyzer.memberactivity_utils import MemberActivityUtils
+
 from .utils.analyzer_setup import launch_db_access, setup_analyzer
 from .utils.remove_and_setup_guild import setup_db_guild
-
-from discord_analyzer.analyzer.memberactivity_utils import (
-    MemberActivityUtils,
-)
 
 
 def test_utils_get_members():

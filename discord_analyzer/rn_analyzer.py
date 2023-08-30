@@ -3,18 +3,14 @@ import logging
 import os
 import sys
 
-from dotenv import load_dotenv
-
 from discord_analyzer.analyzer.analyzer_heatmaps import Heatmaps
+from discord_analyzer.analyzer.analyzer_memberactivities import Member_activities
 from discord_analyzer.analyzer.base_analyzer import Base_analyzer
 from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
 from discord_analyzer.models.GuildsRnDaoModel import GuildsRnDaoModel
 from discord_analyzer.models.HeatMapModel import HeatMapModel
 from discord_analyzer.models.RawInfoModel import RawInfoModel
-
-from discord_analyzer.analyzer.analyzer_memberactivities import (
-    Member_activities,
-)
+from dotenv import load_dotenv
 
 
 class RnDaoAnalyzer(Base_analyzer):

@@ -1,5 +1,4 @@
 import numpy as np
-
 from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
 
 from .utils.neo4j_conn import neo4j_setup
