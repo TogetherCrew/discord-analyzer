@@ -1,13 +1,14 @@
 from datetime import datetime, timedelta
+from typing import Any
 
 
 def create_empty_memberactivities_data(
     start_date: datetime, count: int = 10
-) -> list[dict[str, list]]:
+) -> list[dict[str, list[Any]]]:
     """
     create empty documents of memberactivities
     """
-    data = []
+    data: list[dict[str, list[Any]]] = []
 
     for i in range(count):
         date = start_date + timedelta(days=i)
