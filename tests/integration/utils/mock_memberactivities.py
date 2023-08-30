@@ -4,11 +4,11 @@ from typing import Any
 
 def create_empty_memberactivities_data(
     start_date: datetime, count: int = 10
-) -> list[dict[str, list[Any]]]:
+) -> list[dict[str, Any]]:
     """
     create empty documents of memberactivities
     """
-    data: list[dict[str, list[Any]]] = []
+    data: list[dict[str, Any]] = []
 
     for i in range(count):
         date = start_date + timedelta(days=i)
