@@ -1,7 +1,6 @@
-import logging
 from typing import Any
 
-from discord_analyzer.DB_operations.mongo_neo4j_ops import MongoNeo4jDB  # isort: skip
+from discord_analyzer.DB_operations.mongo_neo4j_ops import MongoNeo4jDB
 
 
 class Base_analyzer:

@@ -95,7 +95,7 @@ class MongodbQuery:
             the query to get access
         """
 
-        # creating each part of query seperately ##
+        # creating each part of query seperately
 
         # creating date query
         date_query = []

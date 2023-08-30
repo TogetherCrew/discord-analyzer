@@ -8,7 +8,7 @@ from discord_analyzer.models.GuildsRnDaoModel import GuildsRnDaoModel
 from discord_analyzer.models.HeatMapModel import HeatMapModel
 from discord_analyzer.models.RawInfoModel import RawInfoModel
 
-from discord_analyzer.analyzer.heatmaps_utils import (  # isort: skip
+from discord_analyzer.analyzer.heatmaps_utils import (
     get_bot_id,
     getNumberOfActions,
     store_counts_dict,

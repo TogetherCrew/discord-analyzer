@@ -1,7 +1,7 @@
 # the nodes of the graph are partially connected
 from .utils.neo4j_conn import neo4j_setup
 
-from discord_analyzer.analysis.neo4j_analysis.centrality import (  # isort: skip
+from discord_analyzer.analysis.neo4j_analysis.centrality import (
     Centerality,
 )
 

@@ -1,10 +1,12 @@
 # Computation of Neo4j analytics
 from typing import Literal
+
 import numpy as np
+from graphdatascience import GraphDataScience
 
 
 class Neo4JMetrics:
-    def __init__(self, gds) -> None:
+    def __init__(self, gds: GraphDataScience) -> None:
         """
         computation of Neo4J metrics
 
@@ -68,7 +70,7 @@ class Neo4JMetrics:
         isolated_nodes : pandas dataframe
             the isolated nodes list
         """
-        if type(guildId) is not list:
+        if not isinstance(guildId, list):
             raise ValueError(
                 f"guildId should be a list of string! Given type is: {type(guildId)}"
             )
@@ -110,7 +112,7 @@ class Neo4JMetrics:
         isolation_fraction : float
             the fraction of isolation in network
         """
-        if type(guildId) is not list:
+        if not isinstance(guildId, list):
             raise ValueError(
                 f"guildId should be a list of string! Given type is: {type(guildId)}"
             )
@@ -166,7 +168,7 @@ class Neo4JMetrics:
         network_density : float
             the fraction of isolation in network
         """
-        if type(guildId) is not list:
+        if not isinstance(guildId, list):
             raise ValueError(
                 f"guildId should be a list of string! Given type is: {type(guildId)}"
             )

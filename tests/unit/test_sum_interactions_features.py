@@ -1,4 +1,4 @@
-from discord_analyzer.analysis.analytics_interactions_script import (  # isort: skip
+from discord_analyzer.analysis.analytics_interactions_script import (
     sum_interactions_features,
 )
 

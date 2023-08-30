@@ -2,13 +2,14 @@
 import logging
 from datetime import datetime
 
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
+
 from discord_analyzer.analysis.neo4j_analysis.analyzer_node_stats import NodeStats
 from discord_analyzer.analysis.neo4j_analysis.local_clustering_coefficient import (
     LocalClusteringCoeff,
 )
-from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
-from discord_analyzer.analysis.neo4j_analysis.centrality import (  # isort: skip
+from discord_analyzer.analysis.neo4j_analysis.centrality import (
     Centerality,
 )
 

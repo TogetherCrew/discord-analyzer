@@ -1,4 +1,4 @@
-from discord_analyzer.analysis.utils.member_activity_utils import (  # isort: skip
+from discord_analyzer.analysis.utils.member_activity_utils import (
     convert_to_dict,
 )
 

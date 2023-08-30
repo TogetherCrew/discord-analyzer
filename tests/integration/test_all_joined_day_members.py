@@ -72,8 +72,8 @@ def test_all_joined_day_members():
         date = datetime.strptime(date_str, "%Y-%m-%d")
 
         # checking the types
-        assert type(document["all_joined_day"]) is list
-        assert type(document["all_joined"]) is list
+        assert isinstance(document["all_joined_day"], list)
+        assert isinstance(document["all_joined"], list)
 
         joined_day = set(document["all_joined_day"])
         joined = set(document["all_joined"])

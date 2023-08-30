@@ -4,7 +4,7 @@ import numpy as np
 
 from .utils.analyzer_setup import launch_db_access
 
-from discord_analyzer.analysis.utils.member_activity_utils import (  # isort: skip
+from discord_analyzer.analysis.utils.member_activity_utils import (
     get_users_past_window,
 )
 

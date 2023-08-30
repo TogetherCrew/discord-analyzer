@@ -5,7 +5,7 @@ from uuid import uuid1
 import pandas as pd
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
-from discord_analyzer.analysis.neo4j_utils.projection_utils import (  # isort: skip
+from discord_analyzer.analysis.neo4j_utils.projection_utils import (
     ProjectionUtils,
 )
 
@@ -49,7 +49,7 @@ class NodeStats:
         possible_dates = projection_utils.get_dates(guildId=guildId)
 
         try:
-            ## if we didn't want to compute from the day start
+            # if we didn't want to compute from the day start
             if not from_start:
                 computed_dates = self.get_computed_dates(projection_utils, guildId)
                 possible_dates = possible_dates - computed_dates

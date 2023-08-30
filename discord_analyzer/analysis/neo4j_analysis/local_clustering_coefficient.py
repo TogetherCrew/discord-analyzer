@@ -3,7 +3,7 @@ from uuid import uuid1
 
 from graphdatascience import GraphDataScience
 
-from discord_analyzer.analysis.neo4j_utils.projection_utils import (  # isort: skip
+from discord_analyzer.analysis.neo4j_utils.projection_utils import (
     ProjectionUtils,
 )
 

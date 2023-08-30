@@ -10,14 +10,13 @@ from datetime import datetime, timedelta
 import networkx as nx
 import numpy as np
 from dateutil.relativedelta import relativedelta
-from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
-from tc_core_analyzer_lib.utils.activity import DiscordActivity
+from discord_analyzer.analysis.compute_interaction_matrix_discord import (
+    compute_interaction_matrix_discord,
+)
 from discord_analyzer.analysis.member_activity_history import check_past_history
 from discord_analyzer.analysis.utils.member_activity_history_utils import (
     MemberActivityPastUtils,
 )
-from discord_analyzer.DB_operations.mongodb_access import DB_access
-
 from discord_analyzer.analysis.utils.member_activity_utils import (
     convert_to_dict,
     get_joined_accounts,
@@ -26,11 +25,9 @@ from discord_analyzer.analysis.utils.member_activity_utils import (
     store_based_date,
     update_activities,
 )
-
-
-from discord_analyzer.analysis.compute_interaction_matrix_discord import (
-    compute_interaction_matrix_discord,
-)
+from discord_analyzer.DB_operations.mongodb_access import DB_access
+from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
+from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
 
 def compute_member_activity(

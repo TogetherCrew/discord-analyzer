@@ -2,7 +2,7 @@
 # meaning we have nodes available in more than one community
 from .utils.neo4j_conn import neo4j_setup
 
-from discord_analyzer.analysis.neo4j_analysis.centrality import (  # isort: skip
+from discord_analyzer.analysis.neo4j_analysis.centrality import (
     Centerality,
 )
 
@@ -38,7 +38,7 @@ def test_multiple_guilds():
         CREATE (c:DiscordAccount) -[:IS_MEMBER]->(g)
         CREATE (d:DiscordAccount) -[:IS_MEMBER]->(g)
         CREATE (e:DiscordAccount) -[:IS_MEMBER]->(g)
-        CREATE (f2:DiscordAccount) 
+        CREATE (f2:DiscordAccount)
             -[:IS_MEMBER]->(guild2:Guild {{guildId: '{guildId2}'}})
         CREATE (g2:DiscordAccount) -[:IS_MEMBER]->(guild2)
         SET a.userId = "1000"

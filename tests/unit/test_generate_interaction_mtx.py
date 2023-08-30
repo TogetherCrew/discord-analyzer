@@ -1,7 +1,6 @@
 from discord_analyzer.analysis.utils.activity import Activity
-from discord_analyzer.analysis.utils.compute_interaction_mtx_utils import (
-    generate_interaction_matrix,
-)
+from discord_analyzer.analysis.utils.compute_interaction_mtx_utils import \
+    generate_interaction_matrix
 
 
 def test_empty_inputs():
