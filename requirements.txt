@@ -22,5 +22,5 @@ tc-messageBroker==1.4.0
 sentry-sdk
 rq
 redis
-tc-core-analyzer-lib==1.0.0
+tc-core-analyzer-lib==1.0.1
 tc-neo4j-lib==1.0.0
