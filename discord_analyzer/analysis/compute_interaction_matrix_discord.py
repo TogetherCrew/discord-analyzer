@@ -20,7 +20,7 @@ def compute_interaction_matrix_discord(
     dates,
     channels,
     db_access,
-    activities: list[Activity] = [Activity.Mention, Activity.Reply, Activity.Reaction],
+    activities: list[str] = [Activity.Mention, Activity.Reply, Activity.Reaction],
 ) -> dict[str, ndarray]:
     """
     Computes interaction matrix from discord data

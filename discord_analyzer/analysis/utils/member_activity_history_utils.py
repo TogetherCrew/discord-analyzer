@@ -61,7 +61,7 @@ class MemberActivityPastUtils:
 
     def get_users_past_days(
         self, all_joined_day: dict[str, set[str]], window_d: int
-    ) -> dict[str, list[str]]:
+    ) -> dict[str, set[str]]:
         """
         get the users from past `window_d` days
 

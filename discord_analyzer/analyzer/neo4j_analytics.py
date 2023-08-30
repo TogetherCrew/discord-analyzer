@@ -68,7 +68,7 @@ class Neo4JAnalytics:
     def compute_fragmentation_score(
         self,
         guildId: str,
-        past_window_date: datetime.timestamp,
+        past_window_date: float,
         scale_fragmentation_score: int = 1,
     ):
         """
@@ -77,6 +77,16 @@ class Neo4JAnalytics:
 
         Note: We can compute this metric in backend,
         so we might not add it to pipeline.
+        
+        Parameters:
+        --------------
+        guildId : str
+            the guildId to use
+        past_window_date : float
+            the timestamp for window date
+        scale_fragmentation_score : int
+            scaling the fragmentation score by a value
+            default is `1` meaning no scale
         """
         msg = f"GUILDID: {guildId}:"
         logging.info(f"{msg} Averaging LocalClusteringCoefficient")

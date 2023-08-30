@@ -25,7 +25,7 @@ def prepare_per_account(db_results: list) -> dict[str, list[dict]]:
         and values are the docuemnts of database
     """
     # Cetegorize per account_name
-    per_acc_query_result = {}
+    per_acc_query_result : dict[str, list[dict]] = {}
 
     # a dictionary for results of each account
     for db_record in db_results:
@@ -43,7 +43,7 @@ def prepare_per_account(db_results: list) -> dict[str, list[dict]]:
 def generate_interaction_matrix(
     per_acc_interactions: dict[str, list[Any]],
     acc_names: list[str],
-    activities: list[Activity],
+    activities: list[str],
 ) -> np.ndarray:
     """
     generate interaction matrix for account interactions
@@ -56,7 +56,7 @@ def generate_interaction_matrix(
         values are the interactions for that account
     acc_names : [str]
         list of all account names to be considered for analysis
-    activities : list[Activity]
+    activities : list[str]
         the activities to include for generating interaction matrix
         min length is 1
 

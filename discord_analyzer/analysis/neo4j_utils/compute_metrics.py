@@ -228,7 +228,7 @@ class Neo4JMetrics:
         c_sorted = sorted(centrality, reverse=True)
 
         # initate c_numerator at 0
-        c_numerator = 0
+        c_numerator : float = 0.0
 
         # for each sorted score
         for value in c_sorted:

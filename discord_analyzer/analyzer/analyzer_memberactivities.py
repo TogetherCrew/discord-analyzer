@@ -1,10 +1,9 @@
 from datetime import datetime, timedelta
 
-from discord_analyzer.models.RawInfoModel import RawInfoModel
-
 from discord_analyzer.analysis.compute_member_activity import compute_member_activity
 from discord_analyzer.analyzer.memberactivity_utils import MemberActivityUtils
 from discord_analyzer.models.MemberActivityModel import MemberActivityModel
+from discord_analyzer.models.RawInfoModel import RawInfoModel
 
 
 class Member_activities:
