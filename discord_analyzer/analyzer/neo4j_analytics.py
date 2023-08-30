@@ -1,6 +1,5 @@
 # A wrapper to compute the neo4j metrics in cron-job
 import logging
-from datetime import datetime
 
 from discord_analyzer.analysis.neo4j_analysis.analyzer_node_stats import NodeStats
 from discord_analyzer.analysis.neo4j_analysis.centrality import Centerality
@@ -77,7 +76,7 @@ class Neo4JAnalytics:
 
         Note: We can compute this metric in backend,
         so we might not add it to pipeline.
-        
+
         Parameters:
         --------------
         guildId : str

@@ -25,7 +25,7 @@ def prepare_per_account(db_results: list) -> dict[str, list[dict]]:
         and values are the docuemnts of database
     """
     # Cetegorize per account_name
-    per_acc_query_result : dict[str, list[dict]] = {}
+    per_acc_query_result: dict[str, list[dict]] = {}
 
     # a dictionary for results of each account
     for db_record in db_results:

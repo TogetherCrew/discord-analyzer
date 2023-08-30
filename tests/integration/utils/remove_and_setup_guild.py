@@ -1,3 +1,4 @@
+from typing import Optional
 from datetime import datetime, timedelta
 
 import numpy as np
@@ -9,7 +10,7 @@ def setup_db_guild(
     guildId: str = "1234",
     discordId_list: list[str] = ["973993299281076285"],
     discordId_isbot: list[bool] = [False],
-    dates: list[datetime] = None,
+    dates: Optional[list[datetime]] = None,
     days_ago_period: int = 30,
 ):
     """

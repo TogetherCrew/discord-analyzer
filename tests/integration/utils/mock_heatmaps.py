@@ -1,3 +1,4 @@
+from typing import Any
 from datetime import datetime, timedelta
 
 import numpy as np
@@ -5,11 +6,11 @@ import numpy as np
 
 def create_empty_heatmaps_data(
     start_date: datetime, count: int = 10
-) -> list[dict[str, list]]:
+) -> list[dict[str, Any]]:
     """
     create empty documents of heatmaps
     """
-    data = []
+    data: list[dict[str, Any]] = []
     for i in range(count):
         date = start_date + timedelta(days=i)
         document = {
