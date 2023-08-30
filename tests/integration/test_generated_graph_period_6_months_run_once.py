@@ -18,9 +18,9 @@ def test_networkgraph_six_months_period_run_once_available_analytics():
     # first create the collections
     guildId = "1234"
     db_access = launch_db_access(guildId)
-    neo4j_utils = neo4j_setup()
+    neo4j_ops = neo4j_setup()
 
-    neo4j_utils.gds.run_cypher(
+    neo4j_ops.gds.run_cypher(
         """
         MATCH (n) DETACH DELETE (n)
         """
@@ -83,7 +83,7 @@ def test_networkgraph_six_months_period_run_once_available_analytics():
     analyzer = setup_analyzer()
     analyzer.run_once(guildId=guildId)
 
-    results = neo4j_utils.gds.run_cypher(
+    results = neo4j_ops.gds.run_cypher(
         f"""
         MATCH (g:Guild {{guildId: '{guildId}'}})-[r:HAVE_METRICS]-> (g)
         RETURN DISTINCT r.date as dates

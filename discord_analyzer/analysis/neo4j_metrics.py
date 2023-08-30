@@ -1,6 +1,6 @@
 import os
 
-from discord_analyzer.DB_operations.neo4j_utils import Neo4jUtils
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 from dotenv import load_dotenv
 
 from discord_analyzer.analysis.neo4j_utils.compute_metrics import (  # isort: skip
@@ -20,7 +20,7 @@ def degree_centrality(
     parallel_relationship=False,
 ):
     """
-    a sample function to show how to compute DegreeCenterality using neo4j_utils
+    a sample function to show how to compute DegreeCenterality using neo4j_ops
     Note: this function does not assume the relation over time
 
 
@@ -145,11 +145,11 @@ if __name__ == "__main__":
 
     user, password = (os.getenv("NEO4J_USER"), os.getenv("NEO4J_PASSWORD"))
 
-    neo4j_utils = Neo4jUtils()
-    neo4j_utils.set_neo4j_db_info(db_name, url, user, password)
-    neo4j_utils.neo4j_database_connect()
+    neo4j_ops = Neo4jOps()
+    neo4j_ops.set_neo4j_db_info(db_name, url, user, password)
+    neo4j_ops.neo4j_database_connect()
 
-    gds = neo4j_utils.gds
+    gds = neo4j_ops.gds
 
     neo4j_analytics = Neo4JMetrics(gds)
 

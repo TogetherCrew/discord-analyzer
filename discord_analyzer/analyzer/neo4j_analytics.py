@@ -6,7 +6,7 @@ from discord_analyzer.analysis.neo4j_analysis.analyzer_node_stats import NodeSta
 from discord_analyzer.analysis.neo4j_analysis.local_clustering_coefficient import (
     LocalClusteringCoeff,
 )
-from discord_analyzer.DB_operations.neo4j_utils import Neo4jUtils
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 from discord_analyzer.analysis.neo4j_analysis.centrality import (  # isort: skip
     Centerality,
@@ -14,12 +14,12 @@ from discord_analyzer.analysis.neo4j_analysis.centrality import (  # isort: skip
 
 
 class Neo4JAnalytics:
-    def __init__(self, neo4j_utils: Neo4jUtils) -> None:
+    def __init__(self, neo4j_ops: Neo4jOps) -> None:
         """
         neo4j metrics to be compute
         input variables are all the neo4j credentials
         """
-        self.neo4j_utils = neo4j_utils
+        self.neo4j_ops = neo4j_ops
 
     def compute_metrics(self, guildId: str, from_start: bool) -> None:
         """
@@ -62,7 +62,7 @@ class Neo4JAnalytics:
         try:
             # Local Clustering Coefficient
             logging.info(f"{msg} Computing LocalClusteringCoefficient")
-            lcc = LocalClusteringCoeff(gds=self.neo4j_utils.gds)
+            lcc = LocalClusteringCoeff(gds=self.neo4j_ops.gds)
             lcc.compute(guildId=guildId, from_start=from_start)
         except Exception as exp:
             logging.error(f"{msg} Exception in computing LocalClusteringCoefficient!")
@@ -91,7 +91,7 @@ class Neo4JAnalytics:
                 avg(lcc) * $scale AS fragmentation_score,
                 date
         """
-        records, _, _ = self.neo4j_utils.neo4j_driver.execute_query(
+        records, _, _ = self.neo4j_ops.neo4j_driver.execute_query(
             query,
             guildId=guildId,
             scale=scale_fragmentation_score,
@@ -105,7 +105,7 @@ class Neo4JAnalytics:
         compute network decentrality and save results back to neo4j
         """
         try:
-            centrality = Centerality(self.neo4j_utils)
+            centrality = Centerality(self.neo4j_ops)
             # degree decentrality
             _ = centrality.compute_network_decentrality(
                 guildId=guildId, from_start=from_start
@@ -124,7 +124,7 @@ class Neo4JAnalytics:
         """
         try:
             logging.info(f"GUILDID: {guildId}: computing node stats")
-            node_stats = NodeStats(self.neo4j_utils, threshold=2)
+            node_stats = NodeStats(self.neo4j_ops, threshold=2)
             node_stats.compute_stats(guildId, from_start)
         except Exception as exp:
             logging.error("Exception occured in node stats computation!")
@@ -140,7 +140,7 @@ class Neo4JAnalytics:
         guildId : str
             the guild we want to delete the relations for
         """
-        with self.neo4j_utils.neo4j_driver.session() as session:
+        with self.neo4j_ops.neo4j_driver.session() as session:
             query = """
                 MATCH (:DiscordAccount) -[r:INTERACTED_IN]->(:Guild {guildId: $guildId})
                 DELETE r

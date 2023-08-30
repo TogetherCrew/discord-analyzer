@@ -12,9 +12,9 @@ def test_neo4j_compute_metrics_from_start():
     and decentralization scores are available in guild node
     and localClustetingCoefficient is available in DiscordAccount nodes
     """
-    neo4j_utils = neo4j_setup()
+    neo4j_ops = neo4j_setup()
     # deleting all data
-    neo4j_utils.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
+    neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
     # timestamps
     today = 1689280200.0
@@ -22,7 +22,7 @@ def test_neo4j_compute_metrics_from_start():
     guildId = "1234"
 
     # creating some nodes with data
-    neo4j_utils.gds.run_cypher(
+    neo4j_ops.gds.run_cypher(
         f"""
         CREATE (a:DiscordAccount) -[:IS_MEMBER]->(g:Guild {{guildId: '{guildId}'}})
         CREATE (b:DiscordAccount) -[:IS_MEMBER]->(g)
@@ -62,11 +62,11 @@ def test_neo4j_compute_metrics_from_start():
         """
     )
 
-    analytics = Neo4JAnalytics(neo4j_utils)
+    analytics = Neo4JAnalytics(neo4j_ops)
 
     analytics.compute_metrics(guildId=guildId, from_start=True)
 
-    accounts_result = neo4j_utils.gds.run_cypher(
+    accounts_result = neo4j_ops.gds.run_cypher(
         f"""
         MATCH (a:DiscordAccount) -[r:INTERACTED_IN]-> (g:Guild {{guildId: '{guildId}'}})
         RETURN
@@ -101,7 +101,7 @@ def test_neo4j_compute_metrics_from_start():
         else:
             assert bool(np.isnan(status)) is False
 
-    guild_results = neo4j_utils.gds.run_cypher(
+    guild_results = neo4j_ops.gds.run_cypher(
         f"""
         MATCH (g:Guild {{guildId: '{guildId}'}}) -[r:HAVE_METRICS]->(g)
         RETURN

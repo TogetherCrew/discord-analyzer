@@ -16,9 +16,9 @@ def test_all_connected_coeffs():
     To see more info for this test:
     https://miro.com/app/board/uXjVM7GdYqo=/?share_link_id=105382864070
     """
-    neo4j_utils = neo4j_setup()
+    neo4j_ops = neo4j_setup()
     # deleting all data
-    neo4j_utils.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
+    neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
     # timestamps
     today = 1689280200.0
@@ -26,7 +26,7 @@ def test_all_connected_coeffs():
     guildId = "1234"
 
     # creating some nodes with data
-    neo4j_utils.gds.run_cypher(
+    neo4j_ops.gds.run_cypher(
         f"""
         CREATE (a:DiscordAccount) -[:IS_MEMBER]->(g:Guild {{guildId: '{guildId}'}})
         CREATE (b:DiscordAccount) -[:IS_MEMBER]->(g)
@@ -44,11 +44,11 @@ def test_all_connected_coeffs():
         SET r4.guildId = '{guildId}'
         """
     )
-    lcc = LocalClusteringCoeff(gds=neo4j_utils.gds)
+    lcc = LocalClusteringCoeff(gds=neo4j_ops.gds)
     lcc.compute(guildId=guildId, from_start=True)
 
     # getting the results
-    results = neo4j_utils.gds.run_cypher(
+    results = neo4j_ops.gds.run_cypher(
         f"""
         MATCH (a:DiscordAccount) -[r:INTERACTED_IN]-> (:Guild {{guildId: '{guildId}'}})
         RETURN

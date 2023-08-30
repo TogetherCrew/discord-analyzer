@@ -9,11 +9,11 @@ def test_avg_clustering_coeff_scaling():
     """
     test scaling of the avgClusteringCoefficient (a.k.a fragmentation score)
     """
-    neo4j_utils = neo4j_setup()
+    neo4j_ops = neo4j_setup()
 
-    neo4j_analytics = Neo4JAnalytics(neo4j_utils)
+    neo4j_analytics = Neo4JAnalytics(neo4j_ops)
     # deleting all data
-    neo4j_utils.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
+    neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
     # timestamps
     today = 1689280200.0
@@ -25,7 +25,7 @@ def test_avg_clustering_coeff_scaling():
     guildId = "1234"
 
     # creating some nodes with data
-    neo4j_utils.gds.run_cypher(
+    neo4j_ops.gds.run_cypher(
         f"""
         CREATE (a:DiscordAccount) -[:IS_MEMBER]->(g:Guild {{guildId: '{guildId}'}})
         CREATE (b:DiscordAccount) -[:IS_MEMBER]->(g)

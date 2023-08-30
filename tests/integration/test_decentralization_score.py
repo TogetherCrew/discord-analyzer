@@ -15,18 +15,18 @@ def test_decentralization_score():
     https://miro.com/app/board/uXjVM7GdYqo=/?moveToWidget=3458764558210553321&cot=14
     """
     guildId = "1234"
-    neo4j_utils = neo4j_setup()
+    neo4j_ops = neo4j_setup()
 
-    centrality = Centerality(neo4j_utils)
+    centrality = Centerality(neo4j_ops)
     # deleting all data
-    neo4j_utils.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
+    neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
     # timestamps
     today = 1689280200.0
     yesterday = 1689193800.0
 
     # creating some nodes with data
-    neo4j_utils.gds.run_cypher(
+    neo4j_ops.gds.run_cypher(
         f"""
         CREATE (a:DiscordAccount) -[:IS_MEMBER]->(g:Guild {{guildId: '{guildId}'}})
         CREATE (b:DiscordAccount) -[:IS_MEMBER]->(g)

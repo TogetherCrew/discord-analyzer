@@ -36,9 +36,7 @@ class RnDaoAnalyzer(Base_analyzer):
         setup the neo4j analytics wrapper
         """
 
-        self.neo4j_analytics = Neo4JAnalytics(
-            neo4j_utils=self.DB_connections.neo4j_utils
-        )
+        self.neo4j_analytics = Neo4JAnalytics(neo4j_ops=self.DB_connections.neo4j_ops)
 
     def run_once(self, guildId):
         """Run analysis once (Wrapper)"""

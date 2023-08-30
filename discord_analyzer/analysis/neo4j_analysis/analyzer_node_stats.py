@@ -3,7 +3,7 @@ import logging
 from uuid import uuid1
 
 import pandas as pd
-from discord_analyzer.DB_operations.neo4j_utils import Neo4jUtils
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 from discord_analyzer.analysis.neo4j_utils.projection_utils import (  # isort: skip
     ProjectionUtils,
@@ -11,7 +11,7 @@ from discord_analyzer.analysis.neo4j_utils.projection_utils import (  # isort: s
 
 
 class NodeStats:
-    def __init__(self, neo4j_utils: Neo4jUtils, threshold: int = 2) -> None:
+    def __init__(self, neo4j_ops: Neo4jOps, threshold: int = 2) -> None:
         """
         initialize the Node status computations object
         the status could be either one of `Sender`, `Receiver`, `Balanced`
@@ -30,8 +30,8 @@ class NodeStats:
             - else it is balanced
 
         """
-        self.gds = neo4j_utils.gds
-        self.driver = neo4j_utils.neo4j_driver
+        self.gds = neo4j_ops.gds
+        self.driver = neo4j_ops.neo4j_driver
         self.threshold = threshold
 
     def compute_stats(self, guildId: str, from_start: bool) -> None:
@@ -237,6 +237,6 @@ class NodeStats:
                     )
         else:
             logging.error("neo4j driver not connected!")
-        
+
         prefix = f"GUILDID: {guildId}: "
         logging.info(f"{prefix}Node stats saved for the date: {date}")

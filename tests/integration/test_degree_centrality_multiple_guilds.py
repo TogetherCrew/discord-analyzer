@@ -18,10 +18,10 @@ def test_multiple_guilds():
     https://miro.com/app/board/uXjVM7GdYqo=/?share_link_id=105382864070
     """
     guildId = "1234"
-    neo4j_utils = neo4j_setup()
+    neo4j_ops = neo4j_setup()
 
     # deleting all data
-    neo4j_utils.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
+    neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
     # timestamps
     today = 1689280200.0
@@ -31,7 +31,7 @@ def test_multiple_guilds():
     guildId2 = "1235"
 
     # creating some nodes with data
-    neo4j_utils.gds.run_cypher(
+    neo4j_ops.gds.run_cypher(
         f"""
         CREATE (a:DiscordAccount) -[:IS_MEMBER]->(g:Guild {{guildId: '{guildId}'}})
         CREATE (b:DiscordAccount) -[:IS_MEMBER]->(g)
@@ -78,7 +78,7 @@ def test_multiple_guilds():
         SET r14.guildId = '{guildId2}'
         """
     )
-    centrality = Centerality(neo4j_utils)
+    centrality = Centerality(neo4j_ops)
     degree_centrality = centrality.compute_degree_centerality(
         guildId=guildId2,
         direction="undirected",

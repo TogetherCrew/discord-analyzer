@@ -1,8 +1,8 @@
 import logging
 
 import pandas as pd
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 from discord_analyzer.analysis.neo4j_metrics import Neo4JMetrics
-from discord_analyzer.DB_operations.neo4j_utils import Neo4jUtils
 
 from discord_analyzer.analysis.neo4j_utils.projection_utils import (  # isort: skip
     ProjectionUtils,
@@ -10,11 +10,11 @@ from discord_analyzer.analysis.neo4j_utils.projection_utils import (  # isort: s
 
 
 class Centerality:
-    def __init__(self, neo4j_utils: Neo4jUtils) -> None:
+    def __init__(self, neo4j_ops: Neo4jOps) -> None:
         """
         centerality algorithms
         """
-        self.neo4j_utils = neo4j_utils
+        self.neo4j_ops = neo4j_ops
 
     def compute_degree_centerality(
         self,
@@ -100,7 +100,7 @@ class Centerality:
         elif direction == "undirected":
             query = f"MATCH (a:{node})-[r:INTERACTED_WITH]-(b:{node})"
 
-        results = self.neo4j_utils.gds.run_cypher(
+        results = self.neo4j_ops.gds.run_cypher(
             f"""
                 {query}
                 WHERE r.guildId = '{guildId}'
@@ -114,9 +114,7 @@ class Centerality:
 
         dates_to_compute = set(results["date"].value_counts().index)
         if not from_start:
-            projection_utils = ProjectionUtils(
-                gds=self.neo4j_utils.gds, guildId=guildId
-            )
+            projection_utils = ProjectionUtils(gds=self.neo4j_ops.gds, guildId=guildId)
 
             dates_to_compute = self._get_dates_to_compute(
                 projection_utils, dates_to_compute, guildId
@@ -299,7 +297,7 @@ class Centerality:
         save : bool
             save the results of network decentrality in db
             default is `True` meaning we would save the results back to db
-        neo4j_utils : Neo4jUtils
+        neo4j_ops : Neo4jOps
             the utils instance to save the results
             will be used if save=True, else a None value could be given
         weighted : bool
@@ -323,7 +321,7 @@ class Centerality:
             from_start=from_start,
         )
 
-        neo4j_metrics = Neo4JMetrics(self.neo4j_utils.gds)
+        neo4j_metrics = Neo4JMetrics(self.neo4j_ops.gds)
 
         # saving each date network decentrality
         network_decentrality: dict[float, float] = {}
@@ -365,7 +363,7 @@ class Centerality:
                 """
             queries.append(query)
 
-        self.neo4j_utils.store_data_neo4j(
+        self.neo4j_ops.store_data_neo4j(
             queries,
             message=f"GUILDID: {guildId}: Saving Network Decentrality:",
         )

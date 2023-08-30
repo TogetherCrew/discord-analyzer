@@ -57,7 +57,7 @@ class Base_analyzer:
         """
         """ Connection String will be modified once the url is provided"""
 
-        self.DB_connections = MongoNeo4jDB(logging=logging, testing=False)
+        self.DB_connections = MongoNeo4jDB(testing=False)
         self.DB_connections.set_mongo_db_ops(
             mongo_user=self.mongo_user,
             mongo_pass=self.mongo_pass,
@@ -65,11 +65,11 @@ class Base_analyzer:
             mongo_port=self.mongo_port,
         )
 
-        neo4j_url = f"{self.neo4j_protocol}://{self.neo4j_host}:{self.neo4j_port}"
-
         self.DB_connections.set_neo4j_utils(
-            neo4j_db_name=self.neo4j_db_name,
-            neo4j_url=neo4j_url,
-            neo4j_user=self.neo4j_user,
-            neo4j_password=self.neo4j_password,
+            db_name=self.neo4j_db_name,
+            host=self.neo4j_host,
+            port=self.neo4j_port,
+            protocol=self.neo4j_protocol,
+            user=self.neo4j_user,
+            password=self.neo4j_password,
         )

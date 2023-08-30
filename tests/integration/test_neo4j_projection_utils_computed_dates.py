@@ -9,9 +9,9 @@ def test_neo4j_projection_utils_get_computed_dates():
     """
     testing the projection utils get_computed_dates
     """
-    neo4j_utils = neo4j_setup()
+    neo4j_ops = neo4j_setup()
     # deleting all data
-    neo4j_utils.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
+    neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
     # timestamps
     today = 1689280200.0
@@ -19,7 +19,7 @@ def test_neo4j_projection_utils_get_computed_dates():
     guildId = "1234"
 
     # creating some nodes with data
-    neo4j_utils.gds.run_cypher(
+    neo4j_ops.gds.run_cypher(
         f"""
         CREATE (a:DiscordAccount) -[:IS_MEMBER]->(g:Guild {{guildId: '{guildId}'}})
         CREATE (b:DiscordAccount) -[:IS_MEMBER]->(g)
@@ -67,7 +67,7 @@ def test_neo4j_projection_utils_get_computed_dates():
         SET r12.guildId = '{guildId}'
         """
     )
-    projection_utils = ProjectionUtils(neo4j_utils.gds, guildId=guildId)
+    projection_utils = ProjectionUtils(neo4j_ops.gds, guildId=guildId)
     computed_dates = projection_utils.get_computed_dates(
         f"""
         MATCH (:DiscordAccount)-[r:INTERACTED_IN]->(g:Guild {{guildId: '{guildId}'}})
