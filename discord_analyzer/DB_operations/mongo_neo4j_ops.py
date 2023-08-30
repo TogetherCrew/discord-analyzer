@@ -1,9 +1,8 @@
 import logging
 
-from tc_neo4j_lib.neo4j_ops import Neo4jOps
-
 from discord_analyzer.DB_operations.mongodb_interaction import MongoDBOps
 from discord_analyzer.DB_operations.network_graph import make_neo4j_networkx_query_dict
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 class MongoNeo4jDB:

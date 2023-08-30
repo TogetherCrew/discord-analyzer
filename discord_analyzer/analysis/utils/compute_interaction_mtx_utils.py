@@ -2,12 +2,10 @@ import logging
 from typing import Any
 
 import numpy as np
-
-from discord_analyzer.analysis.utils.activity import Activity
-
 from discord_analyzer.analysis.analytics_interactions_script import (
     per_account_interactions,
 )
+from discord_analyzer.analysis.utils.activity import Activity
 
 
 def prepare_per_account(db_results: list) -> dict[str, list[dict]]:

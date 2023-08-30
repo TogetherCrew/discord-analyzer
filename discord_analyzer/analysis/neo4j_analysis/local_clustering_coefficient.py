@@ -1,11 +1,8 @@
 import logging
 from uuid import uuid1
 
+from discord_analyzer.analysis.neo4j_utils.projection_utils import ProjectionUtils
 from graphdatascience import GraphDataScience
-
-from discord_analyzer.analysis.neo4j_utils.projection_utils import (
-    ProjectionUtils,
-)
 
 
 class LocalClusteringCoeff:

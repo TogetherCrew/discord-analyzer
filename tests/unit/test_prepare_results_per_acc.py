@@ -1,5 +1,6 @@
-from discord_analyzer.analysis.utils.compute_interaction_mtx_utils import \
+from discord_analyzer.analysis.utils.compute_interaction_mtx_utils import (
     prepare_per_account
+)
 
 
 def test_empty_db_results():

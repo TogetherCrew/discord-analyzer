@@ -1,6 +1,5 @@
 # test out local clustering coefficient with all nodes connected
-from discord_analyzer.analysis.neo4j_analysis.analyzer_node_stats import \
-    NodeStats
+from discord_analyzer.analysis.neo4j_analysis.analyzer_node_stats import NodeStats
 
 from .utils.neo4j_conn import neo4j_setup
 

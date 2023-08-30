@@ -1,6 +1,7 @@
 # the nodes of the graph are partially connected
-from discord_analyzer.analysis.neo4j_analysis.local_clustering_coefficient import \
+from discord_analyzer.analysis.neo4j_analysis.local_clustering_coefficient import (
     LocalClusteringCoeff
+)
 
 from .utils.neo4j_conn import neo4j_setup
 

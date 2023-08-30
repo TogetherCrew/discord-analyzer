@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 
-from discord_analyzer.analysis.utils.member_activity_history_utils import \
+from discord_analyzer.analysis.utils.member_activity_history_utils import (
     MemberActivityPastUtils
+)
 
 
 def test_zero_joined():

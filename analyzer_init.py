@@ -1,7 +1,6 @@
 from typing import Any
 
 from discord_analyzer import RnDaoAnalyzer
-
 from utils.daolytics_uitls import (
     get_mongo_credentials,
     get_neo4j_credentials,

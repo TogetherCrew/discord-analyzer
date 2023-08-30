@@ -3,9 +3,8 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from dateutil import parser
-from numpy import array
-
 from discord_analyzer.DB_operations.mongodb_access import DB_access
+from numpy import array
 
 
 class MemberActivityPastUtils:
