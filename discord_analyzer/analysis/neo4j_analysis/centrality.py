@@ -1,3 +1,5 @@
+from typing import Literal
+
 import logging
 
 import pandas as pd
@@ -19,7 +21,7 @@ class Centerality:
         direction: str,
         from_start: bool,
         **kwargs,
-    ) -> dict[str, dict[float, int]]:
+    ) -> dict[str, dict[float, float]]:
         """
         compute the weighted count of edges coming to a node
         it would be based on the date
@@ -63,7 +65,7 @@ class Centerality:
 
         Returns:
         ----------
-        degree_centerality : dict[str, dict[float, int]]
+        degree_centerality : dict[str, dict[float, float]]
             the degree centerality per date for each user
         """
 
@@ -161,7 +163,7 @@ class Centerality:
         weighted: bool,
         normalize: bool,
         preserve_parallel: bool,
-    ) -> dict[str, dict[float, int]]:
+    ) -> dict[float, dict[str, float]]:
         """
         count the degree of nodes
         (the direction of the relation depends on the results)
@@ -185,10 +187,10 @@ class Centerality:
 
         Returns:
         -----------
-        per_acc_date_weights : dict[str, dict[float, int]]
+        degree_centrality : dict[float, dict[str, float]]
             the results per date degrees of each user
         """
-        per_date_acc_weights = {}
+        per_date_acc_weights: dict[float, dict[str, float]] = {}
 
         userIds = set(results["a_userId"].value_counts().index).union(
             results["b_userId"].value_counts().index
@@ -334,7 +336,7 @@ class Centerality:
     def save_decentralization_score(
         self,
         guildId: str,
-        decentrality_score: dict[float, float],
+        decentrality_score: dict[float, float | Literal[-1]],
     ) -> None:
         """
         save network decentrality scores over time in the Guild node
