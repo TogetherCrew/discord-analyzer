@@ -82,7 +82,7 @@ class Centerality:
 
         if weighted and not preserve_parallel:
             logging.warn(
-                """preserver_parallel=False with weighted=True 
+                """preserver_parallel=False with weighted=True
                 could produce wrong results!"""
             )
 
@@ -98,9 +98,9 @@ class Centerality:
             f"""
                 {query}
                 WHERE r.guildId = '{guildId}'
-                RETURN 
-                    a.userId as a_userId, 
-                    r.date as date, 
+                RETURN
+                    a.userId as a_userId,
+                    r.date as date,
                     r.weight as weight,
                     b.userId as b_userId
             """
@@ -143,7 +143,7 @@ class Centerality:
             the guildId to get computations date
         """
         query = f"""
-            MATCH (g:Guild {{guildId: '{guildId}'}}) 
+            MATCH (g:Guild {{guildId: '{guildId}'}})
                 -[r:HAVE_METRICS] -> (g)
             WHERE r.decentralizationScore IS NOT NULL
             RETURN r.date as computed_dates
@@ -245,17 +245,17 @@ class Centerality:
 
     def normalize_degree_centrality(
         self,
-        per_date_acc_weights: dict[float, dict[str, int]],
+        per_date_acc_weights: dict[float, dict[str, float]],
         date_max_values: dict[float, int],
-    ) -> dict[float, dict[str, int]]:
+    ) -> dict[float, dict[str, float]]:
         """
         normalize the per_acc_date_weights of degree centrality
 
         Parameters:
         ------------
-        per_date_acc_weights : dict[float, dict[str, int]]
+        per_date_acc_weights : dict[float, dict[str, float]]
             the results per date degrees of each user
-            float is representing the date and int is the weight
+            first float is representing the date and second one is the weight
             str is also the user
         date_max_values : dict[float, int]
             max values in each date
@@ -263,7 +263,7 @@ class Centerality:
 
         Returns:
         ----------
-        per_date_acc_weights : dict[float, dict[str, int]]
+        per_date_acc_weights : dict[float, dict[str, float]]
             the normalized version of `per_date_acc_weights`
         """
         for date in per_date_acc_weights.keys():

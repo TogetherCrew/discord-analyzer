@@ -94,8 +94,8 @@ class Neo4JAnalytics:
             MATCH ()-[r:INTERACTED_IN]->(g:Guild {guildId: $guildId })
             WHERE r.date >= $past_date
             WITH r.date as date, r.localClusteringCoefficient as lcc
-            RETURN 
-                avg(lcc) * $scale AS fragmentation_score, 
+            RETURN
+                avg(lcc) * $scale AS fragmentation_score,
                 date
         """
         records, _, _ = self.neo4j_ops.neo4j_driver.execute_query(

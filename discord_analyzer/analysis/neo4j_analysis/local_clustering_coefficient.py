@@ -42,7 +42,7 @@ class LocalClusteringCoeff:
         computed_dates = self.get_computed_dates(projection_utils, guildId)
 
         # compute for each date
-        to_compute: float
+        to_compute: set[float]
         if from_start:
             to_compute = computable_dates
         else:
@@ -94,7 +94,7 @@ class LocalClusteringCoeff:
         # dropping the computed date
         _ = self.gds.run_cypher(
             f"""
-            CALL gds.graph.drop("{graph_projected_name}") 
+            CALL gds.graph.drop("{graph_projected_name}")
             """
         )
 
@@ -149,8 +149,8 @@ class LocalClusteringCoeff:
                     CALL gds.localClusteringCoefficient.stream(
                         "{graph_name}"
                     ) YIELD nodeId, localClusteringCoefficient
-                    WITH 
-                        gds.util.asNode(nodeId) as userNode, 
+                    WITH
+                        gds.util.asNode(nodeId) as userNode,
                         localClusteringCoefficient
                     MATCH (g:Guild {{guildId: '{guildId}'}})
                     MERGE (userNode) -[r:INTERACTED_IN  {{date: {date}}}]-> (g)

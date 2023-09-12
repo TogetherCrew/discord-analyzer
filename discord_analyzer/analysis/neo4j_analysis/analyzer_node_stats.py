@@ -96,10 +96,10 @@ class NodeStats:
             f"""
             CALL gds.degree.stream(
                 '{graph_name}',
-                {{ 
+                {{
                     orientation: 'REVERSE',
                     relationshipWeightProperty: 'weight'
-                }}    
+                }}
             )
             YIELD nodeId, score
             RETURN gds.util.asNode(nodeId).userId AS userId, score
