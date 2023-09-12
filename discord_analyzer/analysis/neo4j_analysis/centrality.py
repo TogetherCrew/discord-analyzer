@@ -1,6 +1,6 @@
-from typing import Literal
-
 import logging
+
+from typing import Literal
 
 import pandas as pd
 from discord_analyzer.analysis.neo4j_metrics import Neo4JMetrics
@@ -21,7 +21,7 @@ class Centerality:
         direction: str,
         from_start: bool,
         **kwargs,
-    ) -> dict[str, dict[float, float]]:
+    ) -> dict[float, dict[float, float]]:
         """
         compute the weighted count of edges coming to a node
         it would be based on the date
@@ -65,7 +65,7 @@ class Centerality:
 
         Returns:
         ----------
-        degree_centerality : dict[str, dict[float, float]]
+        degree_centerality : dict[float, dict[float, float]]
             the degree centerality per date for each user
         """
 
@@ -283,7 +283,7 @@ class Centerality:
         from_start: bool,
         save: bool = True,
         weighted: bool = False,
-    ) -> dict[float, float]:
+    ) -> dict[float, float | Literal[-1]]:
         """
         compute the network decentrality over the date periods
 
@@ -303,7 +303,7 @@ class Centerality:
 
         Returns:
         ---------
-        network_decentrality : dict[float, float]
+        network_decentrality : dict[float, float | Literal[-1]]
             the decentrality over time
             keys are timestamp in float format
             values are the decenrality values
@@ -321,7 +321,7 @@ class Centerality:
         neo4j_metrics = Neo4JMetrics(self.neo4j_ops.gds)
 
         # saving each date network decentrality
-        network_decentrality = {}
+        network_decentrality: dict[float, float | Literal[-1]] = {}
         for date in results_undirected.keys():
             centerality = list(results_undirected[date].values())
             network_decentrality[date] = neo4j_metrics.compute_decentralization(
