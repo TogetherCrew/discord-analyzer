@@ -247,7 +247,7 @@ class Centerality:
     def normalize_degree_centrality(
         self,
         per_date_acc_weights: dict[float, dict[str, float]],
-        date_max_values: dict[float, int],
+        date_max_values: dict[float, float],
     ) -> dict[float, dict[str, float]]:
         """
         normalize the per_acc_date_weights of degree centrality
@@ -258,7 +258,7 @@ class Centerality:
             the results per date degrees of each user
             first float is representing the date and second one is the weight
             str is also the user
-        date_max_values : dict[float, int]
+        date_max_values : dict[float, float]
             max values in each date
             keys are dates and values are the maximum values
 
