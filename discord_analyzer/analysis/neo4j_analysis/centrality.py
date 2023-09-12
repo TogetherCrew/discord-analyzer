@@ -197,7 +197,7 @@ class Centerality:
 
         # a variable for normalizing
         # saving max value of each date
-        date_max_values = {}
+        date_max_values: dict[float, float] = {}
 
         for date in computation_date:
             per_date_acc_weights[date] = {}
