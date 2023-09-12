@@ -17,8 +17,8 @@ class NodeStats:
         -------------
         gds : GraphDataScience
             the gds instance to do computations on it
-        driver : GraphDatabase.driver
-            neo4j driver access to save the results
+        neo4j_ops : Neo4jOps
+            neo4j shared library instance to use
         threshold : int
             the threshold value to compute the stats
             default is 2 meaning for the node
@@ -34,6 +34,42 @@ class NodeStats:
     def compute_stats(self, guildId: str, from_start: bool) -> None:
         projection_utils = ProjectionUtils(gds=self.gds, guildId=guildId)
 
+        # possible dates to do the computations
+        possible_dates = projection_utils.get_dates(guildId=guildId)
+
+        # if we didn't want to compute from the day start
+        if not from_start:
+            computed_dates = self.get_computed_dates(projection_utils, guildId)
+            possible_dates = possible_dates - computed_dates
+
+        for date in possible_dates:
+            try:
+                self.compute_node_stats_wrapper(projection_utils, guildId, date)
+            except Exception as exp:
+                msg = f"GUILDID: {guildId} "
+                logging.error(
+                    f"{msg} node stats computation for date: {date}, exp: {exp}"
+                )
+
+    def compute_node_stats_wrapper(
+        self, projection_utils: ProjectionUtils, guildId: str, date: float
+    ):
+        """
+        a wrapper for node stats computation process
+        we're doing the projection here and computing on that,
+        then we'll drop the pojection
+
+        Parameters:
+        ------------
+        projection_utils : ProjectionUtils
+            the utils needed to get the work done
+        guildId : str
+            the guild we want the temp relationships
+            between its members
+        date : float
+            timestamp of the relation
+        """
+        # NATURAL relations direction degreeCentrality computations
         graph_name = f"GraphStats_{uuid1()}"
 
         projection_utils.project_temp_graph(
@@ -41,66 +77,38 @@ class NodeStats:
             graph_name=graph_name,
             weighted=True,
             relation_direction="NATURAL",
+            date=date,
         )
-        # possible dates to do the computations
-        possible_dates = projection_utils.get_dates(guildId=guildId)
-
-        try:
-            # if we didn't want to compute from the day start
-            if not from_start:
-                computed_dates = self.get_computed_dates(projection_utils, guildId)
-                possible_dates = possible_dates - computed_dates
-        except Exception as exp:
-            msg = f"GUILDID: {guildId}: "
-            msg += f"Exception during node stats computations, exp: {exp}"
-            msg += "Computing from scratch!"
-            logging.warning(msg)
-
-        for date in possible_dates:
-            subgraph_name = f"SubGraphStats_{uuid1()}"
-
-            projection_utils.project_subgraph_per_date(
-                graph_name=graph_name, subgraph_name=subgraph_name, date=date
+        natural_dc = self.gds.run_cypher(
+            f"""
+            CALL gds.degree.stream(
+                '{graph_name}',
+                {{
+                    relationshipWeightProperty: 'weight'
+                }}
             )
-            # NATURAL relations direction degreeCentrality computations
-            natural_dc = self.gds.run_cypher(
-                f"""
-                CALL gds.degree.stream(
-                    '{subgraph_name}',
-                    {{
-                        relationshipWeightProperty: 'weight'
-                    }}
-                )
-                YIELD nodeId, score
-                RETURN gds.util.asNode(nodeId).userId AS userId, score
-                """
+            YIELD nodeId, score
+            RETURN gds.util.asNode(nodeId).userId AS userId, score
+            """
+        )
+
+        reverse_dc = self.gds.run_cypher(
+            f"""
+            CALL gds.degree.stream(
+                '{graph_name}',
+                {{ 
+                    orientation: 'REVERSE',
+                    relationshipWeightProperty: 'weight'
+                }}    
             )
+            YIELD nodeId, score
+            RETURN gds.util.asNode(nodeId).userId AS userId, score
+            """
+        )
 
-            reverse_dc = self.gds.run_cypher(
-                f"""
-                CALL gds.degree.stream(
-                    '{subgraph_name}',
-                    {{
-                        orientation: 'REVERSE',
-                        relationshipWeightProperty: 'weight'
-                    }}
-                )
-                YIELD nodeId, score
-                RETURN gds.util.asNode(nodeId).userId AS userId, score
-                """
-            )
+        df = self.get_date_stats(natural_dc, reverse_dc, threshold=self.threshold)
 
-            df = self.get_date_stats(natural_dc, reverse_dc, threshold=self.threshold)
-
-            self.save_properties_db(guildId, df, date)
-            _ = self.gds.run_cypher(
-                f"""
-                CALL gds.graph.drop(
-                    "{subgraph_name}"
-                )
-                """
-            )
-
+        self.save_properties_db(guildId, df, date)
         _ = self.gds.run_cypher(
             f"""
             CALL gds.graph.drop(
@@ -118,7 +126,8 @@ class NodeStats:
         query = f"""
             MATCH (:DiscordAccount)
                 -[r:INTERACTED_IN]->(g:Guild {{guildId: '{guildId}'}})
-            RETURN r.date as computed_dates, r.status as status
+            WHERE r.status IS NOT NULL
+            RETURN r.date as computed_dates
             """
         computed_dates = projection_utils.get_computed_dates(query=query)
 
@@ -215,25 +224,21 @@ class NodeStats:
         date : float
             the date in timestamp format
         """
-        if self.driver is not None:
-            with self.driver.session() as session:
-                for _, row in user_status.iterrows():
-                    userId = row["userId"]
-                    status = row["stats"]
+        with self.driver.session() as session:
+            for _, row in user_status.iterrows():
+                userId = row["userId"]
+                status = row["stats"]
 
-                    query = """
-                        MATCH (a:DiscordAccount {userId: $userId})
-                        MATCH (g:Guild {guildId: $guildId})
-                        MERGE (a) -[r:INTERACTED_IN {
-                            date: $date
-                        }] -> (g)
-                        SET r.status = $status
-                    """
-                    session.run(
-                        query, userId=userId, guildId=guildId, status=status, date=date
-                    )
-        else:
-            logging.error("neo4j driver not connected!")
-
+                query = """
+                    MATCH (a:DiscordAccount {userId: $userId})
+                    MATCH (g:Guild {guildId: $guildId})
+                    MERGE (a) -[r:INTERACTED_IN {
+                        date: $date
+                    }] -> (g)
+                    SET r.status = $status
+                """
+                session.run(
+                    query, userId=userId, guildId=guildId, status=status, date=date
+                )
         prefix = f"GUILDID: {guildId}: "
         logging.info(f"{prefix}Node stats saved for the date: {date}")

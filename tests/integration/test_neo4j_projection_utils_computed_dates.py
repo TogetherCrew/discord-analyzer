@@ -69,7 +69,8 @@ def test_neo4j_projection_utils_get_computed_dates():
     computed_dates = projection_utils.get_computed_dates(
         f"""
         MATCH (:DiscordAccount)-[r:INTERACTED_IN]->(g:Guild {{guildId: '{guildId}'}})
-        RETURN r.date, r.localClusteringCoefficient as lcc
+        WHERE r.localClusteringCoefficient is NOT NULL
+        RETURN r.date as computed_dates
         """
     )
 

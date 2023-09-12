@@ -77,7 +77,8 @@ def test_neo4j_compute_metrics_from_start():
         """
     )
 
-    assert len(accounts_result.values) == 10
+    # we don't have 1004 interacting on yesterday (1689193800.0)
+    assert len(accounts_result.values) == 9
 
     for _, row in accounts_result.iterrows():
         print(row)
@@ -94,12 +95,7 @@ def test_neo4j_compute_metrics_from_start():
 
         assert status is not None
 
-        # user "1004" didn't have any kind of interaction yesterday
-        if userId == "1004" and date == yesterday:
-            assert bool(np.isnan(status)) is True
-
-        else:
-            assert bool(np.isnan(status)) is False
+        assert bool(np.isnan(status)) is False
 
     guild_results = neo4j_ops.gds.run_cypher(
         f"""

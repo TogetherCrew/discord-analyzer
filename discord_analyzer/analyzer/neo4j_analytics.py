@@ -61,8 +61,9 @@ class Neo4JAnalytics:
             lcc = LocalClusteringCoeff(gds=self.neo4j_ops.gds)
             lcc.compute(guildId=guildId, from_start=from_start)
         except Exception as exp:
-            logging.error(f"{msg} Exception in computing LocalClusteringCoefficient!")
-            logging.error(f"Exception: {exp}")
+            logging.error(
+                f"{msg} Exception in computing LocalClusteringCoefficient, {exp}"
+            )
 
     def compute_fragmentation_score(
         self,
@@ -93,8 +94,8 @@ class Neo4JAnalytics:
             MATCH ()-[r:INTERACTED_IN]->(g:Guild {guildId: $guildId })
             WHERE r.date >= $past_date
             WITH r.date as date, r.localClusteringCoefficient as lcc
-            RETURN
-                avg(lcc) * $scale AS fragmentation_score,
+            RETURN 
+                avg(lcc) * $scale AS fragmentation_score, 
                 date
         """
         records, _, _ = self.neo4j_ops.neo4j_driver.execute_query(
@@ -110,6 +111,7 @@ class Neo4JAnalytics:
         """
         compute network decentrality and save results back to neo4j
         """
+        msg = f"GUILDID: {guildId}:"
         try:
             centrality = Centerality(self.neo4j_ops)
             # degree decentrality
@@ -117,8 +119,9 @@ class Neo4JAnalytics:
                 guildId=guildId, from_start=from_start
             )
         except Exception as exp:
-            logging.error("Exception occured in computing Network decentrality!")
-            logging.error(f"Exception: {exp}")
+            logging.error(
+                f"{msg} Exception occured in computing Network decentrality, {exp}!"
+            )
 
     def compute_node_stats(self, guildId: str, from_start: bool):
         """
@@ -128,13 +131,13 @@ class Neo4JAnalytics:
         - "1": Receiver
         - "2": Balanced
         """
+        msg = f"GUILDID: {guildId}:"
         try:
-            logging.info(f"GUILDID: {guildId}: computing node stats")
+            logging.info(f"{msg}: computing node stats")
             node_stats = NodeStats(self.neo4j_ops, threshold=2)
             node_stats.compute_stats(guildId, from_start)
         except Exception as exp:
-            logging.error("Exception occured in node stats computation!")
-            logging.error(f"Exception: {exp}")
+            logging.error(f"{msg} Exception occured in node stats computation, {exp}")
 
     def _remove_analytics_interacted_in(self, guildId: str) -> None:
         """

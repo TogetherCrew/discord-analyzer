@@ -19,7 +19,7 @@ class Centerality:
         direction: str,
         from_start: bool,
         **kwargs,
-    ) -> dict[float, dict[str, float]]:
+    ) -> dict[str, dict[float, int]]:
         """
         compute the weighted count of edges coming to a node
         it would be based on the date
@@ -63,11 +63,8 @@ class Centerality:
 
         Returns:
         ----------
-        degree_centerality : dict[float, dict[str, float]]
+        degree_centerality : dict[str, dict[float, int]]
             the degree centerality per date for each user
-            the `float` keys are representative of the timestamp date
-            the `str` is representative userId
-            and the last `float` is represantative of user centrality value
         """
 
         node = "DiscordAccount" if "node" not in kwargs.keys() else kwargs["node"]
@@ -85,7 +82,7 @@ class Centerality:
 
         if weighted and not preserve_parallel:
             logging.warn(
-                """preserver_parallel=False with weighted=True
+                """preserver_parallel=False with weighted=True 
                 could produce wrong results!"""
             )
 
@@ -101,9 +98,9 @@ class Centerality:
             f"""
                 {query}
                 WHERE r.guildId = '{guildId}'
-                RETURN
-                    a.userId as a_userId,
-                    r.date as date,
+                RETURN 
+                    a.userId as a_userId, 
+                    r.date as date, 
                     r.weight as weight,
                     b.userId as b_userId
             """
@@ -146,9 +143,10 @@ class Centerality:
             the guildId to get computations date
         """
         query = f"""
-            MATCH (g:Guild {{guildId: '{guildId}'}})
+            MATCH (g:Guild {{guildId: '{guildId}'}}) 
                 -[r:HAVE_METRICS] -> (g)
-            RETURN r.date as date, r.decentralizationScore as dc
+            WHERE r.decentralizationScore IS NOT NULL
+            RETURN r.date as computed_dates
             """
         computed_dates = projection_utils.get_computed_dates(query)
 
@@ -163,7 +161,7 @@ class Centerality:
         weighted: bool,
         normalize: bool,
         preserve_parallel: bool,
-    ) -> dict[float, dict[str, float]]:
+    ) -> dict[str, dict[float, int]]:
         """
         count the degree of nodes
         (the direction of the relation depends on the results)
@@ -187,10 +185,10 @@ class Centerality:
 
         Returns:
         -----------
-        per_acc_date_weights : dict[float, dict[str, float]]
+        per_acc_date_weights : dict[str, dict[float, int]]
             the results per date degrees of each user
         """
-        per_date_acc_weights: dict[float, dict[str, float]] = {}
+        per_date_acc_weights = {}
 
         userIds = set(results["a_userId"].value_counts().index).union(
             results["b_userId"].value_counts().index
@@ -198,7 +196,7 @@ class Centerality:
 
         # a variable for normalizing
         # saving max value of each date
-        date_max_values: dict[float, float] = {}
+        date_max_values = {}
 
         for date in computation_date:
             per_date_acc_weights[date] = {}
@@ -247,9 +245,9 @@ class Centerality:
 
     def normalize_degree_centrality(
         self,
-        per_date_acc_weights: dict[float, dict[str, float]],
-        date_max_values: dict[float, float],
-    ) -> dict[float, dict[str, float]]:
+        per_date_acc_weights: dict[float, dict[str, int]],
+        date_max_values: dict[float, int],
+    ) -> dict[float, dict[str, int]]:
         """
         normalize the per_acc_date_weights of degree centrality
 
@@ -265,7 +263,7 @@ class Centerality:
 
         Returns:
         ----------
-        per_date_acc_weights : dict[float, dict[str, float]]
+        per_date_acc_weights : dict[float, dict[str, int]]
             the normalized version of `per_date_acc_weights`
         """
         for date in per_date_acc_weights.keys():
@@ -321,7 +319,7 @@ class Centerality:
         neo4j_metrics = Neo4JMetrics(self.neo4j_ops.gds)
 
         # saving each date network decentrality
-        network_decentrality: dict[float, float] = {}
+        network_decentrality = {}
         for date in results_undirected.keys():
             centerality = list(results_undirected[date].values())
             network_decentrality[date] = neo4j_metrics.compute_decentralization(
