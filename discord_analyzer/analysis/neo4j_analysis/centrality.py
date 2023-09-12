@@ -1,5 +1,4 @@
 import logging
-
 from typing import Literal
 
 import pandas as pd
@@ -21,7 +20,7 @@ class Centerality:
         direction: str,
         from_start: bool,
         **kwargs,
-    ) -> dict[float, dict[float, float]]:
+    ) -> dict[float, dict[str, float]]:
         """
         compute the weighted count of edges coming to a node
         it would be based on the date
@@ -65,7 +64,7 @@ class Centerality:
 
         Returns:
         ----------
-        degree_centerality : dict[float, dict[float, float]]
+        degree_centerality : dict[float, dict[str, float]]
             the degree centerality per date for each user
         """
 
