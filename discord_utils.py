@@ -5,6 +5,7 @@ from analyzer_init import AnalyzerInit
 from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
 from utils.get_rabbitmq import prepare_rabbit_mq
 from utils.transactions_ordering import sort_transactions
+from engagement_notifier.engagement import EngagementNotifier
 
 
 def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, Any]):
@@ -110,5 +111,9 @@ def publish_on_success(connection, result, *args, **kwargs):
                 event=tx.event,
                 content={"uuid": sagaId, "data": saga.data},
             )
+
+        # after all notify the users
+        engagement = EngagementNotifier()
+        engagement.notify_disengaged(guildId=guildId)
     except Exception as exp:
         logging.info(f"Exception occured in job on_success callback: {exp}")
