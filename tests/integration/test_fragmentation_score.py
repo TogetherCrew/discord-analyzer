@@ -76,7 +76,7 @@ def test_avg_clustering_coeff():
 
     for score in fragmentation_score:
         if score["date"] == yesterday:
-            assert score["fragmentation_score"] - 133.3333 < 0.1
+            assert score["fragmentation_score"] - 166.6666 < 0.1
         elif score["date"] == today:
             assert score["fragmentation_score"] - 120 < 0.1
         else:

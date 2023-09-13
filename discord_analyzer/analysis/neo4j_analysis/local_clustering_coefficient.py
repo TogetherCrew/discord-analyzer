@@ -36,21 +36,13 @@ class LocalClusteringCoeff:
         """
         projection_utils = ProjectionUtils(gds=self.gds, guildId=guildId)
 
-        graph_projected_name = f"GraphLocalClustering_{uuid1()}"
-
-        # first we have to apply the projection (will be saved in server memory)
-        projection_utils.project_temp_graph(
-            guildId=guildId,
-            graph_name=graph_projected_name,
-        )
-
         # Getting all possible dates
         computable_dates = projection_utils.get_dates(guildId=guildId)
 
         computed_dates = self.get_computed_dates(projection_utils, guildId)
 
         # compute for each date
-        to_compute = None
+        to_compute: set[float]
         if from_start:
             to_compute = computable_dates
         else:
@@ -58,26 +50,49 @@ class LocalClusteringCoeff:
 
         # for the computation date
         for date in to_compute:
-            subgraph_name = f"SubGraphLocalClustering_{uuid1()}"
+            try:
+                self.local_clustering_computation_wrapper(
+                    projection_utils=projection_utils, guildId=guildId, date=date
+                )
+            except Exception as exp:
+                msg = f"GUILDID: {guildId} "
+                logging.error(
+                    f"{msg}localClustering computation for date: {date}, exp: {exp}"
+                )
 
-            projection_utils.project_subgraph_per_date(
-                graph_name=graph_projected_name, subgraph_name=subgraph_name, date=date
-            )
+    def local_clustering_computation_wrapper(
+        self, projection_utils: ProjectionUtils, guildId: str, date: float
+    ) -> None:
+        """
+        a wrapper for local clustering coefficient computation process
+        we're doing the projection here and computing on that,
+        then we'll drop the pojection
 
-            # get the results as pandas dataframe
-            self.compute_sub_graph_lcc(
-                date=date, subgraph_name=subgraph_name, guildId=guildId
-            )
+        Parameters:
+        ------------
+        projection_utils : ProjectionUtils
+            the utils needed to get the work done
+        guildId : str
+            the guild we want the temp relationships
+            between its members
+        date : float
+            timestamp of the relation
+        """
+        graph_projected_name = f"GraphLocalClustering_{uuid1()}"
+        projection_utils.project_temp_graph(
+            guildId=guildId,
+            graph_name=graph_projected_name,
+            weighted=True,
+            date=date,
+        )
 
-            # dropping the computed date
-            _ = self.gds.run_cypher(
-                f"""
-                CALL gds.graph.drop("{subgraph_name}")
-                """
-            )
+        # get the results as pandas dataframe
+        self.compute_graph_lcc(
+            date=date, graph_name=graph_projected_name, guildId=guildId
+        )
 
-        # drop the original graph projection
-        self.gds.run_cypher(
+        # dropping the computed date
+        _ = self.gds.run_cypher(
             f"""
             CALL gds.graph.drop("{graph_projected_name}")
             """
@@ -106,33 +121,33 @@ class LocalClusteringCoeff:
         query = f"""
             MATCH (:DiscordAccount)
                 -[r:INTERACTED_IN]->(g:Guild {{guildId: '{guildId}'}})
-            RETURN r.date as computed_dates, r.localClusteringCoefficient as lcc
+            WHERE r.localClusteringCoefficient IS NOT NULL
+            RETURN r.date as computed_dates
             """
         computed_dates = projection_utils.get_computed_dates(query)
 
         return computed_dates
 
-    def compute_sub_graph_lcc(
-        self, date: float, subgraph_name: str, guildId: str
-    ) -> None:
+    def compute_graph_lcc(self, date: float, graph_name: str, guildId: str) -> None:
         """
-        compute the localClusteringCoefficient for the subgraph
+        compute the localClusteringCoefficient for the given graph
         and write the results back to the nodes
 
         Parameters:
         ------------
         date : float
             timestamp of the relation
-        subgraph_name : str
-            the operation would be done on the subgraph
+        graph_name : str
+            the operation would be done on the graph
+        guild : str
+            the guildId to save the data for it
         """
+        msg = f"GUILDID: {guildId}"
         try:
             _ = self.gds.run_cypher(
                 f"""
-                    // Doing the operation for the day
-                    // and saving the localClustering Coeffs
                     CALL gds.localClusteringCoefficient.stream(
-                        "{subgraph_name}"
+                        "{graph_name}"
                     ) YIELD nodeId, localClusteringCoefficient
                     WITH
                         gds.util.asNode(nodeId) as userNode,
@@ -143,5 +158,4 @@ class LocalClusteringCoeff:
                     """
             )
         except Exception as exp:
-            logging.error("Cypher execution in computing localClusteringCoefficient")
-            logging.error(f"Exception is: {exp}")
+            logging.error(f"{msg} error in computing localClusteringCoefficient, {exp}")

@@ -1,6 +1,5 @@
 import logging
 
-import numpy as np
 from graphdatascience import GraphDataScience
 
 
@@ -38,6 +37,8 @@ class ProjectionUtils:
                     `MATCH (a:DiscordAccount)
                 -[r:INTERACTED_WITH {{guildId: '{guildId}'}}]->
                 (b:DiscordAccount)`
+            date : float
+                if we want to include date in the graph projection query
         """
         # getting kwargs
         weighted = False
@@ -48,9 +49,17 @@ class ProjectionUtils:
         if "relation_direction" in kwargs:
             relation_direction = kwargs["relation_direction"]
 
-        projection_query = f"""MATCH (a:DiscordAccount)
-                -[r:INTERACTED_WITH {{guildId: '{guildId}'}}]->
-                (b:DiscordAccount)  """
+        projection_query: str
+        if "date" in kwargs:
+            date = kwargs["date"]
+            projection_query = f"""MATCH (a:DiscordAccount)
+                   -[r:INTERACTED_WITH {{guildId: '{guildId}', date: {date}}}]->
+                   (b:DiscordAccount)  """
+        else:
+            projection_query = f"""MATCH (a:DiscordAccount)
+                   -[r:INTERACTED_WITH {{guildId: '{guildId}'}}]->
+                   (b:DiscordAccount)  """
+
         if "projection_query" in kwargs:
             projection_query = kwargs["projection_query"]
 
@@ -93,37 +102,6 @@ class ProjectionUtils:
             """
         )
 
-    def project_subgraph_per_date(
-        self, graph_name: str, subgraph_name: str, date: float
-    ) -> None:
-        """
-        create a subgraph from a previously projected graph
-
-        Parameters:
-        ------------
-        graph_name : str
-            the projected graph name we wanted to get our subgraph
-        subgraph_name : str
-            the subgraph name we want to do the projections
-        date : float
-            timestamp we want to do the projection for
-        """
-        _ = self.gds.run_cypher(
-            f"""
-                    CALL gds.beta.graph.project.subgraph(
-                        "{subgraph_name}",
-                        "{graph_name}",
-                        "*",
-                        "r.date = $date",
-                        {{
-                            parameters: {{
-                                date: {date}
-                            }}
-                        }}
-                    )
-                    """
-        )
-
     def get_dates(self, guildId: str) -> set[float]:
         """
         get all the dates we do have on the INTERACTED_WITH relations
@@ -153,18 +131,10 @@ class ProjectionUtils:
         -------------
         query : str
             the query to get the computed dates of a metric
-            must have two return results
-            - first one is date
-            - second one is the metric
+            must have one return results with label of computed_dates
+            first one is date
         """
-        computed_dates = self.gds.run_cypher(query)
-
-        computed_dates = set(
-            map(
-                lambda x: None if np.isnan(x[1]) is np.bool_(True) else x[0],
-                computed_dates.values,
-            )
-        )
-        computed_dates = computed_dates - {None}
+        dates = self.gds.run_cypher(query)
+        computed_dates = set(dates["computed_dates"].values)
 
         return computed_dates

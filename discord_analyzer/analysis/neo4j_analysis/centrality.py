@@ -1,4 +1,5 @@
 import logging
+from typing import Literal
 
 import pandas as pd
 from discord_analyzer.analysis.neo4j_metrics import Neo4JMetrics
@@ -65,9 +66,6 @@ class Centerality:
         ----------
         degree_centerality : dict[float, dict[str, float]]
             the degree centerality per date for each user
-            the `float` keys are representative of the timestamp date
-            the `str` is representative userId
-            and the last `float` is represantative of user centrality value
         """
 
         node = "DiscordAccount" if "node" not in kwargs.keys() else kwargs["node"]
@@ -148,7 +146,8 @@ class Centerality:
         query = f"""
             MATCH (g:Guild {{guildId: '{guildId}'}})
                 -[r:HAVE_METRICS] -> (g)
-            RETURN r.date as date, r.decentralizationScore as dc
+            WHERE r.decentralizationScore IS NOT NULL
+            RETURN r.date as computed_dates
             """
         computed_dates = projection_utils.get_computed_dates(query)
 
@@ -187,7 +186,7 @@ class Centerality:
 
         Returns:
         -----------
-        per_acc_date_weights : dict[float, dict[str, float]]
+        degree_centrality : dict[float, dict[str, float]]
             the results per date degrees of each user
         """
         per_date_acc_weights: dict[float, dict[str, float]] = {}
@@ -255,11 +254,11 @@ class Centerality:
 
         Parameters:
         ------------
-        per_date_acc_weights : dict[float, dict[str, int]]
+        per_date_acc_weights : dict[float, dict[str, float]]
             the results per date degrees of each user
-            float is representing the date and int is the weight
+            first float is representing the date and second one is the weight
             str is also the user
-        date_max_values : dict[float, int]
+        date_max_values : dict[float, float]
             max values in each date
             keys are dates and values are the maximum values
 
@@ -283,7 +282,7 @@ class Centerality:
         from_start: bool,
         save: bool = True,
         weighted: bool = False,
-    ) -> dict[float, float]:
+    ) -> dict[float, float | Literal[-1]]:
         """
         compute the network decentrality over the date periods
 
@@ -303,7 +302,7 @@ class Centerality:
 
         Returns:
         ---------
-        network_decentrality : dict[float, float]
+        network_decentrality : dict[float, float | Literal[-1]]
             the decentrality over time
             keys are timestamp in float format
             values are the decenrality values
@@ -321,7 +320,7 @@ class Centerality:
         neo4j_metrics = Neo4JMetrics(self.neo4j_ops.gds)
 
         # saving each date network decentrality
-        network_decentrality: dict[float, float] = {}
+        network_decentrality: dict[float, float | Literal[-1]] = {}
         for date in results_undirected.keys():
             centerality = list(results_undirected[date].values())
             network_decentrality[date] = neo4j_metrics.compute_decentralization(
@@ -336,7 +335,7 @@ class Centerality:
     def save_decentralization_score(
         self,
         guildId: str,
-        decentrality_score: dict[float, float],
+        decentrality_score: dict[float, float | Literal[-1]],
     ) -> None:
         """
         save network decentrality scores over time in the Guild node
