@@ -167,7 +167,7 @@ cython_debug/
 # Emacs
 .org
 
-interactions/credentials.py
-interactions/temp.ipynb
-test*.ipynb
-analyzer/rndao_analyzer/analysis/credentials.py
+coverage/*
+
+analyzer_lib
+main.ipynb
