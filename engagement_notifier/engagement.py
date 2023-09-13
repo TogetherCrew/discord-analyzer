@@ -1,13 +1,11 @@
-from typing import Any
-from pymongo import MongoClient
-from datetime import datetime, timedelta
 import logging
+from datetime import datetime, timedelta
+from typing import Any
 from uuid import uuid1
 
-from tc_messageBroker.rabbit_mq.queue import Queue
+from pymongo import MongoClient
 from tc_messageBroker.rabbit_mq.event import Event
-
-
+from tc_messageBroker.rabbit_mq.queue import Queue
 from utils.daolytics_uitls import get_mongo_credentials, get_rabbit_mq_credentials
 from utils.get_rabbitmq import prepare_rabbit_mq
 

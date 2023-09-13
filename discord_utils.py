@@ -2,10 +2,10 @@ import logging
 from typing import Any
 
 from analyzer_init import AnalyzerInit
+from engagement_notifier.engagement import EngagementNotifier
 from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
 from utils.get_rabbitmq import prepare_rabbit_mq
 from utils.transactions_ordering import sort_transactions
-from engagement_notifier.engagement import EngagementNotifier
 
 
 def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, Any]):

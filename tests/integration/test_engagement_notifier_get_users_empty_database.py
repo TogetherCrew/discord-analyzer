@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 
-from .utils.analyzer_setup import launch_db_access
 from engagement_notifier.engagement import EngagementNotifier
+
+from .utils.analyzer_setup import launch_db_access
 
 
 def test_engagement_notifier_get_users_no_data():
