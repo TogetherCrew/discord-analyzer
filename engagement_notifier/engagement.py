@@ -31,13 +31,10 @@ class EngagementNotifier:
         users = self._subtract_users(users1, users2)
 
         msg = f"GUILDID: {guildId}: "
-        # hardcoding a guildId for now
-        if guildId == "915914985140531240":
-            for userId in users:
-                logging.info(f"{msg}Firing event for user: {userId}")
-                self.fire_event(guildId, userId)
-        else:
-            logging.warning(f"{msg}This guild is not included for notifier!")
+
+        for userId in users:
+            logging.info(f"{msg}Firing event for user: {userId}")
+            self.fire_event(guildId, userId)
 
     def fire_event(self, guildId: str, userId: str) -> None:
         """
