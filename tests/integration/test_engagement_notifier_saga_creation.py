@@ -9,8 +9,8 @@ def test_engagement_notifier_saga_creation():
     """
     guildId = "1234"
     db_access = launch_db_access(guildId)
-    db_access.db_mongo_client["Saga"].drop_collection("saga")
-    db_access.db_mongo_client["Saga"]["Saga"].delete_many({})
+    db_access.db_mongo_client["Saga"].drop_collection("sagas")
+    db_access.db_mongo_client["Saga"]["sagas"].delete_many({})
 
     notifier = EngagementNotifier()
 
@@ -23,7 +23,7 @@ def test_engagement_notifier_saga_creation():
     }
     saga_id = notifier._create_manual_saga(data=data)
 
-    manual_saga = db_access.db_mongo_client["Saga"]["saga"].find_one(
+    manual_saga = db_access.db_mongo_client["Saga"]["sagas"].find_one(
         {"sagaId": saga_id}
     )
     print(manual_saga)
