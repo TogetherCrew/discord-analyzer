@@ -24,7 +24,9 @@ def get_disengaged_message(name: str) -> str:
     disengaeged_message += "- Join our next onboarding call (Wednesdays at 3 pm UTC https://discord.com/channels/915914985140531240/941648148068171816)\n"
     disengaeged_message += "- Or have a call with Rezvan, our community supporter: <https://meetwithwallet.xyz/rezvan>\n"
     disengaeged_message += "### If you were looking to learn \n"
-    disengaeged_message += "For new techniques and tools for human collaboration, checkout\n"
+    disengaeged_message += (
+        "For new techniques and tools for human collaboration, checkout\n"
+    )
     disengaeged_message += "- Learning channel https://discord.com/channels/915914985140531240/920707473369878589 for discussion and content\n"
     disengaeged_message += "- Our research blog: <https://rndao.mirror.xyz/>\n"
     disengaeged_message += "- Recorded talks: <https://www.youtube.com/@rndaotalks>\n"

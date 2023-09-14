@@ -123,6 +123,7 @@ class EngagementNotifier(EngagementUtils):
             elif user["globalName"] is not None:
                 prepared_names.append(user["globalName"])
             else:
-                prepared_names.append(user["username"])
+                # this would never be None
+                prepared_names.append(user["username"])  # type: ignore
 
         return prepared_names
