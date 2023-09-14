@@ -3,78 +3,95 @@ from datetime import datetime, timedelta
 from typing import Any
 from uuid import uuid1
 
-from pymongo import MongoClient
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
-from utils.daolytics_uitls import get_mongo_credentials, get_rabbit_mq_credentials
+from utils.get_mongo_client import get_mongo_client
 from utils.get_rabbitmq import prepare_rabbit_mq
 
 
 class EngagementNotifier:
     def __init__(self) -> None:
-        pass
+        self.mongo_client = get_mongo_client()
+        self.rabbitmq = prepare_rabbit_mq()
 
     def notify_disengaged(
-        self, guildId: str, category: str = "all_new_disengaged"
+        self, guild_id: str, category: str = "all_new_disengaged"
     ) -> None:
         """
         notify the disengaged type of people
 
         Parameters:
         ------------
-        guildId : str
+        guild_id : str
             the guild id to notify people
         category : str
             which category of disengaged memberactivities to notify
         """
-        users1, users2 = self._get_users(guildId, category)
+        users1, users2 = self._get_users(guild_id, category)
         users = self._subtract_users(users1, users2)
 
-        msg = f"GUILDID: {guildId}: "
+        msg = f"GUILDID: {guild_id}: "
 
-        for userId in users:
-            logging.info(f"{msg}Firing event for user: {userId}")
-            self.fire_event(guildId, userId)
+        for user_id in users:
+            logging.info(f"{msg}Firing event for user: {user_id}")
+            # creating the saga in database
+            data = self._prepare_saga_data(guild_id, user_id)
+            saga_id = self._create_manual_saga(data)
+            # firing the event
+            self.fire_event(saga_id, data)
 
-    def fire_event(self, guildId: str, userId: str) -> None:
+    def fire_event(self, saga_id: str, data: dict[str, Any]) -> None:
         """
         fire the event `SEND_MESSAGE` to the user of a guild
 
         Parameters:
         ------------
-        guildId : str
-            the guildId having the user
-        userId : str
-            the userId to send message
+        saga_id : str
+            the saga_id having of the event
+        data : str
+            the data to fire
         """
-        rabbit_creds = get_rabbit_mq_credentials()
-        rabbitmq = prepare_rabbit_mq(rabbit_creds)
 
-        rabbitmq.connect(Queue.DISCORD_BOT)
+        self.rabbitmq.connect(Queue.DISCORD_BOT)
 
-        rabbitmq.publish(
+        self.rabbitmq.publish(
             queue_name=Queue.DISCORD_BOT,
             event=Event.DISCORD_BOT.SEND_MESSAGE,
             content={
-                "uuid": str(uuid1()),
-                "data": {
-                    "guildId": guildId,
-                    "created": False,
-                    "discordId": userId,
-                    "message": "This message is sent you for notifications!",
-                    "userFallback": True,
-                },
+                "uuid": saga_id,
+                "data": data,
             },
         )
 
-    def _get_users(self, guildId: str, category: str) -> tuple[list[str], list[str]]:
+    def _prepare_saga_data(self, guild_id: str, user_id: str) -> dict[str, Any]:
+        """
+        prepare the data needed for the saga
+
+        Parameters:
+        ------------
+        guild_id : str
+            the guild_id having the user
+        user_id : str
+            the user_id to send message
+        """
+        data = {
+            "guildId": guild_id,
+            "created": False,
+            "discordId": user_id,
+            "message": "This message is sent you for notifications!",
+            "userFallback": True,
+        }
+
+        return data
+
+    def _get_users(self, guild_id: str, category: str) -> tuple[list[str], list[str]]:
         """
         get the users of memberactivities within a specific memberactivities
         the users from previous day and previous two days
 
         Parameters:
         -------------
-        guildId : str
+        guild_id : str
             the guild id to get people's id
         category : str
             the category of memberactivities
@@ -99,9 +116,8 @@ class EngagementNotifier:
             .strftime("%Y-%m-%dT%H:%M:%S")
         )
 
-        client = self.setup_client()
         users = (
-            client[guildId]["memberactivities"]
+            self.mongo_client[guild_id]["memberactivities"]
             .find(
                 {
                     "$or": [
@@ -144,21 +160,42 @@ class EngagementNotifier:
 
         return results
 
-    def setup_client(self) -> MongoClient:
-        creds = get_mongo_credentials()
+    def _create_manual_saga(self, data: dict[str, Any]) -> str:
+        """
+        manually create a saga for the discord-bot to be able to work.
+        NOTE: THIS FUNCTION IS FOR MVP AND IN FUTURE WE HAVE TO ADD A NEW SAGA
 
-        connection_uri = self._get_mongo_connection(creds)
+        Parameters:
+        ------------
+        data : dict[str, Any]
+            the data we want to have on the saga
 
-        client = MongoClient(connection_uri)
+        Returns:
+        ---------
+        saga_id : str
+            the id of created saga
+        """
 
-        return client
+        saga_id = str(uuid1())
+        self.mongo_client["Saga"]["saga"].insert_one(
+            {
+                "choreography": {
+                    "name": "DISCORD_NOTIFY_USERS",
+                    "transactions": [
+                        {
+                            "queue": "DISCORD_BOT",
+                            "event": "SEND_MESSAGE",
+                            "order": 1,
+                            "status": "NOT_STARTED",
+                        }
+                    ],
+                },
+                "status": "IN_PROGRESS",
+                "data": data,
+                "sagaId": saga_id,
+                "createdAt": {"$date": datetime.now()},
+                "updatedAt": {"$date": datetime.now()},
+            }
+        )
 
-    def _get_mongo_connection(self, mongo_creds: dict[str, Any]):
-        user = mongo_creds["user"]
-        password = mongo_creds["password"]
-        host = mongo_creds["host"]
-        port = mongo_creds["port"]
-
-        connection = f"mongodb://{user}:{password}@{host}:{port}"
-
-        return connection
+        return saga_id
