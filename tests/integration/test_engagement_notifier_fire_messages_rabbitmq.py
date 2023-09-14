@@ -82,6 +82,7 @@ def test_engagement_notifier_fire_message_check_rabbitmq():
 
     queue_name = "DISCORD_BOT"
     notifier = EngagementNotifier()
+    notifier.rabbitmq.channel.queue_delete(queue_name)
     notifier.notify_disengaged(guildId)
 
     queue = notifier.rabbitmq.channel.queue_declare(
@@ -90,8 +91,11 @@ def test_engagement_notifier_fire_message_check_rabbitmq():
     )
     print(queue.method)
 
+    # TODO: There's a problem with pika library
+    # it does not show the right message_count in the time of test running
+    
     # we had two users
-    assert queue.method.consumer_count == 2
+    assert queue.method.message_count == 2
 
     # just deleting the queue after the test
     notifier.rabbitmq.channel.queue_delete(queue_name)
