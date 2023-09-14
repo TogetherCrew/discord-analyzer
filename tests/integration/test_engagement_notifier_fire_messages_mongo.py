@@ -15,7 +15,7 @@ def test_engagement_notifier_fire_message_check_mongodb():
     db_access.db_mongo_client[guildId].drop_collection("memberactivities")
     db_access.db_mongo_client[guildId]["memberactivities"].delete_many({})
 
-    db_access.db_mongo_client["Saga"].drop_collection("saga")
+    db_access.db_mongo_client["Saga"].drop_collection("sagas")
 
     date_yesterday = (
         (datetime.now() - timedelta(days=1))
@@ -84,5 +84,5 @@ def test_engagement_notifier_fire_message_check_mongodb():
     notifier.notify_disengaged(guildId)
 
     # sending messages to 2 users (user1 and user2)
-    doc_count = db_access.db_mongo_client["Saga"]["saga"].count_documents({})
+    doc_count = db_access.db_mongo_client["Saga"]["sagas"].count_documents({})
     assert doc_count == 2
