@@ -82,7 +82,9 @@ def get_saga_instance(sagaId: str, connection: str, saga_db: str, saga_collectio
 def publish_on_success(connection, result, *args, **kwargs):
     # we must get these three things
     try:
-        rabbit_creds = args[0][0]
+        # rabbitmq creds
+        # TODO: remove sending it in future
+        _ = args[0][0]
         sagaId = args[0][1]
         mongo_creds = args[0][2]
         logging.info(f"SAGAID: {sagaId}: ON_SUCCESS callback! ")
@@ -93,7 +95,7 @@ def publish_on_success(connection, result, *args, **kwargs):
             saga_db=mongo_creds["db_name"],
             saga_collection=mongo_creds["collection_name"],
         )
-        rabbitmq = prepare_rabbit_mq(rabbit_creds)
+        rabbitmq = prepare_rabbit_mq()
 
         transactions = saga.choreography.transactions
 
@@ -116,7 +118,7 @@ def publish_on_success(connection, result, *args, **kwargs):
         if guildId == "915914985140531240":
             # after all notify the users
             engagement = EngagementNotifier()
-            engagement.notify_disengaged(guildId=guildId)
+            engagement.notify_disengaged(guild_id=guildId)
         else:
             logging.warning(f"{msg}This guild is not included for notifier!")
 

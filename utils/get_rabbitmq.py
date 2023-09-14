@@ -1,6 +1,5 @@
 from tc_messageBroker import RabbitMQ
 from tc_messageBroker.rabbit_mq.queue import Queue
-
 from utils.daolytics_uitls import get_rabbit_mq_credentials
 
 

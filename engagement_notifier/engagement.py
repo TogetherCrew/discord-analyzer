@@ -5,8 +5,8 @@ from uuid import uuid1
 
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
-from utils.get_rabbitmq import prepare_rabbit_mq
 from utils.get_mongo_client import get_mongo_client
+from utils.get_rabbitmq import prepare_rabbit_mq
 
 
 class EngagementNotifier:

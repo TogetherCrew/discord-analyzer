@@ -1,7 +1,6 @@
 from typing import Any
 
 from pymongo import MongoClient
-
 from utils.daolytics_uitls import get_mongo_credentials
 
 
