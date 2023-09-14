@@ -1,3 +1,4 @@
+# flake8: noqa
 # predefined messages are hardcoded for now here
 
 disengaeged_message = """## Hey

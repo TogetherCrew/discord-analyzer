@@ -3,11 +3,11 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import uuid1
 
+from engagement_notifier.messages import disengaeged_message
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
 from utils.get_mongo_client import get_mongo_client
 from utils.get_rabbitmq import prepare_rabbit_mq
-from engagement_notifier.messages import disengaeged_message
 
 
 class EngagementNotifier:
