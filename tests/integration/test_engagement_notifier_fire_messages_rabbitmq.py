@@ -93,7 +93,7 @@ def test_engagement_notifier_fire_message_check_rabbitmq():
 
     # TODO: There's a problem with pika library
     # it does not show the right message_count in the time of test running
-    
+
     # we had two users
     assert queue.method.message_count == 2
 
