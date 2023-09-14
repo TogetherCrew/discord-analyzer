@@ -1,19 +1,15 @@
 import logging
-from datetime import datetime, timedelta, timezone
 from typing import Any
-from uuid import uuid1
 
-from engagement_notifier.messages import disengaeged_message
+from engagement_notifier.messages import get_disengaged_message
+from engagement_notifier.utils import EngagementUtils
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
-from utils.get_mongo_client import get_mongo_client
-from utils.get_rabbitmq import prepare_rabbit_mq
 
 
-class EngagementNotifier:
+class EngagementNotifier(EngagementUtils):
     def __init__(self) -> None:
-        self.mongo_client = get_mongo_client()
-        self.rabbitmq = prepare_rabbit_mq()
+        super().__init__()
 
     def notify_disengaged(
         self, guild_id: str, category: str = "all_new_disengaged"
@@ -28,16 +24,20 @@ class EngagementNotifier:
         category : str
             which category of disengaged memberactivities to notify
         """
-        users1, users2 = self._get_users(guild_id, category)
+        users1, users2 = self._get_users_from_memberactivities(guild_id, category)
         users = self._subtract_users(users1, users2)
+        names = self.prepare_names(guild_id, list(users))
 
         msg = f"GUILDID: {guild_id}: "
 
-        for user_id in users:
+        for user_id, user_name in zip(users, names):
             logging.info(f"{msg}Firing event for user: {user_id}")
-            # creating the saga in database
-            data = self._prepare_saga_data(guild_id, user_id)
+
+            # preparations
+            message = get_disengaged_message(user_name)
+            data = self._prepare_saga_data(guild_id, user_id, message)
             saga_id = self._create_manual_saga(data)
+
             # firing the event
             self.fire_event(saga_id, data)
 
@@ -64,7 +64,9 @@ class EngagementNotifier:
             },
         )
 
-    def _prepare_saga_data(self, guild_id: str, user_id: str) -> dict[str, Any]:
+    def _prepare_saga_data(
+        self, guild_id: str, user_id: str, message: str
+    ) -> dict[str, Any]:
         """
         prepare the data needed for the saga
 
@@ -74,129 +76,53 @@ class EngagementNotifier:
             the guild_id having the user
         user_id : str
             the user_id to send message
+        message : str
+            the message to send the user
         """
         data = {
             "guildId": guild_id,
             "created": False,
             "discordId": user_id,
-            "message": disengaeged_message,
+            "message": message,
             "userFallback": True,
         }
 
         return data
 
-    def _get_users(self, guild_id: str, category: str) -> tuple[list[str], list[str]]:
+    def prepare_names(self, guild_id: str, user_ids: list[str]) -> list[str]:
         """
-        get the users of memberactivities within a specific memberactivities
-        the users from previous day and previous two days
+        prepare the name to use in message
+        selecting from ngu meaning we would choose the name in first item
+        and if was None, we would choose the next ones
+        1. NickName
+        2. GlobalName
+        3. Username
 
-        Parameters:
-        -------------
+        Parameters
+        ------------
         guild_id : str
-            the guild id to get people's id
-        category : str
-            the category of memberactivities
+            the guild to access their data
+        user_ids : list[str]
+            a list of user ids to prepare their name
+
 
         Returns:
-        ----------
-        users1: list[str]
-            the users for yesterday
-        users2: list[str]
-            the users from past two days
+        --------
+        prepared_names : list[str]
+            a prepared names of users to use
         """
-        projection = {category: 1, "date": 1, "_id": 0}
-        date_yesterday = (
-            (datetime.now() - timedelta(days=1))
-            .replace(hour=0, minute=0, second=0)
-            .strftime("%Y-%m-%dT%H:%M:%S")
+        users_data = self._get_users_from_guildmembers(
+            guild_id=guild_id, user_ids=user_ids
         )
 
-        date_two_past_days = (
-            (datetime.now() - timedelta(days=2))
-            .replace(hour=0, minute=0, second=0)
-            .strftime("%Y-%m-%dT%H:%M:%S")
-        )
+        prepared_names: list[str] = []
 
-        users = (
-            self.mongo_client[guild_id]["memberactivities"]
-            .find(
-                {
-                    "$or": [
-                        {"date": date_yesterday},
-                        {"date": date_two_past_days},
-                    ]
-                },
-                projection,
-            )
-            .limit(2)
-        )
-
-        users1: list[str] = []
-        users2: list[str] = []
-        for users_data in users:
-            if users_data["date"] == date_yesterday:
-                users1 = users_data[category]
+        for user in users_data:
+            if user["nickname"] is not None:
+                prepared_names.append(user["nickname"])
+            elif user["globalName"] is not None:
+                prepared_names.append(user["globalName"])
             else:
-                users2 = users_data[category]
+                prepared_names.append(user["username"])
 
-        return users1, users2
-
-    def _subtract_users(self, users1: list[str], users2: list[str]) -> set[str]:
-        """
-        subtract two list of users
-
-        Parameters:
-        ------------
-        users1: list[str]
-            a list of user ids
-        users2: list[str]
-            a list of user ids for another day
-
-        Returns:
-        ---------
-        results: set[str]
-            a set of users subtracting users1 from users2
-        """
-        results = set(users1) - set(users2)
-
-        return results
-
-    def _create_manual_saga(self, data: dict[str, Any]) -> str:
-        """
-        manually create a saga for the discord-bot to be able to work.
-        NOTE: THIS FUNCTION IS FOR MVP AND IN FUTURE WE HAVE TO ADD A NEW SAGA
-
-        Parameters:
-        ------------
-        data : dict[str, Any]
-            the data we want to have on the saga
-
-        Returns:
-        ---------
-        saga_id : str
-            the id of created saga
-        """
-
-        saga_id = str(uuid1())
-        self.mongo_client["Saga"]["sagas"].insert_one(
-            {
-                "choreography": {
-                    "name": "DISCORD_NOTIFY_USERS",
-                    "transactions": [
-                        {
-                            "queue": "DISCORD_BOT",
-                            "event": "SEND_MESSAGE",
-                            "order": 1,
-                            "status": "NOT_STARTED",
-                        }
-                    ],
-                },
-                "status": "IN_PROGRESS",
-                "data": data,
-                "sagaId": saga_id,
-                "createdAt": datetime.now(timezone.utc),
-                "updatedAt": datetime.now(timezone.utc),
-            }
-        )
-
-        return saga_id
+        return prepared_names

@@ -5,9 +5,9 @@ from engagement_notifier.engagement import EngagementNotifier
 from .utils.analyzer_setup import launch_db_access
 
 
-def test_engagement_notifier_fire_message_check_mongodb():
+def test_engagement_notifier_get_users_no_data():
     """
-    check the saga count created
+    try to get the users in case of no data available
     """
     guildId = "1234"
     db_access = launch_db_access(guildId)
@@ -15,7 +15,24 @@ def test_engagement_notifier_fire_message_check_mongodb():
     db_access.db_mongo_client[guildId].drop_collection("memberactivities")
     db_access.db_mongo_client[guildId]["memberactivities"].delete_many({})
 
-    db_access.db_mongo_client["Saga"].drop_collection("sagas")
+    notifier = EngagementNotifier()
+    users1, users2 = notifier._get_users_from_memberactivities(
+        guildId, category="all_new_disengaged"
+    )
+
+    assert users1 == []
+    assert users2 == []
+
+
+def test_engagement_notifier_get_users_empty():
+    """
+    get empty users in case of no data available
+    """
+    guildId = "1234"
+    db_access = launch_db_access(guildId)
+
+    db_access.db_mongo_client[guildId].drop_collection("memberactivities")
+    db_access.db_mongo_client[guildId]["memberactivities"].delete_many({})
 
     date_yesterday = (
         (datetime.now() - timedelta(days=1))
@@ -40,7 +57,7 @@ def test_engagement_notifier_fire_message_check_mongodb():
                 "all_active": [],
                 "all_connected": [],
                 "all_paused": [],
-                "all_new_disengaged": ["user1", "user2"],
+                "all_new_disengaged": [],
                 "all_disengaged": [],
                 "all_unpaused": [],
                 "all_returned": [],
@@ -63,7 +80,7 @@ def test_engagement_notifier_fire_message_check_mongodb():
                 "all_active": [],
                 "all_connected": [],
                 "all_paused": [],
-                "all_new_disengaged": ["user3", "user6", "user9"],
+                "all_new_disengaged": [],
                 "all_disengaged": [],
                 "all_unpaused": [],
                 "all_returned": [],
@@ -81,8 +98,9 @@ def test_engagement_notifier_fire_message_check_mongodb():
     )
 
     notifier = EngagementNotifier()
-    notifier.notify_disengaged(guildId)
+    users1, users2 = notifier._get_users_from_memberactivities(
+        guildId, category="all_new_disengaged"
+    )
 
-    # sending messages to 2 users (user1 and user2)
-    doc_count = db_access.db_mongo_client["Saga"]["sagas"].count_documents({})
-    assert doc_count == 2
+    assert users1 == []
+    assert users2 == []
