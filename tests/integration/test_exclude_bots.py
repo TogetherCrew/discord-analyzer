@@ -59,6 +59,7 @@ def test_excluding_bots_heatmaps():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
+            "IsGeneratedByWebhook": False,
         }
         rawinfo_samples.append(sample)
 

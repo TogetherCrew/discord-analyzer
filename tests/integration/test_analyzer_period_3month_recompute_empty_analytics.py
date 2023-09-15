@@ -47,6 +47,7 @@ def test_analyzer_three_month_period_recompute_empty_analytics():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
+            "IsGeneratedByWebhook": False,
         }
         rawinfo_samples.append(sample)
 

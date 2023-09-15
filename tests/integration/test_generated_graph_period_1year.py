@@ -75,6 +75,7 @@ def test_networkgraph_one_year_period_recompute_available_analytics():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
+            "IsGeneratedByWebhook": False,
         }
         rawinfo_samples.append(sample)
 
