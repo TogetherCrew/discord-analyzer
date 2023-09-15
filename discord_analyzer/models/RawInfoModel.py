@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import logging
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 import pymongo
