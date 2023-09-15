@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 from discord_analyzer.models.RawInfoModel import RawInfoModel
-
 from utils.get_mongo_client import get_mongo_client
 
 
@@ -40,7 +39,7 @@ def test_rawinfo_get_day_entry_data_avaialble():
         {
             "type": 19,
             "author": "user1",
-            "content": f"test_message",
+            "content": "test_message",
             "user_mentions": [],
             "role_mentions": [],
             "reactions": [],
@@ -56,7 +55,7 @@ def test_rawinfo_get_day_entry_data_avaialble():
         {
             "type": 19,
             "author": "This is a test!",
-            "content": f"test_message",
+            "content": "test_message",
             "user_mentions": [],
             "role_mentions": [],
             "reactions": [],
@@ -72,7 +71,7 @@ def test_rawinfo_get_day_entry_data_avaialble():
         {
             "type": 19,
             "author": "This is a test!",
-            "content": f"test_message",
+            "content": "test_message",
             "user_mentions": [],
             "role_mentions": [],
             "reactions": [],
@@ -88,7 +87,7 @@ def test_rawinfo_get_day_entry_data_avaialble():
         {
             "type": 19,
             "author": "Hello",
-            "content": f"test_message",
+            "content": "test_message",
             "user_mentions": [],
             "role_mentions": [],
             "reactions": [],

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-from typing import Any
 import logging
 from datetime import timedelta, datetime
+from typing import Any
 
 import pymongo
 from discord_analyzer.models.BaseModel import BaseModel
