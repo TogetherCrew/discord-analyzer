@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
+from typing import Any
 
 import pymongo
 from discord_analyzer.models.BaseModel import BaseModel
@@ -69,7 +70,7 @@ class RawInfoModel(BaseModel):
             print(f"{self.guild_msg} No documents found in the collection")
             return None
 
-    def get_day_entries(self, day, msg=""):
+    def get_day_entries(self, day: datetime, msg: str = "") -> list[dict[str, Any]]:
         """
         Gets the list of entries for the stated day
         This is RawInfo specific method
@@ -85,12 +86,12 @@ class RawInfoModel(BaseModel):
         logg_msg += f" {self.collection_name}: {start_day} -> {end_day}"
         logging.info(logg_msg)
 
-        # date_str = day.strftime("%Y-%m-%d")
-
-        # entries = self.database[self.collection_name].find(
-        #     {"datetime": {"$regex": "^" + date_str}}
-        # )
         entries = self.database[self.collection_name].find(
-            {"createdDate": {"$gte": start_day, "$lte": end_day}}
+            {
+                "$and": [
+                    {"createdDate": {"$gte": start_day, "$lte": end_day}},
+                    {"IsGeneratedByWebhook": False},
+                ]
+            }
         )
         return list(entries)

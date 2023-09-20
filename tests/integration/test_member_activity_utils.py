@@ -30,6 +30,7 @@ def test_utils_get_members():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
+            "IsGeneratedByWebhook": False,
         }
         rawinfo_samples.append(sample)
 

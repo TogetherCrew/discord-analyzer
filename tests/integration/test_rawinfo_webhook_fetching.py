@@ -1,0 +1,111 @@
+from datetime import datetime, timedelta
+
+from discord_analyzer.models.RawInfoModel import RawInfoModel
+from utils.get_mongo_client import get_mongo_client
+
+
+def test_rawinfo_get_day_entry_empty_data():
+    """
+    test rawinfo dailty data fetching with no data avaialbe
+    """
+    guildId = "1234"
+
+    client = get_mongo_client()
+
+    client[guildId].drop_collection("rawinfos")
+
+    rawinfo_model = RawInfoModel(client[guildId])
+
+    today = datetime.now()
+    data = rawinfo_model.get_day_entries(today)
+
+    assert data == []
+
+
+def test_rawinfo_get_day_entry_data_avaialble():
+    """
+    test the rawinfo daily data fetching in case of some data available
+    """
+    guildId = "1234"
+
+    client = get_mongo_client()
+
+    client[guildId].drop_collection("rawinfos")
+
+    specific_midday = datetime(2023, 3, 3, 12)
+
+    # generating rawinfo samples
+    rawinfo_samples = [
+        {
+            "type": 19,
+            "author": "user1",
+            "content": "test_message",
+            "user_mentions": [],
+            "role_mentions": [],
+            "reactions": [],
+            "replied_user": "user3",
+            "createdDate": (specific_midday - timedelta(hours=1)),
+            "messageId": "222222",
+            "channelId": "1115555666777889",
+            "channelName": "general",
+            "threadId": None,
+            "threadName": None,
+            "IsGeneratedByWebhook": False,
+        },
+        {
+            "type": 19,
+            "author": "This is a test!",
+            "content": "test_message",
+            "user_mentions": [],
+            "role_mentions": [],
+            "reactions": [],
+            "replied_user": "user3",
+            "createdDate": (specific_midday - timedelta(hours=2)),
+            "messageId": "222223",
+            "channelId": "1115555666777889",
+            "channelName": "general",
+            "threadId": None,
+            "threadName": None,
+            "IsGeneratedByWebhook": True,
+        },
+        {
+            "type": 19,
+            "author": "This is a test!",
+            "content": "test_message",
+            "user_mentions": [],
+            "role_mentions": [],
+            "reactions": [],
+            "replied_user": "user3",
+            "createdDate": (specific_midday - timedelta(hours=3)),
+            "messageId": "222224",
+            "channelId": "1115555666777889",
+            "channelName": "general",
+            "threadId": None,
+            "threadName": None,
+            "IsGeneratedByWebhook": True,
+        },
+        {
+            "type": 19,
+            "author": "Hello",
+            "content": "test_message",
+            "user_mentions": [],
+            "role_mentions": [],
+            "reactions": [],
+            "replied_user": "user3",
+            "createdDate": (specific_midday - timedelta(hours=4)),
+            "messageId": "222225",
+            "channelId": "1115555666777889",
+            "channelName": "general",
+            "threadId": None,
+            "threadName": None,
+            "IsGeneratedByWebhook": False,
+        },
+    ]
+
+    client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+
+    rawinfo_model = RawInfoModel(client[guildId])
+
+    data = rawinfo_model.get_day_entries(specific_midday)
+
+    assert len(data) == 2
