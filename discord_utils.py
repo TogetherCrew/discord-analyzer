@@ -101,8 +101,8 @@ def publish_on_success(connection, result, *args, **kwargs):
 
         (transactions_ordered, tx_not_started_count) = sort_transactions(transactions)
 
+        guildId = saga.data["guildId"]
         if tx_not_started_count != 0:
-            guildId = saga.data["guildId"]
             tx = transactions_ordered[0]
             msg = f"GUILDID: {guildId}: "
 
