@@ -19,6 +19,9 @@ def test_publish_on_success_check_notification_choreographies():
     saga_id = "000000011111113333377777ie0w"
     expected_owner_id = "334461287892"
     db_access = launch_db_access(guildId)
+    saga_db = os.getenv("SAGA_DB_NAME")
+    saga_collection = os.getenv("SAGA_DB_COLLECTION")
+
     db_access.db_mongo_client["RnDAO"].drop_collection("guilds")
 
     db_access.db_mongo_client["RnDAO"]["guilds"].insert_one(
@@ -143,9 +146,9 @@ def test_publish_on_success_check_notification_choreographies():
     )
 
     # Adding a sample saga
-    db_access.db_mongo_client["Saga"].drop_collection("sagas")
+    db_access.db_mongo_client[saga_db].drop_collection(saga_collection)
 
-    db_access.db_mongo_client["Saga"]["sagas"].insert_one(
+    db_access.db_mongo_client[saga_db][saga_collection].insert_one(
         {
             "choreography": {
                 "name": "DISCORD_UPDATE_CHANNELS",
@@ -193,14 +196,14 @@ def test_publish_on_success_check_notification_choreographies():
     connection_uri = f"mongodb://{user}:{password}@{host}:{port}"
     mongo_creds = {
         "connection_str": connection_uri,
-        "db_name": os.getenv("SAGA_DB_NAME"),
-        "collection_name": os.getenv("SAGA_DB_COLLECTION"),
+        "db_name": saga_db,
+        "collection_name": saga_collection,
     }
 
     sample_args_data = ["sample", saga_id, mongo_creds]
     publish_on_success(None, None, sample_args_data)
 
-    cursor = db_access.db_mongo_client["Saga"]["sagas"].find(
+    cursor = db_access.db_mongo_client[saga_db][saga_collection].find(
         {"choreography.name": "DISCORD_NOTIFY_USERS"}
     )
 
