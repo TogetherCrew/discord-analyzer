@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-from engagement_notifier.messages import get_disengaged_message
+from engagement_notifier.messages import get_disengaged_message, get_report_message
 from engagement_notifier.utils import EngagementUtils
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
@@ -39,6 +39,32 @@ class EngagementNotifier(EngagementUtils):
             saga_id = self._create_manual_saga(data)
 
             # firing the event
+            self.fire_event(saga_id, data)
+
+        # notifying the guild owner of people messaged to
+        self.notifiy_guild_owner(guild_id=guild_id, notified_people=names)
+
+    def notifiy_guild_owner(self, guild_id: str, notified_people: list[str]) -> None:
+        """
+        notify the guild owner of people messaged
+
+        Parameters
+        -----------
+        guild_id : str
+            the guild id we're dealing with
+        notified_people : list[str]
+            a list of people's name that we messaged
+        """
+        msg = f"GUILDID: {guild_id}: "
+
+        if len(notified_people) != 0:
+            owner_id = self.get_owner_id(guild_id)
+            message = get_report_message(notified_people)
+            data = self._prepare_saga_data(
+                guild_id=guild_id, user_id=owner_id, message=message
+            )
+            logging.info(f"{msg}Firing event for guild owner: {owner_id}")
+            saga_id = self._create_manual_saga(data)
             self.fire_event(saga_id, data)
 
     def fire_event(self, saga_id: str, data: dict[str, Any]) -> None:
