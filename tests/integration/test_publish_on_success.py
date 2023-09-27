@@ -3,9 +3,9 @@ from datetime import datetime, timedelta
 
 from discord_utils import publish_on_success
 from dotenv import load_dotenv
+from utils.daolytics_uitls import get_mongo_credentials
 
 from .utils.analyzer_setup import launch_db_access
-from utils.daolytics_uitls import get_mongo_credentials
 
 
 def test_publish_on_success_check_notification_choreographies():
