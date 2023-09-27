@@ -5,6 +5,7 @@ from discord_utils import publish_on_success
 from dotenv import load_dotenv
 
 from .utils.analyzer_setup import launch_db_access
+from utils.daolytics_uitls import get_mongo_credentials
 
 
 def test_publish_on_success_check_notification_choreographies():
@@ -183,9 +184,15 @@ def test_publish_on_success_check_notification_choreographies():
         }
     )
 
-    # these args data were made from the rabbitMQ parameters
+    # preparing the data for publish_on_success function
+    mongo_creds = get_mongo_credentials()
+    user = mongo_creds["user"]
+    password = mongo_creds["password"]
+    host = mongo_creds["host"]
+    port = mongo_creds["port"]
+    connection_uri = f"mongodb://{user}:{password}@{host}:{port}"
     mongo_creds = {
-        "connection_str": "mongodb://admin:password@localhost:27017/",
+        "connection_str": connection_uri,
         "db_name": os.getenv("SAGA_DB_NAME"),
         "collection_name": os.getenv("SAGA_DB_COLLECTION"),
     }

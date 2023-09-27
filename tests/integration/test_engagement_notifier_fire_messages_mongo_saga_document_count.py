@@ -21,6 +21,28 @@ def test_engagement_notifier_fire_message_check_mongodb_document_count():
     db_access.db_mongo_client[guildId].drop_collection("guildmembers")
     db_access.db_mongo_client[guildId]["guildmembers"].delete_many({})
 
+    db_access.db_mongo_client["RnDAO"].drop_collection("guilds")
+
+    db_access.db_mongo_client["RnDAO"]["guilds"].insert_one(
+        {
+            "guildId": guildId,
+            "user": "owner_id",
+            "name": "Sample Guild",
+            "connectedAt": datetime.now(),
+            "isInProgress": False,
+            "isDisconnected": False,
+            "icon": "4256asdiqwjo032",
+            "window": [7, 1],
+            "action": [1, 1, 1, 4, 3, 5, 5, 4, 3, 2, 2, 2, 1],
+            "selectedChannels": [
+                {
+                    "channelId": "11111111111111",
+                    "channelName": "general",
+                },
+            ],
+        }
+    )
+
     db_access.db_mongo_client[guildId]["guildmembers"].insert_many(
         [
             {
@@ -159,6 +181,6 @@ def test_engagement_notifier_fire_message_check_mongodb_document_count():
     notifier = EngagementNotifier()
     notifier.notify_disengaged(guildId)
 
-    # sending messages to 2 users (1111 and user2)
+    # sending messages to 4 users (1111, 1112, 1113, and owner)
     doc_count = db_access.db_mongo_client["Saga"]["sagas"].count_documents({})
-    assert doc_count == 3
+    assert doc_count == 4
