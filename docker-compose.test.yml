@@ -26,7 +26,7 @@ services:
       - NEO4J_PASSWORD=password
       - NEO4J_DB=neo4j
       - SAGA_DB_NAME=Saga
-      - SAGA_DB_COLLECTION=saga
+      - SAGA_DB_COLLECTION=sagas
       - SENTRY_DSN=sample_dsn
       - SENTRY_ENV=local
     volumes:

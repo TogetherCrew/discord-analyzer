@@ -1,32 +1,33 @@
+import os
 from datetime import datetime, timedelta
 
-from engagement_notifier.engagement import EngagementNotifier
+from discord_utils import publish_on_success
+from dotenv import load_dotenv
+from utils.daolytics_uitls import get_mongo_credentials
 
 from .utils.analyzer_setup import launch_db_access
 
 
-def test_engagement_notifier_fire_message_check_mongodb_document_count():
+def test_publish_on_success_check_notification_choreographies():
     """
-    check the saga count created
+    test the publish on success functions
+    we want to check the database if the notify choreographies are created
     """
-    guildId = "1234"
+    load_dotenv()
+
+    guildId = "915914985140531240"
+    saga_id = "000000011111113333377777ie0w"
+    expected_owner_id = "334461287892"
     db_access = launch_db_access(guildId)
-
-    db_access.db_mongo_client[guildId].drop_collection("memberactivities")
-    db_access.db_mongo_client[guildId]["memberactivities"].delete_many({})
-
-    db_access.db_mongo_client["Saga"].drop_collection("sagas")
-    db_access.db_mongo_client["Saga"]["sagas"].delete_many({})
-
-    db_access.db_mongo_client[guildId].drop_collection("guildmembers")
-    db_access.db_mongo_client[guildId]["guildmembers"].delete_many({})
+    saga_db = os.getenv("SAGA_DB_NAME")
+    saga_collection = os.getenv("SAGA_DB_COLLECTION")
 
     db_access.db_mongo_client["RnDAO"].drop_collection("guilds")
 
     db_access.db_mongo_client["RnDAO"]["guilds"].insert_one(
         {
             "guildId": guildId,
-            "user": "owner_id",
+            "user": expected_owner_id,
             "name": "Sample Guild",
             "connectedAt": datetime.now(),
             "isInProgress": False,
@@ -42,6 +43,9 @@ def test_engagement_notifier_fire_message_check_mongodb_document_count():
             ],
         }
     )
+
+    db_access.db_mongo_client[guildId].drop_collection("guildmembers")
+    db_access.db_mongo_client[guildId]["guildmembers"].delete_many({})
 
     db_access.db_mongo_client[guildId]["guildmembers"].insert_many(
         [
@@ -71,50 +75,13 @@ def test_engagement_notifier_fire_message_check_mongodb_document_count():
                 "globalName": "User2GlobalName",
                 "nickname": None,
             },
-            {
-                "discordId": "1113",
-                "username": "user3",
-                "roles": [],
-                "joinedAt": datetime.now() - timedelta(days=10),
-                "avatar": None,
-                "isBot": False,
-                "discriminator": "0",
-                "permissions": "6677",
-                "deletedAt": None,
-                "globalName": None,
-                "nickname": None,
-            },
-            {
-                "discordId": "1116",
-                "username": "user6",
-                "roles": [],
-                "joinedAt": datetime.now() - timedelta(days=10),
-                "avatar": None,
-                "isBot": False,
-                "discriminator": "0",
-                "permissions": "6677",
-                "deletedAt": None,
-                "globalName": "User6GlobalName",
-                "nickname": "User6NickName",
-            },
-            {
-                "discordId": "1119",
-                "username": "user9",
-                "roles": [],
-                "joinedAt": datetime.now() - timedelta(days=10),
-                "avatar": None,
-                "isBot": False,
-                "discriminator": "0",
-                "permissions": "6677",
-                "deletedAt": None,
-                "globalName": "User9GlobalName",
-                "nickname": None,
-            },
         ]
     )
 
-    db_access.db_mongo_client["Saga"].drop_collection("sagas")
+    db_access.db_mongo_client[guildId].drop_collection("memberactivities")
+    db_access.db_mongo_client[guildId]["memberactivities"].delete_many({})
 
+    # Adding sample memberactivities
     date_yesterday = (
         (datetime.now() - timedelta(days=1))
         .replace(hour=0, minute=0, second=0)
@@ -138,7 +105,7 @@ def test_engagement_notifier_fire_message_check_mongodb_document_count():
                 "all_active": [],
                 "all_connected": [],
                 "all_paused": [],
-                "all_new_disengaged": ["1111", "1112", "1113"],
+                "all_new_disengaged": ["1111", "1112"],
                 "all_disengaged": [],
                 "all_unpaused": [],
                 "all_returned": [],
@@ -161,7 +128,7 @@ def test_engagement_notifier_fire_message_check_mongodb_document_count():
                 "all_active": [],
                 "all_connected": [],
                 "all_paused": [],
-                "all_new_disengaged": ["1116", "1119"],
+                "all_new_disengaged": ["user3", "user6", "user9"],
                 "all_disengaged": [],
                 "all_unpaused": [],
                 "all_returned": [],
@@ -178,9 +145,79 @@ def test_engagement_notifier_fire_message_check_mongodb_document_count():
         ]
     )
 
-    notifier = EngagementNotifier()
-    notifier.notify_disengaged(guildId)
+    # Adding a sample saga
+    db_access.db_mongo_client[saga_db].drop_collection(saga_collection)
 
-    # sending messages to 4 users (1111, 1112, 1113, and owner)
-    doc_count = db_access.db_mongo_client["Saga"]["sagas"].count_documents({})
-    assert doc_count == 4
+    db_access.db_mongo_client[saga_db][saga_collection].insert_one(
+        {
+            "choreography": {
+                "name": "DISCORD_UPDATE_CHANNELS",
+                "transactions": [
+                    {
+                        "queue": "DISCORD_BOT",
+                        "event": "FETCH",
+                        "order": 1,
+                        "status": "SUCCESS",
+                        "start": datetime.now(),
+                        "end": datetime.now(),
+                        "runtime": 1,
+                    },
+                    {
+                        "queue": "DISCORD_ANALYZER",
+                        "event": "RUN",
+                        "order": 2,
+                        "status": "SUCCESS",
+                        "start": datetime.now(),
+                        "end": datetime.now(),
+                        "runtime": 1,
+                    },
+                ],
+            },
+            "status": "IN_PROGRESS",
+            "data": {
+                "guildId": guildId,
+                "created": False,
+                "discordId": expected_owner_id,
+                "message": "data is ready",
+                "useFallback": True,
+            },
+            "sagaId": saga_id,
+            "createdAt": datetime.now(),
+            "updatedAt": datetime.now(),
+        }
+    )
+
+    # preparing the data for publish_on_success function
+    mongo_creds = get_mongo_credentials()
+    user = mongo_creds["user"]
+    password = mongo_creds["password"]
+    host = mongo_creds["host"]
+    port = mongo_creds["port"]
+    connection_uri = f"mongodb://{user}:{password}@{host}:{port}"
+    mongo_creds = {
+        "connection_str": connection_uri,
+        "db_name": saga_db,
+        "collection_name": saga_collection,
+    }
+
+    sample_args_data = ["sample", saga_id, mongo_creds]
+    publish_on_success(None, None, sample_args_data)
+
+    cursor = db_access.db_mongo_client[saga_db][saga_collection].find(
+        {"choreography.name": "DISCORD_NOTIFY_USERS"}
+    )
+
+    notification_sagas = list(cursor)
+    # two notified users
+    # and one notified guild owner
+    assert len(notification_sagas) == 3
+
+    for saga in notification_sagas:
+        assert saga["data"]["discordId"] in ["1111", "1112", expected_owner_id]
+        # the owner of the guild receives a different message
+        if saga["data"]["discordId"] == expected_owner_id:
+            expected_message = "The following members disengaged and were messaged:\n"
+            expected_message += "- User1NickName\n"
+            expected_message += "- User2GlobalName\n"
+
+            saga["data"]["message"] == expected_message

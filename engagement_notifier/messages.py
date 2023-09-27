@@ -32,3 +32,24 @@ def get_disengaged_message(name: str) -> str:
     disengaeged_message += "- Recorded talks: <https://www.youtube.com/@rndaotalks>\n"
 
     return disengaeged_message
+
+
+def get_report_message(notified_people_name: list[str]) -> str:
+    """
+    get a message report of people messaged
+
+    Parameters
+    ------------
+    notified_people_name : list[str]
+        a list of name of the people that were messaged
+
+    Returns
+    ---------
+    message : str
+        the message defined as a report
+    """
+    message = "The following members disengaged and were messaged:\n"
+    for name in notified_people_name:
+        message += "- " + name + "\n"
+
+    return message

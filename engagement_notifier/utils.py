@@ -160,3 +160,25 @@ class EngagementUtils:
         )
 
         return saga_id
+
+    def get_owner_id(self, guild_id: str) -> str:
+        """
+        get guild owner discord id
+
+        Parameters
+        ------------
+        guild_id : str
+            the guild_id that we want its owner
+
+        Returns
+        --------
+        owner_id : str
+            the owner discordId
+        """
+        document = self.mongo_client["RnDAO"]["guilds"].find_one(
+            {"guildId": guild_id}, {"_id": 0, "guildId": 1, "user": 1}
+        )
+
+        owner_id = document["user"]
+
+        return owner_id
