@@ -45,7 +45,7 @@ def test_two_weeks_period_active_members():
         "channelName": "general",
         "threadId": None,
         "threadName": None,
-        "IsGeneratedByWebhook": False,
+        "isGeneratedByWebhook": False,
     }
 
     rawinfo_samples.append(sample)
@@ -65,7 +65,7 @@ def test_two_weeks_period_active_members():
         "channelName": "general",
         "threadId": None,
         "threadName": None,
-        "IsGeneratedByWebhook": False,
+        "isGeneratedByWebhook": False,
     }
 
     rawinfo_samples.append(sample)
@@ -85,7 +85,7 @@ def test_two_weeks_period_active_members():
         "channelName": "general",
         "threadId": None,
         "threadName": None,
-        "IsGeneratedByWebhook": False,
+        "isGeneratedByWebhook": False,
     }
 
     rawinfo_samples.append(sample)
@@ -105,7 +105,7 @@ def test_two_weeks_period_active_members():
         "channelName": "general",
         "threadId": None,
         "threadName": None,
-        "IsGeneratedByWebhook": False,
+        "isGeneratedByWebhook": False,
     }
 
     rawinfo_samples.append(sample)

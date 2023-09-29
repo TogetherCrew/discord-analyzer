@@ -55,7 +55,7 @@ def test_all_joined_day_members():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
-            "IsGeneratedByWebhook": False,
+            "isGeneratedByWebhook": False,
         }
         rawinfo_samples.append(sample)
 

@@ -47,7 +47,7 @@ def test_analyzer_one_year_period_run_once_empty_analytics():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
-            "IsGeneratedByWebhook": False,
+            "isGeneratedByWebhook": False,
         }
         rawinfo_samples.append(sample)
 

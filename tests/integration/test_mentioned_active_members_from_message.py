@@ -43,7 +43,7 @@ def test_mention_active_members_from_rawinfo():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
-            "IsGeneratedByWebhook": False,
+            "isGeneratedByWebhook": False,
         }
         rawinfo_samples.append(sample)
 

@@ -50,7 +50,7 @@ def test_rawinfo_get_day_entry_data_avaialble():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
-            "IsGeneratedByWebhook": False,
+            "isGeneratedByWebhook": False,
         },
         {
             "type": 19,
@@ -66,7 +66,7 @@ def test_rawinfo_get_day_entry_data_avaialble():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
-            "IsGeneratedByWebhook": True,
+            "isGeneratedByWebhook": True,
         },
         {
             "type": 19,
@@ -82,7 +82,7 @@ def test_rawinfo_get_day_entry_data_avaialble():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
-            "IsGeneratedByWebhook": True,
+            "isGeneratedByWebhook": True,
         },
         {
             "type": 19,
@@ -98,7 +98,7 @@ def test_rawinfo_get_day_entry_data_avaialble():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
-            "IsGeneratedByWebhook": False,
+            "isGeneratedByWebhook": False,
         },
     ]
 

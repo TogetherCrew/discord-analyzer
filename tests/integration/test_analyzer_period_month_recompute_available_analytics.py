@@ -66,7 +66,7 @@ def test_analyzer_month_period_recompute_available_analytics():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
-            "IsGeneratedByWebhook": False,
+            "isGeneratedByWebhook": False,
         }
         rawinfo_samples.append(sample)
 
