@@ -90,7 +90,7 @@ class RawInfoModel(BaseModel):
             {
                 "$and": [
                     {"createdDate": {"$gte": start_day, "$lte": end_day}},
-                    {"IsGeneratedByWebhook": False},
+                    {"isGeneratedByWebhook": False},
                 ]
             }
         )

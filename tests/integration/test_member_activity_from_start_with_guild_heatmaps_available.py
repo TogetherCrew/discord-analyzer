@@ -50,7 +50,7 @@ def test_analyzer_member_activities_from_start_available_heatmaps():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
-            "IsGeneratedByWebhook": False,
+            "isGeneratedByWebhook": False,
         }
         rawinfo_samples.append(sample)
 

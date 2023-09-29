@@ -68,7 +68,7 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
-            "IsGeneratedByWebhook": False,
+            "isGeneratedByWebhook": False,
         }
         rawinfo_samples.append(sample)
 
