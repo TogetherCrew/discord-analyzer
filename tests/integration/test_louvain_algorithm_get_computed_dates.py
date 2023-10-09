@@ -39,10 +39,7 @@ def test_louvain_get_computed_dates_empty_data():
     louvain = Louvain(neo4j_ops)
     projection_utils = ProjectionUtils(neo4j_ops.gds, guildId=guild_id)
 
-    projection_utils = ProjectionUtils(
-        gds=neo4j_ops.gds,
-        guildId=guild_id
-    )
+    projection_utils = ProjectionUtils(gds=neo4j_ops.gds, guildId=guild_id)
 
     computed_dates = louvain.get_computed_dates(projection_utils, guildId=guild_id)
 
@@ -85,10 +82,7 @@ def test_louvain_get_computed_dates_empty_data_with_have_metrics_relation():
     louvain = Louvain(neo4j_ops)
     projection_utils = ProjectionUtils(neo4j_ops.gds, guildId=guild_id)
 
-    projection_utils = ProjectionUtils(
-        gds=neo4j_ops.gds,
-        guildId=guild_id
-    )
+    projection_utils = ProjectionUtils(gds=neo4j_ops.gds, guildId=guild_id)
 
     computed_dates = louvain.get_computed_dates(projection_utils, guildId=guild_id)
 
@@ -131,10 +125,7 @@ def test_louvain_get_computed_dates_one_data():
     louvain = Louvain(neo4j_ops)
     projection_utils = ProjectionUtils(neo4j_ops.gds, guildId=guild_id)
 
-    projection_utils = ProjectionUtils(
-        gds=neo4j_ops.gds,
-        guildId=guild_id
-    )
+    projection_utils = ProjectionUtils(gds=neo4j_ops.gds, guildId=guild_id)
 
     computed_dates = louvain.get_computed_dates(projection_utils, guildId=guild_id)
 
