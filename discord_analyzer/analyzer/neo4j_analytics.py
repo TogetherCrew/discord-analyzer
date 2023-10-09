@@ -31,8 +31,9 @@ class Neo4JAnalytics:
             Note: only some metrics support this
             others would be computed from_start=True
         """
-        if from_start:
-            self._remove_analytics_interacted_in(guildId)
+        # we don't need this, as the data will be replaced after
+        # if from_start:
+        #     self._remove_analytics_interacted_in(guildId)
 
         self.compute_louvain_algorithm(guildId, from_start)
         self.compute_local_clustering_coefficient(guildId, from_start)
