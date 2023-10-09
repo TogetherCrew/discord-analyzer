@@ -39,7 +39,13 @@ class Louvain:
             to_compute = computable_dates - computed_dates
 
         for date in to_compute:
-            self.louvain_computation_wrapper(projection_utils, guild_id, date)
+            try:
+                self.louvain_computation_wrapper(projection_utils, guild_id, date)
+            except Exception as exp:
+                msg = f"GUILDID: {guild_id} "
+                logging.error(
+                    f"{msg}Louvain Modularity computation for date: {date}, exp: {exp}"
+                )
 
     def louvain_computation_wrapper(
         self, projection_utils: ProjectionUtils, guild_id: str, date: float
