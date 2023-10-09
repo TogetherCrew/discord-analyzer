@@ -105,7 +105,7 @@ def test_guild_results_available():
         RETURN r.date as date, r.louvainModularityScore as modularityScore
         """
     )
-    
+
     assert len(results) == 2
     print(results)
     assert results["date"].iloc[0] in [yesterday, today]

@@ -2,7 +2,6 @@ import logging
 from uuid import uuid1
 
 from discord_analyzer.analysis.neo4j_utils.projection_utils import ProjectionUtils
-
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
@@ -136,7 +135,7 @@ class Louvain:
         try:
             _ = self.neo4j_ops.gds.run_cypher(
                 f"""
-                    CALL gds.louvain.stats("{graph_name}") 
+                    CALL gds.louvain.stats("{graph_name}")
                     YIELD modularity
                     WITH modularity
                     MATCH (g:Guild {{guildId: '{guild_id}'}})

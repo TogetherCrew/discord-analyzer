@@ -1,8 +1,8 @@
 from discord_analyzer.analysis.neo4j_analysis.louvain import Louvain
 from discord_analyzer.analysis.neo4j_utils.projection_utils import ProjectionUtils
 
-
 from .utils.neo4j_conn import neo4j_setup
+
 
 def test_louvain_get_computed_dates_empty_data():
     """
@@ -40,14 +40,15 @@ def test_louvain_get_computed_dates_empty_data():
     projection_utils = ProjectionUtils(neo4j_ops.gds, guildId=guild_id)
 
     projection_utils = ProjectionUtils(
-        gds=neo4j_ops.gds, 
+        gds=neo4j_ops.gds,
         guildId=guild_id
     )
 
     computed_dates = louvain.get_computed_dates(projection_utils, guildId=guild_id)
 
     assert computed_dates == set()
-    
+
+
 def test_louvain_get_computed_dates_empty_data_with_have_metrics_relation():
     """
     test with empty data for getting the computed dates
@@ -85,13 +86,14 @@ def test_louvain_get_computed_dates_empty_data_with_have_metrics_relation():
     projection_utils = ProjectionUtils(neo4j_ops.gds, guildId=guild_id)
 
     projection_utils = ProjectionUtils(
-        gds=neo4j_ops.gds, 
+        gds=neo4j_ops.gds,
         guildId=guild_id
     )
 
     computed_dates = louvain.get_computed_dates(projection_utils, guildId=guild_id)
 
     assert computed_dates == set()
+
 
 def test_louvain_get_computed_dates_one_data():
     """
@@ -130,7 +132,7 @@ def test_louvain_get_computed_dates_one_data():
     projection_utils = ProjectionUtils(neo4j_ops.gds, guildId=guild_id)
 
     projection_utils = ProjectionUtils(
-        gds=neo4j_ops.gds, 
+        gds=neo4j_ops.gds,
         guildId=guild_id
     )
 

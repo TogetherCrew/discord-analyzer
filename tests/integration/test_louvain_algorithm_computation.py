@@ -2,6 +2,7 @@ from discord_analyzer.analysis.neo4j_analysis.louvain import Louvain
 
 from .utils.neo4j_conn import neo4j_setup
 
+
 def test_louvain_algorithm_available_data():
     """
     test the louvain algorithm with some nodes connected
@@ -44,11 +45,10 @@ def test_louvain_algorithm_available_data():
         RETURN r.date as date, r.louvainModularityScore as modularityScore
         """
     )
-    
+
     assert len(results) == 2
     assert results["date"].iloc[0] in [yesterday, today]
     assert results["date"].iloc[1] in [yesterday, today]
-
 
 
 def test_louvain_algorithm_more_available_data():
@@ -118,4 +118,3 @@ def test_louvain_algorithm_more_available_data():
     assert len(results) == 2
     assert results["date"].iloc[0] in [yesterday, today]
     assert results["date"].iloc[1] in [yesterday, today]
-    assert False is True
