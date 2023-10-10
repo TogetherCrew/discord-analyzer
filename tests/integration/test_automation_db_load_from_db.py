@@ -2,6 +2,8 @@ import os
 import unittest
 from dotenv import load_dotenv
 
+from datetime import datetime, timedelta
+
 from automation.utils.model import AutomationDB
 from utils.get_mongo_client import MongoSingleton
 
@@ -30,6 +32,9 @@ class TestAutomationDBLoadFromDB(unittest.TestCase):
         collection_name = os.getenv("AUTOMATION_DB_COLLECTION")
 
         client[db_name].drop_collection(collection_name)
+        past_two_day_created_at = datetime.now() - timedelta(days=2)
+        yesterday_created_at = datetime.now() - timedelta(days=1)
+        today_created_at = datetime.now() - timedelta(days=0)
 
         automations_dict = [
             {
@@ -62,6 +67,8 @@ class TestAutomationDBLoadFromDB(unittest.TestCase):
                     "enabled": True,
                 },
                 "enabled": True,
+                "createdAt": past_two_day_created_at,
+                "updatedAt": past_two_day_created_at,
             },
             {
                 "guildId": "124",
@@ -93,6 +100,8 @@ class TestAutomationDBLoadFromDB(unittest.TestCase):
                     "enabled": True,
                 },
                 "enabled": True,
+                "createdAt": yesterday_created_at,
+                "updatedAt": yesterday_created_at,
             },
             {
                 "guildId": "123",
@@ -118,6 +127,8 @@ class TestAutomationDBLoadFromDB(unittest.TestCase):
                     "enabled": True,
                 },
                 "enabled": True,
+                "createdAt": today_created_at,
+                "updatedAt": today_created_at,
             },
         ]
 
@@ -127,44 +138,28 @@ class TestAutomationDBLoadFromDB(unittest.TestCase):
 
         automations = automation_db.load_from_db(guild_id="123")
 
-        expected_automations_guild_123 = [
-            {
-                "guildId": "123",
-                "triggers": [
+        self.assertEqual(len(automations), 2)
+        for at in automations:
+            at_dict = at.to_dict()
+
+            self.assertEqual(at_dict["guildId"], "123")
+
+            assert (
+                at_dict["triggers"]
+                == [
                     {"options": {"category": "all_new_disengaged"}, "enabled": True},
                     {"options": {"category": "all_new_active"}, "enabled": True},
-                ],
-                "actions": [
-                    {
-                        "template": "hey {{username}}! please get back to us!",
-                        "options": {},
-                        "enabled": True,
-                    },
-                    {
-                        "template": "hey {{username}}! please get back to us!",
-                        "options": {},
-                        "enabled": True,
-                    },
-                    {
-                        "template": "hey {{username}}! please get back to us!",
-                        "options": {},
-                        "enabled": True,
-                    },
-                ],
-                "report": {
-                    "recipientIds": ["111"],
-                    "template": "hey {{username}}, this is a report!",
-                    "options": {},
-                    "enabled": True,
-                },
-                "enabled": True,
-            },
-            {
-                "guildId": "123",
-                "triggers": [
+                ]
+            ) or (
+                at_dict["triggers"]
+                == [
                     {"options": {"category": "all_new_active"}, "enabled": True},
-                ],
-                "actions": [
+                ]
+            )
+
+            assert (
+                at_dict["actions"]
+                == [
                     {
                         "template": "hello {{username}}!",
                         "options": {},
@@ -175,59 +170,106 @@ class TestAutomationDBLoadFromDB(unittest.TestCase):
                         "options": {},
                         "enabled": True,
                     },
-                ],
-                "report": {
-                    "recipientIds": ["111", "113"],
-                    "template": "hey {{username}}, this is a report!",
-                    "options": {},
-                    "enabled": True,
-                },
-                "enabled": True,
-            },
-        ]
-        self.assertEqual(len(automations), 2)
-        for at in automations:
-            at_dict = at.to_dict()
+                ]
+            ) or (
+                at_dict["actions"]
+                == [
+                    {
+                        "template": "hey {{username}}! please get back to us!",
+                        "options": {},
+                        "enabled": True,
+                    },
+                    {
+                        "template": "hey {{username}}! please get back to us!",
+                        "options": {},
+                        "enabled": True,
+                    },
+                    {
+                        "template": "hey {{username}}! please get back to us!",
+                        "options": {},
+                        "enabled": True,
+                    },
+                ]
+            )
 
-            self.assertIn(at_dict, expected_automations_guild_123)
+            self.assertIn(
+                at_dict["report"],
+                [
+                    {
+                        "recipientIds": ["111", "113"],
+                        "template": "hey {{username}}, this is a report!",
+                        "options": {},
+                        "enabled": True,
+                    },
+                    {
+                        "recipientIds": ["111"],
+                        "template": "hey {{username}}, this is a report!",
+                        "options": {},
+                        "enabled": True,
+                    },
+                ],
+            )
+            self.assertEqual(at_dict["enabled"], True)
+            self.assertIn(
+                at_dict["createdAt"].strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+                [
+                    past_two_day_created_at.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+                    today_created_at.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+                ],
+            )
+            self.assertIn(
+                at_dict["updatedAt"].strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+                [
+                    past_two_day_created_at.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+                    today_created_at.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+                ],
+            )
 
         automations = automation_db.load_from_db(guild_id="124")
-        expected_automations_guild_124 = [
-            {
-                "guildId": "124",
-                "triggers": [
-                    {"options": {"category": "all_new_disengaged"}, "enabled": True},
-                    {"options": {"category": "all_new_active"}, "enabled": True},
-                ],
-                "actions": [
-                    {
-                        "template": "hey {{username}}! please get back to us!",
-                        "options": {},
-                        "enabled": True,
-                    },
-                    {
-                        "template": "hey {{username}}! please get back to us!",
-                        "options": {},
-                        "enabled": True,
-                    },
-                    {
-                        "template": "hey {{username}}! please get back to us!",
-                        "options": {},
-                        "enabled": True,
-                    },
-                ],
-                "report": {
-                    "recipientIds": ["111"],
-                    "template": "hey {{username}}, this is a report!",
-                    "options": {},
-                    "enabled": True,
-                },
-                "enabled": True,
-            }
-        ]
 
         self.assertEqual(len(automations), 1)
         for at in automations:
             at_dict = at.to_dict()
 
-            self.assertEqual(at_dict, expected_automations_guild_124[0])
+            self.assertEqual(at_dict["guildId"], "124")
+            self.assertEqual(
+                at_dict["triggers"],
+                [
+                    {"options": {"category": "all_new_disengaged"}, "enabled": True},
+                    {"options": {"category": "all_new_active"}, "enabled": True},
+                ],
+            )
+            self.assertEqual(
+                at_dict["actions"],
+                [
+                    {
+                        "template": "hey {{username}}! please get back to us!",
+                        "options": {},
+                        "enabled": True,
+                    },
+                    {
+                        "template": "hey {{username}}! please get back to us!",
+                        "options": {},
+                        "enabled": True,
+                    },
+                    {
+                        "template": "hey {{username}}! please get back to us!",
+                        "options": {},
+                        "enabled": True,
+                    },
+                ],
+            )
+            self.assertEqual(
+                at_dict["report"],
+                {
+                    "recipientIds": ["111"],
+                    "template": "hey {{username}}, this is a report!",
+                    "options": {},
+                    "enabled": True,
+                },
+            )
+            self.assertEqual(at_dict["enabled"], True)
+            self.assertEqual(
+                at_dict["createdAt"].strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+                yesterday_created_at.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+            )

@@ -1,6 +1,7 @@
 import os
 import unittest
 from dotenv import load_dotenv
+from datetime import datetime, timezone
 
 from automation.utils.model import AutomationDB
 from automation.utils.interfaces import Automation
@@ -18,6 +19,8 @@ class TestAutomationDBSaveToDB(unittest.TestCase):
 
         client[db_name].drop_collection(collection_name)
 
+        today_created_at = datetime.now(tz=timezone.utc)
+
         automation_dict = {
             "guildId": "123",
             "triggers": [
@@ -42,6 +45,8 @@ class TestAutomationDBSaveToDB(unittest.TestCase):
                 "enabled": True,
             },
             "enabled": True,
+            "createdAt": today_created_at,
+            "updatedAt": today_created_at,
         }
 
         automation = Automation.from_dict(automation_dict)
@@ -54,33 +59,45 @@ class TestAutomationDBSaveToDB(unittest.TestCase):
         at_from_db = list(cursor)
 
         self.assertEqual(len(at_from_db), 1)
+        self.assertEqual(at_from_db[0]["guildId"], "123")
         self.assertEqual(
-            at_from_db[0],
-            {
-                "guildId": "123",
-                "triggers": [
-                    {"options": {"category": "all_new_active"}, "enabled": True},
-                ],
-                "actions": [
-                    {
-                        "template": "hello {{username}}!",
-                        "options": {},
-                        "enabled": True,
-                    },
-                    {
-                        "template": "hi {{username}}!",
-                        "options": {},
-                        "enabled": True,
-                    },
-                ],
-                "report": {
-                    "recipientIds": ["111", "113"],
-                    "template": "hey {{username}}, this is a report!",
+            at_from_db[0]["triggers"],
+            [
+                {"options": {"category": "all_new_active"}, "enabled": True},
+            ],
+        )
+        self.assertEqual(
+            at_from_db[0]["actions"],
+            [
+                {
+                    "template": "hello {{username}}!",
                     "options": {},
                     "enabled": True,
                 },
+                {
+                    "template": "hi {{username}}!",
+                    "options": {},
+                    "enabled": True,
+                },
+            ],
+        )
+        self.assertEqual(
+            at_from_db[0]["report"],
+            {
+                "recipientIds": ["111", "113"],
+                "template": "hey {{username}}, this is a report!",
+                "options": {},
                 "enabled": True,
             },
+        )
+        self.assertEqual(at_from_db[0]["enabled"], True)
+        self.assertEqual(
+            at_from_db[0]["createdAt"].strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+            today_created_at.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+        )
+        self.assertEqual(
+            at_from_db[0]["updatedAt"].strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+            today_created_at.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
         )
 
     def test_save_to_db_dict_instance(self):
@@ -90,6 +107,7 @@ class TestAutomationDBSaveToDB(unittest.TestCase):
         load_dotenv()
         db_name = os.getenv("AUTOMATION_DB_NAME")
         collection_name = os.getenv("AUTOMATION_DB_COLLECTION")
+        today_created_at = datetime.now(tz=timezone.utc)
 
         client[db_name].drop_collection(collection_name)
 
@@ -117,6 +135,8 @@ class TestAutomationDBSaveToDB(unittest.TestCase):
                 "enabled": True,
             },
             "enabled": True,
+            "createdAt": today_created_at,
+            "updatedAt": today_created_at,
         }
 
         automation_db = AutomationDB()
@@ -128,33 +148,45 @@ class TestAutomationDBSaveToDB(unittest.TestCase):
         at_from_db = list(cursor)
 
         self.assertEqual(len(at_from_db), 1)
+        self.assertEqual(at_from_db[0]["guildId"], "123")
         self.assertEqual(
-            at_from_db[0],
-            {
-                "guildId": "123",
-                "triggers": [
-                    {"options": {"category": "all_new_active"}, "enabled": True},
-                ],
-                "actions": [
-                    {
-                        "template": "hello {{username}}!",
-                        "options": {},
-                        "enabled": True,
-                    },
-                    {
-                        "template": "hi {{username}}!",
-                        "options": {},
-                        "enabled": True,
-                    },
-                ],
-                "report": {
-                    "recipientIds": ["111", "113"],
-                    "template": "hey {{username}}, this is a report!",
+            at_from_db[0]["triggers"],
+            [
+                {"options": {"category": "all_new_active"}, "enabled": True},
+            ],
+        )
+        self.assertEqual(
+            at_from_db[0]["actions"],
+            [
+                {
+                    "template": "hello {{username}}!",
                     "options": {},
                     "enabled": True,
                 },
+                {
+                    "template": "hi {{username}}!",
+                    "options": {},
+                    "enabled": True,
+                },
+            ],
+        )
+        self.assertEqual(
+            at_from_db[0]["report"],
+            {
+                "recipientIds": ["111", "113"],
+                "template": "hey {{username}}, this is a report!",
+                "options": {},
                 "enabled": True,
             },
+        )
+        self.assertEqual(at_from_db[0]["enabled"], True)
+        self.assertEqual(
+            at_from_db[0]["createdAt"].strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+            today_created_at.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+        )
+        self.assertEqual(
+            at_from_db[0]["updatedAt"].strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+            today_created_at.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
         )
 
     def test_raise_error(self):

@@ -1,5 +1,7 @@
 import unittest
 
+from datetime import datetime
+
 from automation.utils.interfaces import (
     Automation,
     AutomationTrigger,
@@ -35,7 +37,17 @@ class TestAutomation(unittest.TestCase):
             options={},
             enabled=True,
         )
-        automation = Automation("123", triggers, actions, report, enabled=True)
+        today_time = datetime.now()
+
+        automation = Automation(
+            "123",
+            triggers,
+            actions,
+            report,
+            enabled=True,
+            createdAt=today_time,
+            updatedAt=today_time,
+        )
 
         self.assertIsInstance(automation.triggers[0], AutomationTrigger)
         self.assertEqual(
@@ -111,7 +123,17 @@ class TestAutomation(unittest.TestCase):
             options={},
             enabled=True,
         )
-        automation = Automation("123", triggers, actions, report, enabled=True)
+
+        today_time = datetime.now()
+        automation = Automation(
+            "123",
+            triggers,
+            actions,
+            report,
+            enabled=True,
+            createdAt=today_time,
+            updatedAt=today_time,
+        )
 
         automation_dict = automation.to_dict()
 
@@ -151,8 +173,11 @@ class TestAutomation(unittest.TestCase):
             },
         )
         self.assertEqual(automation_dict["enabled"], True)
+        self.assertEqual(automation_dict["createdAt"], today_time)
+        self.assertEqual(automation_dict["updatedAt"], today_time)
 
     def test_from_dict(self):
+        today_time = datetime.now()
         automation_dict = {
             "guildId": "123",
             "triggers": [
@@ -178,6 +203,8 @@ class TestAutomation(unittest.TestCase):
                 "enabled": True,
             },
             "enabled": False,
+            "createdAt": today_time,
+            "updatedAt": today_time,
         }
 
         automation = Automation.from_dict(automation_dict)
@@ -229,3 +256,5 @@ class TestAutomation(unittest.TestCase):
             automation.actions[1].enabled,
             False,
         )
+        self.assertEqual(automation.createdAt, today_time)
+        self.assertEqual(automation.updatedAt, today_time)

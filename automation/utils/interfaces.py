@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 class AutomationTrigger:
     def __init__(self, options: dict, enabled: bool):
         # self.options = {"category": category}
@@ -30,19 +33,33 @@ class Automation:
         actions: list[AutomationAction],
         report: AutomationReport,
         enabled: bool,
+        createdAt: datetime,
+        updatedAt: datetime,
     ):
         self.guild_id = guild_id
         self.triggers = triggers
         self.actions = actions
         self.report = report
         self.enabled = enabled
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
 
     @classmethod
     def from_dict(cls, data: dict):
         triggers = [AutomationTrigger(**trigger) for trigger in data["triggers"]]
         actions = [AutomationAction(**trigger) for trigger in data["actions"]]
         report = AutomationReport(**data["report"])
-        return cls(data["guildId"], triggers, actions, report, data["enabled"])
+        created_at = data["createdAt"]
+        updated_at = data["updatedAt"]
+        return cls(
+            data["guildId"],
+            triggers,
+            actions,
+            report,
+            data["enabled"],
+            created_at,
+            updated_at,
+        )
 
     def to_dict(self):
         return {
@@ -51,4 +68,6 @@ class Automation:
             "actions": [action.__dict__ for action in self.actions],
             "report": self.report.__dict__,
             "enabled": self.enabled,
+            "createdAt": self.createdAt,
+            "updatedAt": self.updatedAt,
         }
