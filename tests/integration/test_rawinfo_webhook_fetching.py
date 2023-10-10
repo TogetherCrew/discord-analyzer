@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from discord_analyzer.models.RawInfoModel import RawInfoModel
-from utils.get_mongo_client import get_mongo_client
+from utils.get_mongo_client import MongoSingleton
 
 
 def test_rawinfo_get_day_entry_empty_data():
@@ -10,7 +10,8 @@ def test_rawinfo_get_day_entry_empty_data():
     """
     guildId = "1234"
 
-    client = get_mongo_client()
+    mongo_singleton = MongoSingleton.get_instance()
+    client = mongo_singleton.get_client()
 
     client[guildId].drop_collection("rawinfos")
 
@@ -28,7 +29,8 @@ def test_rawinfo_get_day_entry_data_avaialble():
     """
     guildId = "1234"
 
-    client = get_mongo_client()
+    mongo_singleton = MongoSingleton.get_instance()
+    client = mongo_singleton.get_client()
 
     client[guildId].drop_collection("rawinfos")
 

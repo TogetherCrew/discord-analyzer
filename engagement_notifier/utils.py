@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import uuid1
 
-from utils.get_mongo_client import get_mongo_client
+from utils.get_mongo_client import MongoSingleton
 from utils.get_rabbitmq import prepare_rabbit_mq
 
 
@@ -11,7 +11,9 @@ class EngagementUtils:
         """
         utilities for engagement notifier
         """
-        self.mongo_client = get_mongo_client()
+        # self.mongo_client = get_mongo_client()
+        mongo_singleton = MongoSingleton.get_instance()
+        self.mongo_client = mongo_singleton.get_client()
         self.rabbitmq = prepare_rabbit_mq()
 
     def _get_users_from_guildmembers(
