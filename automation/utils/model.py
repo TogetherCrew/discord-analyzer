@@ -40,13 +40,24 @@ class AutomationDB:
 
         return guild_automations
 
-    def save_to_db(self, automation: Automation) -> None:
+    def save_to_db(self, automation: Automation | dict) -> None:
         """
         save one automation into the database
 
         Parameters
         ------------
-        automation : Automation
+        automation : Automation | dict
             an automation to insert into a guild
+            in case of Automation instance,
+            at first we would convert it to a dictionary
         """
-        self.client[self.db_name][self.collection_name].insert_one(automation)
+        if isinstance(automation, dict):
+            self.client[self.db_name][self.collection_name].insert_one(automation)
+        elif isinstance(automation, Automation):
+            self.client[self.db_name][self.collection_name].insert_one(
+                automation.to_dict()
+            )
+        else:
+            msg = "Not supported the type of entered object!,"
+            msg += f"given type is: {type(automation)}"
+            raise TypeError(msg)
