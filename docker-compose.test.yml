@@ -27,6 +27,8 @@ services:
       - NEO4J_DB=neo4j
       - SAGA_DB_NAME=Saga
       - SAGA_DB_COLLECTION=sagas
+      - AUTOMATION_DB_NAME=Automation
+      - AUTOMATION_DB_COLLECTION=automations
       - SENTRY_DSN=sample_dsn
       - SENTRY_ENV=local
     volumes:
