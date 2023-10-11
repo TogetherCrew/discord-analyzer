@@ -1,37 +1,19 @@
 from datetime import datetime, timedelta
 
-from engagement_notifier.engagement import EngagementNotifier
+from automation.utils.automation_base import AutomationBase
 
 from .utils.analyzer_setup import launch_db_access
 
 
-def test_prepare_ngu_no_data():
+def test_prepare_ngu_some_data_nickname_strategy():
     """
-    test the ngu preparation module in case of no data available
-    the output should be an empty list
-    """
-    guildId = "1234"
-    db_access = launch_db_access(guildId)
-
-    db_access.db_mongo_client[guildId].drop_collection("guildmembers")
-    db_access.db_mongo_client[guildId]["guildmembers"].delete_many({})
-
-    notifier = EngagementNotifier()
-    names = notifier.prepare_names(guild_id=guildId, user_ids=[])
-
-    assert names == []
-
-
-def test_prepare_ngu_some_data():
-    """
-    test the ngu preparation module in case of some data available
-    the output should be have the names with the priority of ngu
+    test the preparation module in case of some data available
+    the output should be have the names of the field `nickname`
     """
     guildId = "1234"
     db_access = launch_db_access(guildId)
 
     db_access.db_mongo_client[guildId].drop_collection("guildmembers")
-    db_access.db_mongo_client[guildId]["guildmembers"].delete_many({})
 
     db_access.db_mongo_client[guildId]["guildmembers"].insert_many(
         [
@@ -46,7 +28,7 @@ def test_prepare_ngu_some_data():
                 "permissions": "6677",
                 "deletedAt": None,
                 "globalName": "User1GlobalName",
-                "nickname": "User1NickName",  # this will be used for the message
+                "nickname": "User1NickName",
             },
             {
                 "discordId": "1112",
@@ -58,12 +40,12 @@ def test_prepare_ngu_some_data():
                 "discriminator": "0",
                 "permissions": "6677",
                 "deletedAt": None,
-                "globalName": "User2GlobalName",  # this will be used for the message
+                "globalName": "User2GlobalName",
                 "nickname": None,
             },
             {
                 "discordId": "1113",
-                "username": "user3",  # this will be used for the message
+                "username": "user3",
                 "roles": [],
                 "joinedAt": datetime.now() - timedelta(days=10),
                 "avatar": None,
@@ -103,17 +85,16 @@ def test_prepare_ngu_some_data():
         ]
     )
 
-    notifier = EngagementNotifier()
-    names = notifier.prepare_names(
-        guild_id=guildId, user_ids=["1111", "1112", "1113", "1116", "1119"]
+    automation_base = AutomationBase()
+    id_names = automation_base.prepare_names(
+        guild_id=guildId,
+        user_ids=["1111", "1112", "1113", "1116"],
+        user_field="nickname",
     )
 
-    assert set(names) == set(
-        [
-            "User1NickName",
-            "User2GlobalName",
-            "user3",
-            "User6NickName",
-            "User9GlobalName",
-        ]
-    )
+    assert id_names == [
+        ("1111", "User1NickName"),
+        ("1112", None),
+        ("1113", None),
+        ("1116", "User6NickName"),
+    ]
