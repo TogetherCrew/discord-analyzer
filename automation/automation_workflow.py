@@ -96,7 +96,7 @@ class AutomationWorkflow(AutomationBase):
                 if at.report.enabled:
                     # setting up the names to send message
                     report_users: list[str] = []
-                    for member in members_by_category[category]:
+                    for member in members_by_category[category]:  # type: ignore
                         if member["user_name"] is not None:
                             report_users.append(member["user_name"])
                         else:
