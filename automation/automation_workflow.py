@@ -1,7 +1,9 @@
 from typing import Any
 
-from automation.utils.model import AutomationDB
+import logging
+
 from automation.utils.automation_base import AutomationBase
+from automation.utils.model import AutomationDB
 from pybars import Compiler
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
@@ -21,7 +23,15 @@ class AutomationWorkflow(AutomationBase):
         guild_id : str
             to select the right automation
         """
+        log_prefix = f"GUILDID: {guild_id}: "
         automations = self.automation_db.load_from_db(guild_id)
+        if len(automations) == 0:
+            logging.info(f"{log_prefix}No automation available for this guild!")
+        else:
+            msg = f"{log_prefix}Starting automation!"
+            logging.info(
+                f"{msg} number of automation fetched: {len(automations)}"
+            )
 
         for at in automations:
             if at.enabled:
@@ -41,6 +51,10 @@ class AutomationWorkflow(AutomationBase):
                             print(f"action.enabled: {action.enabled}")
                             if action.enabled:
                                 type = self._get_handlebar_type(action.template)
+                                if type is None:
+                                    logging.warning(
+                                        f"{log_prefix}No type specified in the action template!"
+                                    )
                                 prepared_id_name = self.prepare_names(
                                     guild_id, list(users), user_field=type
                                 )
@@ -54,6 +68,7 @@ class AutomationWorkflow(AutomationBase):
                                     )
                                     saga_id = self._create_manual_saga(data)
 
+                                    logging.info(f"{log_prefix}Started to fire events for user {user_id}!")
                                     # firing the event
                                     self.fire_event(saga_id, data)
 
@@ -98,12 +113,12 @@ class AutomationWorkflow(AutomationBase):
         users_prepared = [f"- {user}\n" for user in user_names]
 
         compiled_message = self._compile_message(
-            data={type: users_prepared}, message=template
+            data={type: users_prepared}, message=template  # type: ignore
         )
 
         return compiled_message
 
-    def _get_handlebar_type(self, template: str) -> str:
+    def _get_handlebar_type(self, template: str) -> str | None:
         """
         get the handlebar type.
         for example the template would be
