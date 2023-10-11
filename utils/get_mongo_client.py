@@ -8,7 +8,7 @@ class MongoSingleton:
     __instance = None
 
     def __init__(self):
-        if MongoSingleton.__instance != None:
+        if MongoSingleton.__instance is not None:
             raise Exception("This class is a singleton!")
         else:
             creds = get_mongo_credentials()
@@ -18,7 +18,7 @@ class MongoSingleton:
 
     @staticmethod
     def get_instance():
-        if MongoSingleton.__instance == None:
+        if MongoSingleton.__instance is None:
             MongoSingleton()
         return MongoSingleton.__instance
 

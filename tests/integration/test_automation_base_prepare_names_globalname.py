@@ -96,7 +96,8 @@ def test_prepare_ngu_some_data_globalname_strategy():
         (
             "1111",
             "User1GlobalName",
-        )("1112", "User2GlobalName"),
+        ),
+        ("1112", "User2GlobalName"),
         ("1113", None),
         ("1116", "User6GlobalName"),
     ]

@@ -1,9 +1,9 @@
 import unittest
 
 from automation.utils.interfaces import (
-    AutomationTrigger,
     AutomationAction,
     AutomationReport,
+    AutomationTrigger,
 )
 
 

@@ -4,9 +4,9 @@ from datetime import datetime
 
 from automation.utils.interfaces import (
     Automation,
-    AutomationTrigger,
     AutomationAction,
     AutomationReport,
+    AutomationTrigger,
 )
 
 

@@ -1,6 +1,6 @@
-from dotenv import load_dotenv
-
 import os
+
+from dotenv import load_dotenv
 
 
 def get_automations_env() -> dict[str, str]:
@@ -15,7 +15,7 @@ def get_automations_env() -> dict[str, str]:
         and values are right values
     """
     load_dotenv()
-    db_name = os.getenv("AUTOMATION_DB_NAME")
-    collection_name = os.getenv("AUTOMATION_DB_COLLECTION")
+    db_name = os.getenv("AUTOMATION_DB_NAME", "")
+    collection_name = os.getenv("AUTOMATION_DB_COLLECTION", "")
 
     return {"DB_NAME": db_name, "COLLECTION_NAME": collection_name}

@@ -4,8 +4,8 @@ from automation.automation_workflow import AutomationWorkflow
 from automation.utils.interfaces import (
     Automation,
     AutomationAction,
-    AutomationTrigger,
     AutomationReport,
+    AutomationTrigger,
 )
 
 from .utils.analyzer_setup import launch_db_access

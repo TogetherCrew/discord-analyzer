@@ -1,9 +1,8 @@
 from typing import Any
 
-from pybars import Compiler
-
 from automation.utils.model import AutomationDB
 from automation.utils.automation_base import AutomationBase
+from pybars import Compiler
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
 

@@ -1,10 +1,10 @@
 import os
 import unittest
-from dotenv import load_dotenv
 from datetime import datetime, timezone
 
 from automation.utils.model import AutomationDB
 from automation.utils.interfaces import Automation
+from dotenv import load_dotenv
 from utils.get_mongo_client import MongoSingleton
 
 
