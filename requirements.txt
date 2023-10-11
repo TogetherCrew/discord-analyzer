@@ -24,3 +24,4 @@ rq
 redis
 tc-core-analyzer-lib==1.0.2
 tc-neo4j-lib==1.0.0
+pybars3
