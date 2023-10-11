@@ -68,6 +68,7 @@ class TestAutomationDBLoadFromDB(unittest.TestCase):
                 "enabled": True,
                 "createdAt": past_two_day_created_at,
                 "updatedAt": past_two_day_created_at,
+                "id": "dsajhf2390j0wadjc",
             },
             {
                 "guildId": "124",
@@ -101,6 +102,7 @@ class TestAutomationDBLoadFromDB(unittest.TestCase):
                 "enabled": True,
                 "createdAt": yesterday_created_at,
                 "updatedAt": yesterday_created_at,
+                "id": "328qujmajdsoiwur",
             },
             {
                 "guildId": "123",
@@ -128,6 +130,7 @@ class TestAutomationDBLoadFromDB(unittest.TestCase):
                 "enabled": True,
                 "createdAt": today_created_at,
                 "updatedAt": today_created_at,
+                "id": "uahfoiewrj8979832",
             },
         ]
 
@@ -223,7 +226,7 @@ class TestAutomationDBLoadFromDB(unittest.TestCase):
                     today_created_at.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
                 ],
             )
-
+            self.assertIn(at_dict["id"], ["dsajhf2390j0wadjc", "uahfoiewrj8979832"])
         automations = automation_db.load_from_db(guild_id="124")
 
         self.assertEqual(len(automations), 1)
@@ -272,3 +275,4 @@ class TestAutomationDBLoadFromDB(unittest.TestCase):
                 at_dict["createdAt"].strftime("%Y-%m-%dT%H:%M:%S+00:00"),
                 yesterday_created_at.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
             )
+            self.assertEqual(at_dict["id"], "328qujmajdsoiwur")

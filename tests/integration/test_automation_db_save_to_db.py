@@ -47,6 +47,7 @@ class TestAutomationDBSaveToDB(unittest.TestCase):
             "enabled": True,
             "createdAt": today_created_at,
             "updatedAt": today_created_at,
+            "id": "hafujwe09023",
         }
 
         automation = Automation.from_dict(automation_dict)
@@ -99,6 +100,7 @@ class TestAutomationDBSaveToDB(unittest.TestCase):
             at_from_db[0]["updatedAt"].strftime("%Y-%m-%dT%H:%M:%S+00:00"),
             today_created_at.strftime("%Y-%m-%dT%H:%M:%S+00:00"),
         )
+        self.assertEqual(at_from_db[0]["id"], "hafujwe09023")
 
     def test_save_to_db_dict_instance(self):
         instance = MongoSingleton.get_instance()
