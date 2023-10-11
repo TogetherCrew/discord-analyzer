@@ -31,6 +31,7 @@ class AutomationWorkflow(AutomationBase):
             logging.info(f"{msg} number of automation fetched: {len(automations)}")
 
         for at in automations:
+            at_pre = f"{log_prefix}: automation id: {at.id}: "
             if at.enabled:
                 members_by_category: dict[str, list[dict[str, str]]] = {}
                 for trigger in at.triggers:
@@ -38,11 +39,9 @@ class AutomationWorkflow(AutomationBase):
                         category: str | None = trigger.options["category"]
                         if category is None or not isinstance(category, str):
                             logging.error(
-                                f"{log_prefix}No category specified for one of the triggers, automation id: {at.id}!"
+                                f"{at_pre}No category specified for one of the triggers!"
                             )
-                            logging.error(
-                                f"{log_prefix}Skipping the trigger of automation id: {at.id}!"
-                            )
+                            logging.error(f"{at_pre}Skipping the trigger!")
                             break
 
                         members_by_category[category] = []
@@ -53,16 +52,22 @@ class AutomationWorkflow(AutomationBase):
                         users = self._subtract_users(users1, users2)
 
                         for action in at.actions:
-                            print(f"action.enabled: {action.enabled}")
                             if action.enabled:
                                 type = self._get_handlebar_type(action.template)
+                                prepared_id_name: list[tuple[str, str]]
                                 if type is None:
                                     logging.warning(
-                                        f"{log_prefix}No type specified in the action template!"
+                                        f"{at_pre}No type specified in the action template!"
                                     )
-                                prepared_id_name = self.prepare_names(
-                                    guild_id, list(users), user_field=type
-                                )
+                                    logging.warning(
+                                        f"{at_pre}Sending raw action.template to users!"
+                                    )
+                                    # adding a dummy variable for user_name
+                                    prepared_id_name = zip(users, users)
+                                else:
+                                    prepared_id_name = self.prepare_names(
+                                        guild_id, list(users), user_field=type
+                                    )
 
                                 for user_id, user_name in prepared_id_name:
                                     compiled_message: str
@@ -78,9 +83,8 @@ class AutomationWorkflow(AutomationBase):
                                         guild_id, user_id, compiled_message
                                     )
                                     saga_id = self._create_manual_saga(data)
-
                                     logging.info(
-                                        f"{log_prefix}: automation id: {at.id}:Started to fire events for user {user_id}!"
+                                        f"{at_pre}Started to fire events for user {user_id}!"
                                     )
                                     # firing the event
                                     self.fire_event(saga_id, data)
