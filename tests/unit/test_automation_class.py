@@ -95,6 +95,7 @@ class TestAutomation(unittest.TestCase):
             automation.actions[1].enabled,
             False,
         )
+        self.assertIsInstance(automation.id, str)
 
     def test_to_dict(self):
         triggers = [
@@ -174,6 +175,7 @@ class TestAutomation(unittest.TestCase):
         self.assertEqual(automation_dict["enabled"], True)
         self.assertEqual(automation_dict["createdAt"], today_time)
         self.assertEqual(automation_dict["updatedAt"], today_time)
+        self.assertIsInstance(automation_dict["id"], str)
 
     def test_from_dict(self):
         today_time = datetime.now()
@@ -204,6 +206,7 @@ class TestAutomation(unittest.TestCase):
             "enabled": False,
             "createdAt": today_time,
             "updatedAt": today_time,
+            "id": "uiasdbfjiasn12e237878h",
         }
 
         automation = Automation.from_dict(automation_dict)
@@ -257,3 +260,4 @@ class TestAutomation(unittest.TestCase):
         )
         self.assertEqual(automation.createdAt, today_time)
         self.assertEqual(automation.updatedAt, today_time)
+        self.assertEqual(automation.id, "uiasdbfjiasn12e237878h")

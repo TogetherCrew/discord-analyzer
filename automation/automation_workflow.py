@@ -1,6 +1,5 @@
-from typing import Any
-
 import logging
+from typing import Any
 
 from automation.utils.automation_base import AutomationBase
 from automation.utils.model import AutomationDB
@@ -29,17 +28,23 @@ class AutomationWorkflow(AutomationBase):
             logging.info(f"{log_prefix}No automation available for this guild!")
         else:
             msg = f"{log_prefix}Starting automation!"
-            logging.info(
-                f"{msg} number of automation fetched: {len(automations)}"
-            )
+            logging.info(f"{msg} number of automation fetched: {len(automations)}")
 
         for at in automations:
             if at.enabled:
                 members_by_category: dict[str, list[dict[str, str]]] = {}
                 for trigger in at.triggers:
-                    print(f"trigger.enabled: {trigger.enabled}")
                     if trigger.enabled:
-                        category = trigger.options["category"]
+                        category: str | None = trigger.options["category"]
+                        if category is None or not isinstance(category, str):
+                            logging.error(
+                                f"{log_prefix}No category specified for one of the triggers, automation id: {at.id}!"
+                            )
+                            logging.error(
+                                f"{log_prefix}Skipping the trigger of automation id: {at.id}!"
+                            )
+                            break
+
                         members_by_category[category] = []
 
                         users1, users2 = self._get_users_from_memberactivities(
@@ -60,15 +65,23 @@ class AutomationWorkflow(AutomationBase):
                                 )
 
                                 for user_id, user_name in prepared_id_name:
-                                    compiled_message = self._compile_message(
-                                        data={type: user_name}, message=action.template
-                                    )
+                                    compiled_message: str
+                                    if type is not None:
+                                        compiled_message = self._compile_message(
+                                            data={type: user_name},
+                                            message=action.template,
+                                        )
+                                    else:
+                                        compiled_message = action.template
+
                                     data = self._prepare_saga_data(
                                         guild_id, user_id, compiled_message
                                     )
                                     saga_id = self._create_manual_saga(data)
 
-                                    logging.info(f"{log_prefix}Started to fire events for user {user_id}!")
+                                    logging.info(
+                                        f"{log_prefix}: automation id: {at.id}:Started to fire events for user {user_id}!"
+                                    )
                                     # firing the event
                                     self.fire_event(saga_id, data)
 

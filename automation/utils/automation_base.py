@@ -224,14 +224,14 @@ class AutomationBase:
         if user_field == "ngu":
             for user in users_data:
                 if user["nickname"] is not None:
-                    prepared_id_name.append((user["discordId"], user["nickname"]))
+                    prepared_id_name.append((user["discordId"], user["nickname"]))  # type: ignore
                 elif user["globalName"] is not None:
-                    prepared_id_name.append((user["discordId"], user["globalName"]))
+                    prepared_id_name.append((user["discordId"], user["globalName"]))  # type: ignore
                 else:
                     # this would never be None
                     prepared_id_name.append((user["discordId"], user["username"]))  # type: ignore
         else:
             for user in users_data:
-                prepared_id_name.append((user["discordId"], user[user_field]))
+                prepared_id_name.append((user["discordId"], user[user_field]))  # type: ignore
 
         return prepared_id_name

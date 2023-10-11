@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import uuid1
 
 
 class AutomationTrigger:
@@ -35,7 +36,9 @@ class Automation:
         enabled: bool,
         createdAt: datetime,
         updatedAt: datetime,
+        id: str = str(uuid1()),
     ):
+        self.id = id
         self.guild_id = guild_id
         self.triggers = triggers
         self.actions = actions
@@ -59,10 +62,12 @@ class Automation:
             data["enabled"],
             created_at,
             updated_at,
+            data["id"],
         )
 
     def to_dict(self):
         return {
+            "id": self.id,
             "guildId": self.guild_id,
             "triggers": [trigger.__dict__ for trigger in self.triggers],
             "actions": [action.__dict__ for action in self.actions],
