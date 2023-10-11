@@ -63,7 +63,7 @@ class AutomationWorkflow(AutomationBase):
                                         f"{at_pre}Sending raw action.template to users!"
                                     )
                                     # adding a dummy variable for user_name
-                                    prepared_id_name = zip(users, users)
+                                    prepared_id_name = list(zip(users, users))
                                 else:
                                     prepared_id_name = self.prepare_names(
                                         guild_id, list(users), user_field=type
@@ -95,7 +95,7 @@ class AutomationWorkflow(AutomationBase):
 
                 if at.report.enabled:
                     # setting up the names to send message
-                    users = []
+                    users: list[str] = []
                     for member in members_by_category[category]:
                         if member["user_name"] is not None:
                             users.append(member["user_name"])
