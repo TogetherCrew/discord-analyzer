@@ -3,7 +3,6 @@ import unittest
 from datetime import datetime, timedelta
 
 from automation.utils.model import AutomationDB
-
 from dotenv import load_dotenv
 from utils.get_mongo_client import MongoSingleton
 

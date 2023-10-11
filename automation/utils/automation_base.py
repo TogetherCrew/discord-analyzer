@@ -181,7 +181,7 @@ class AutomationBase:
 
     def prepare_names(
         self, guild_id: str, user_ids: list[str], user_field: str = "username"
-    ) -> list[str]:
+    ) -> list[tuple[str, str]]:
         """
         prepare the name to use in message
         just use the usernames
@@ -203,7 +203,7 @@ class AutomationBase:
 
         Returns:
         --------
-        prepared_id_name : tuple[list[str], list[str]]
+        prepared_id_name : list[tuple[str, str]]
             a prepared id and the names of users to use
             the reason we're returning the id again is we want to
             have the right alignment of id and name
@@ -219,7 +219,7 @@ class AutomationBase:
             guild_id=guild_id, user_ids=user_ids, strategy=fields
         )
 
-        prepared_id_name: list[str] = []
+        prepared_id_name: list[tuple[str, str]] = []
 
         if user_field == "ngu":
             for user in users_data:
