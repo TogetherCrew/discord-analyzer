@@ -214,8 +214,6 @@ class AutomationWorkflow(AutomationBase):
             the data to fire
         """
 
-        self.rabbitmq.connect(Queue.DISCORD_BOT)
-
         self.rabbitmq.publish(
             queue_name=Queue.DISCORD_BOT,
             event=Event.DISCORD_BOT.SEND_MESSAGE,
