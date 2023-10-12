@@ -95,15 +95,17 @@ class AutomationWorkflow(AutomationBase):
 
                 if at.report.enabled:
                     # setting up the names to send message
-                    report_users: list[str] = []
+                    # to avoid duplicate we used dictionary
+                    report_users: dict[str, str] = {}
                     for member in members_by_category[category]:  # type: ignore
                         if member["user_name"] is not None:
-                            report_users.append(member["user_name"])
+                            report_users[member["user_id"]] = member["user_name"]
                         else:
-                            report_users.append(member["user_id"])
+                            # in case of no user info was available just send the ids
+                            report_users[member["user_id"]] = member["user_id"]
 
                     compiled_message = self._prepare_report_compiled_message(
-                        report_users, at.report.template
+                        list(report_users.values()), at.report.template
                     )
 
                     for recipent in at.report.recipientIds:
