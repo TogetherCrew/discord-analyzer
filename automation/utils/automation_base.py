@@ -2,23 +2,24 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import uuid1
 
-from utils.get_mongo_client import get_mongo_client
+from utils.get_mongo_client import MongoSingleton
 from utils.get_rabbitmq import prepare_rabbit_mq
 
 
-class EngagementUtils:
+class AutomationBase:
     def __init__(self) -> None:
         """
-        utilities for engagement notifier
+        utilities for automation workflow
         """
-        self.mongo_client = get_mongo_client()
+        mongo_singleton = MongoSingleton.get_instance()
+        self.mongo_client = mongo_singleton.get_client()
         self.rabbitmq = prepare_rabbit_mq()
 
     def _get_users_from_guildmembers(
-        self, guild_id: str, user_ids: list[str]
+        self, guild_id: str, user_ids: list[str], strategy: str = "ngu"
     ) -> list[dict[str, str | None]]:
         """
-        get the name of the available `ngu` of users
+        get the name of the users based on a strategy
         - `n`: nickname
         - `g`: global name
         - `u`: username
@@ -29,15 +30,33 @@ class EngagementUtils:
             the guild_id to find users from
         user_ids : list[str]
             a list of user id to get the data
+        strategy : str
+            what fields of the user to select from
+            can be either one of the `n`, `g`, `u` or any combination of them
 
         Returns
         ----------
         users_data : list[dict[str, str | None]]
             a dictionary of users with ngu names to use
         """
+        user_fields = {"discordId": 1}
+        for field in strategy:
+            if field == "n":
+                user_fields["nickname"] = 1
+            elif field == "g":
+                user_fields["globalName"] = 1
+            elif field == "u":
+                user_fields["username"] = 1
+            else:
+                msg = "Wrong strategy given!"
+                msg += "should be either on of the `n`, `g`, or `u`!"
+                raise ValueError(msg)
+
+        user_fields["_id"] = 0
+
         curosr = self.mongo_client[guild_id]["guildmembers"].find(
             {"discordId": {"$in": user_ids}},
-            {"nickname": 1, "globalName": 1, "username": 1, "_id": 0},
+            user_fields,
         )
 
         users_data = list(curosr)
@@ -70,7 +89,6 @@ class EngagementUtils:
             .replace(hour=0, minute=0, second=0)
             .strftime("%Y-%m-%dT%H:%M:%S")
         )
-
         date_two_past_days = (
             (datetime.now() - timedelta(days=2))
             .replace(hour=0, minute=0, second=0)
@@ -161,24 +179,59 @@ class EngagementUtils:
 
         return saga_id
 
-    def get_owner_id(self, guild_id: str) -> str:
+    def prepare_names(
+        self, guild_id: str, user_ids: list[str], user_field: str = "username"
+    ) -> list[tuple[str, str]]:
         """
-        get guild owner discord id
+        prepare the name to use in message
+        just use the usernames
 
         Parameters
         ------------
         guild_id : str
-            the guild_id that we want its owner
+            the guild to access their data
+        user_ids : list[str]
+            a list of user ids to prepare their name
+        user_field : str
+            the field to choose from the user
+            can be either one of below
+            - `username`
+            - `nickname`
+            - `globalName`
+            - `ngu` -> is the combination of above
+            - default is `username`
 
-        Returns
+        Returns:
         --------
-        owner_id : str
-            the owner discordId
+        prepared_id_name : list[tuple[str, str]]
+            a prepared id and the names of users to use
+            the reason we're returning the id again is we want to
+            have the right alignment of id and name
         """
-        document = self.mongo_client["RnDAO"]["guilds"].find_one(
-            {"guildId": guild_id}, {"_id": 0, "guildId": 1, "user": 1}
+        # strategy selection
+        fields: str
+        if user_field == "ngu":
+            fields = "ngu"
+        else:
+            fields = user_field[0]  # choose the first character
+
+        users_data = self._get_users_from_guildmembers(
+            guild_id=guild_id, user_ids=user_ids, strategy=fields
         )
 
-        owner_id = document["user"]
+        prepared_id_name: list[tuple[str, str]] = []
 
-        return owner_id
+        if user_field == "ngu":
+            for user in users_data:
+                if user["nickname"] is not None:
+                    prepared_id_name.append((user["discordId"], user["nickname"]))  # type: ignore
+                elif user["globalName"] is not None:
+                    prepared_id_name.append((user["discordId"], user["globalName"]))  # type: ignore
+                else:
+                    # this would never be None
+                    prepared_id_name.append((user["discordId"], user["username"]))  # type: ignore
+        else:
+            for user in users_data:
+                prepared_id_name.append((user["discordId"], user[user_field]))  # type: ignore
+
+        return prepared_id_name

@@ -1,49 +1,29 @@
 from datetime import datetime, timedelta
 
-from engagement_notifier.engagement import EngagementNotifier
+from automation.automation_workflow import AutomationWorkflow
+from automation.utils.interfaces import (
+    Automation,
+    AutomationAction,
+    AutomationReport,
+    AutomationTrigger,
+)
 
 from .utils.analyzer_setup import launch_db_access
 
 
-def test_engagement_notifier_fire_message_check_mongodb_document_count():
+def test_automation_fire_message_check_mongodb_document_messages_username_strategy():
     """
-    check the saga count created
+    check the created messages in saga
     """
-    guildId = "1234"
-    db_access = launch_db_access(guildId)
+    guild_id = "1234"
+    db_access = launch_db_access(guild_id)
 
-    db_access.db_mongo_client[guildId].drop_collection("memberactivities")
-    db_access.db_mongo_client[guildId]["memberactivities"].delete_many({})
-
+    db_access.db_mongo_client[guild_id].drop_collection("memberactivities")
     db_access.db_mongo_client["Saga"].drop_collection("sagas")
-    db_access.db_mongo_client["Saga"]["sagas"].delete_many({})
+    db_access.db_mongo_client[guild_id].drop_collection("guildmembers")
+    db_access.db_mongo_client["Automation"].drop_collection("automations")
 
-    db_access.db_mongo_client[guildId].drop_collection("guildmembers")
-    db_access.db_mongo_client[guildId]["guildmembers"].delete_many({})
-
-    db_access.db_mongo_client["RnDAO"].drop_collection("guilds")
-
-    db_access.db_mongo_client["RnDAO"]["guilds"].insert_one(
-        {
-            "guildId": guildId,
-            "user": "owner_id",
-            "name": "Sample Guild",
-            "connectedAt": datetime.now(),
-            "isInProgress": False,
-            "isDisconnected": False,
-            "icon": "4256asdiqwjo032",
-            "window": [7, 1],
-            "action": [1, 1, 1, 4, 3, 5, 5, 4, 3, 2, 2, 2, 1],
-            "selectedChannels": [
-                {
-                    "channelId": "11111111111111",
-                    "channelName": "general",
-                },
-            ],
-        }
-    )
-
-    db_access.db_mongo_client[guildId]["guildmembers"].insert_many(
+    db_access.db_mongo_client[guild_id]["guildmembers"].insert_many(
         [
             {
                 "discordId": "1111",
@@ -56,7 +36,7 @@ def test_engagement_notifier_fire_message_check_mongodb_document_count():
                 "permissions": "6677",
                 "deletedAt": None,
                 "globalName": "User1GlobalName",
-                "nickname": "User1NickName",
+                "nickname": "User1NickName",  # this will be used for the message
             },
             {
                 "discordId": "1112",
@@ -68,12 +48,12 @@ def test_engagement_notifier_fire_message_check_mongodb_document_count():
                 "discriminator": "0",
                 "permissions": "6677",
                 "deletedAt": None,
-                "globalName": "User2GlobalName",
+                "globalName": "User2GlobalName",  # this will be used for the message
                 "nickname": None,
             },
             {
                 "discordId": "1113",
-                "username": "user3",
+                "username": "user3",  # this will be used for the message
                 "roles": [],
                 "joinedAt": datetime.now() - timedelta(days=10),
                 "avatar": None,
@@ -110,10 +90,60 @@ def test_engagement_notifier_fire_message_check_mongodb_document_count():
                 "globalName": "User9GlobalName",
                 "nickname": None,
             },
+            {
+                "discordId": "999",
+                "username": "community_manager",
+                "roles": [],
+                "joinedAt": datetime.now() - timedelta(days=10),
+                "avatar": None,
+                "isBot": False,
+                "discriminator": "0",
+                "permissions": "6677",
+                "deletedAt": None,
+                "globalName": "User9GlobalName",
+                "nickname": None,
+            },
         ]
     )
 
-    db_access.db_mongo_client["Saga"].drop_collection("sagas")
+    triggers = [
+        AutomationTrigger(options={"category": "all_new_disengaged"}, enabled=True),
+        AutomationTrigger(options={"category": "all_new_active"}, enabled=False),
+    ]
+    actions = [
+        AutomationAction(
+            template="hey {{username}}! please get back to us!",
+            options={},
+            enabled=True,
+        ),
+        AutomationAction(
+            template="hey {{username}}! please get back to us2!",
+            options={},
+            enabled=False,
+        ),
+    ]
+
+    report = AutomationReport(
+        recipientIds=["999"],
+        template="hey body! This users were messaged:\n{{#each usernames}}{{this}}{{/each}}",
+        options={},
+        enabled=True,
+    )
+    today_time = datetime.now()
+
+    automation = Automation(
+        guild_id,
+        triggers,
+        actions,
+        report,
+        enabled=True,
+        createdAt=today_time,
+        updatedAt=today_time,
+    )
+
+    db_access.db_mongo_client["Automation"]["automations"].insert_one(
+        automation.to_dict()
+    )
 
     date_yesterday = (
         (datetime.now() - timedelta(days=1))
@@ -127,7 +157,7 @@ def test_engagement_notifier_fire_message_check_mongodb_document_count():
         .strftime("%Y-%m-%dT%H:%M:%S")
     )
 
-    db_access.db_mongo_client[guildId]["memberactivities"].insert_many(
+    db_access.db_mongo_client[guild_id]["memberactivities"].insert_many(
         [
             {
                 "date": date_yesterday,
@@ -178,9 +208,30 @@ def test_engagement_notifier_fire_message_check_mongodb_document_count():
         ]
     )
 
-    notifier = EngagementNotifier()
-    notifier.notify_disengaged(guildId)
+    automation_workflow = AutomationWorkflow()
+    automation_workflow.start(guild_id)
 
-    # sending messages to 4 users (1111, 1112, 1113, and owner)
-    doc_count = db_access.db_mongo_client["Saga"]["sagas"].count_documents({})
-    assert doc_count == 4
+    count = db_access.db_mongo_client["Saga"]["sagas"].count_documents({})
+    assert count == 4
+
+    user1_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
+        {"data.discordId": "1111"}
+    )
+    assert user1_doc["data"]["message"] == ("hey user1! please get back to us!")
+
+    user2_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
+        {"data.discordId": "1112"}
+    )
+    assert user2_doc["data"]["message"] == ("hey user2! please get back to us!")
+
+    user3_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
+        {"data.discordId": "1113"}
+    )
+    assert user3_doc["data"]["message"] == ("hey user3! please get back to us!")
+
+    user_cm_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
+        {"data.discordId": "999"}
+    )
+    expected_msg = "hey body! This users were messaged:\n"
+    expected_msg += "- user1\n- user2\n- user3\n"
+    assert user_cm_doc["data"]["message"] == expected_msg

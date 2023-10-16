@@ -1,27 +1,29 @@
 from datetime import datetime, timedelta
 
-from engagement_notifier.engagement import EngagementNotifier
+from automation.automation_workflow import AutomationWorkflow
+from automation.utils.interfaces import (
+    Automation,
+    AutomationAction,
+    AutomationReport,
+    AutomationTrigger,
+)
 
 from .utils.analyzer_setup import launch_db_access
 
 
-def test_engagement_notifier_fire_message_check_mongodb_document_messages():
+def test_automation_fire_message_check_mongodb_document_messages_ngu_strategy():
     """
     check the created messages in saga
     """
-    guildId = "1234"
-    db_access = launch_db_access(guildId)
+    guild_id = "1234"
+    db_access = launch_db_access(guild_id)
 
-    db_access.db_mongo_client[guildId].drop_collection("memberactivities")
-    db_access.db_mongo_client[guildId]["memberactivities"].delete_many({})
-
+    db_access.db_mongo_client[guild_id].drop_collection("memberactivities")
     db_access.db_mongo_client["Saga"].drop_collection("sagas")
-    db_access.db_mongo_client["Saga"]["sagas"].delete_many({})
+    db_access.db_mongo_client[guild_id].drop_collection("guildmembers")
+    db_access.db_mongo_client["Automation"].drop_collection("automations")
 
-    db_access.db_mongo_client[guildId].drop_collection("guildmembers")
-    db_access.db_mongo_client[guildId]["guildmembers"].delete_many({})
-
-    db_access.db_mongo_client[guildId]["guildmembers"].insert_many(
+    db_access.db_mongo_client[guild_id]["guildmembers"].insert_many(
         [
             {
                 "discordId": "1111",
@@ -88,10 +90,60 @@ def test_engagement_notifier_fire_message_check_mongodb_document_messages():
                 "globalName": "User9GlobalName",
                 "nickname": None,
             },
+            {
+                "discordId": "999",
+                "username": "community_manager",
+                "roles": [],
+                "joinedAt": datetime.now() - timedelta(days=10),
+                "avatar": None,
+                "isBot": False,
+                "discriminator": "0",
+                "permissions": "6677",
+                "deletedAt": None,
+                "globalName": "User9GlobalName",
+                "nickname": None,
+            },
         ]
     )
 
-    db_access.db_mongo_client["Saga"].drop_collection("sagas")
+    triggers = [
+        AutomationTrigger(options={"category": "all_new_disengaged"}, enabled=True),
+        AutomationTrigger(options={"category": "all_new_active"}, enabled=False),
+    ]
+    actions = [
+        AutomationAction(
+            template="hey {{ngu}}! please get back to us!",
+            options={},
+            enabled=True,
+        ),
+        AutomationAction(
+            template="hey {{ngu}}! please get back to us2!",
+            options={},
+            enabled=False,
+        ),
+    ]
+
+    report = AutomationReport(
+        recipientIds=["999"],
+        template="hey body! This users were messaged:\n{{#each usernames}}{{this}}{{/each}}",
+        options={},
+        enabled=True,
+    )
+    today_time = datetime.now()
+
+    automation = Automation(
+        guild_id,
+        triggers,
+        actions,
+        report,
+        enabled=True,
+        createdAt=today_time,
+        updatedAt=today_time,
+    )
+
+    db_access.db_mongo_client["Automation"]["automations"].insert_one(
+        automation.to_dict()
+    )
 
     date_yesterday = (
         (datetime.now() - timedelta(days=1))
@@ -105,7 +157,7 @@ def test_engagement_notifier_fire_message_check_mongodb_document_messages():
         .strftime("%Y-%m-%dT%H:%M:%S")
     )
 
-    db_access.db_mongo_client[guildId]["memberactivities"].insert_many(
+    db_access.db_mongo_client[guild_id]["memberactivities"].insert_many(
         [
             {
                 "date": date_yesterday,
@@ -156,16 +208,32 @@ def test_engagement_notifier_fire_message_check_mongodb_document_messages():
         ]
     )
 
-    notifier = EngagementNotifier()
-    notifier.notify_disengaged(guildId)
+    automation_workflow = AutomationWorkflow()
+    automation_workflow.start(guild_id)
 
-    # sending messages to 2 users (1111 and user2)
-    cursor = db_access.db_mongo_client["Saga"]["sagas"].find({})
-    saga_docuemnts = list(cursor)
+    count = db_access.db_mongo_client["Saga"]["sagas"].count_documents({})
+    assert count == 4
 
-    for document in saga_docuemnts:
-        assert (
-            "User1NickName" in document["data"]["message"]
-            or "User2GlobalName" in document["data"]["message"]
-            or "user3" in document["data"]["message"]
-        )
+    user1_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
+        {"data.discordId": "1111"}
+    )
+    assert user1_doc["data"]["message"] == ("hey User1NickName! please get back to us!")
+
+    user2_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
+        {"data.discordId": "1112"}
+    )
+    assert user2_doc["data"]["message"] == (
+        "hey User2GlobalName! please get back to us!"
+    )
+
+    user3_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
+        {"data.discordId": "1113"}
+    )
+    assert user3_doc["data"]["message"] == ("hey user3! please get back to us!")
+
+    user_cm_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
+        {"data.discordId": "999"}
+    )
+    expected_msg = "hey body! This users were messaged:\n"
+    expected_msg += "- User1NickName\n- User2GlobalName\n- user3\n"
+    assert user_cm_doc["data"]["message"] == expected_msg

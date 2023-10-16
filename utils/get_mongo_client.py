@@ -4,14 +4,26 @@ from pymongo import MongoClient
 from utils.daolytics_uitls import get_mongo_credentials
 
 
-def get_mongo_client() -> MongoClient:
-    creds = get_mongo_credentials()
+class MongoSingleton:
+    __instance = None
 
-    connection_uri = config_mogno_creds(creds)
+    def __init__(self):
+        if MongoSingleton.__instance is not None:
+            raise Exception("This class is a singleton!")
+        else:
+            creds = get_mongo_credentials()
+            connection_uri = config_mogno_creds(creds)
+            self.client = MongoClient(connection_uri)
+            MongoSingleton.__instance = self
 
-    client = MongoClient(connection_uri)
+    @staticmethod
+    def get_instance():
+        if MongoSingleton.__instance is None:
+            MongoSingleton()
+        return MongoSingleton.__instance
 
-    return client
+    def get_client(self):
+        return self.client
 
 
 def config_mogno_creds(mongo_creds: dict[str, Any]):

@@ -1,113 +1,27 @@
-import os
 from datetime import datetime, timedelta
 
+from automation.automation_workflow import AutomationWorkflow
 from automation.utils.interfaces import (
     Automation,
     AutomationAction,
     AutomationReport,
     AutomationTrigger,
 )
-from discord_utils import publish_on_success
-from dotenv import load_dotenv
-from utils.daolytics_uitls import get_mongo_credentials
 
 from .utils.analyzer_setup import launch_db_access
 
 
-def test_publish_on_success_check_notification_choreographies():
+def test_automation_fire_message_check_mongodb_document_messages_ngu_strategy():
     """
-    test the publish on success functions
-    we want to check the database if the notify choreographies are created
+    check the created messages in saga
     """
-    load_dotenv()
-
     guild_id = "1234"
-    saga_id = "000000011111113333377777ie0w"
-    expected_owner_id = "334461287892"
     db_access = launch_db_access(guild_id)
-    saga_db = os.getenv("SAGA_DB_NAME")
-    saga_collection = os.getenv("SAGA_DB_COLLECTION")
-    at_db = os.getenv("AUTOMATION_DB_NAME")
-    at_collection = os.getenv("AUTOMATION_DB_COLLECTION")
-
-    db_access.db_mongo_client["RnDAO"].drop_collection("guilds")
 
     db_access.db_mongo_client[guild_id].drop_collection("memberactivities")
-    db_access.db_mongo_client[saga_db].drop_collection(saga_collection)
+    db_access.db_mongo_client["Saga"].drop_collection("sagas")
     db_access.db_mongo_client[guild_id].drop_collection("guildmembers")
-    db_access.db_mongo_client[at_db].drop_collection(at_collection)
-
-    db_access.db_mongo_client["RnDAO"]["guilds"].insert_one(
-        {
-            "guildId": guild_id,
-            "user": expected_owner_id,
-            "name": "Sample Guild",
-            "connectedAt": datetime.now(),
-            "isInProgress": False,
-            "isDisconnected": False,
-            "icon": "4256asdiqwjo032",
-            "window": [7, 1],
-            "action": [1, 1, 1, 4, 3, 5, 5, 4, 3, 2, 2, 2, 1],
-            "selectedChannels": [
-                {
-                    "channelId": "11111111111111",
-                    "channelName": "general",
-                },
-            ],
-        }
-    )
-
-    # Adding sample memberactivities
-    date_yesterday = (
-        (datetime.now() - timedelta(days=1))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
-    )
-
-    date_two_past_days = (
-        (datetime.now() - timedelta(days=2))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
-    )
-
-    db_access.db_mongo_client[saga_db][saga_collection].insert_one(
-        {
-            "choreography": {
-                "name": "DISCORD_UPDATE_CHANNELS",
-                "transactions": [
-                    {
-                        "queue": "DISCORD_BOT",
-                        "event": "FETCH",
-                        "order": 1,
-                        "status": "SUCCESS",
-                        "start": datetime.now(),
-                        "end": datetime.now(),
-                        "runtime": 1,
-                    },
-                    {
-                        "queue": "DISCORD_ANALYZER",
-                        "event": "RUN",
-                        "order": 2,
-                        "status": "SUCCESS",
-                        "start": datetime.now(),
-                        "end": datetime.now(),
-                        "runtime": 1,
-                    },
-                ],
-            },
-            "status": "IN_PROGRESS",
-            "data": {
-                "guildId": guild_id,
-                "created": False,
-                "discordId": expected_owner_id,
-                "message": "data is ready",
-                "useFallback": True,
-            },
-            "sagaId": saga_id,
-            "createdAt": datetime.now(),
-            "updatedAt": datetime.now(),
-        }
-    )
+    db_access.db_mongo_client["Automation"].drop_collection("automations")
 
     db_access.db_mongo_client[guild_id]["guildmembers"].insert_many(
         [
@@ -198,14 +112,9 @@ def test_publish_on_success_check_notification_choreographies():
     ]
     actions = [
         AutomationAction(
-            template="hey {{ngu}}! please get back to us!",
+            template="hey! please get back to us!",
             options={},
             enabled=True,
-        ),
-        AutomationAction(
-            template="hey {{ngu}}! please get back to us2!",
-            options={},
-            enabled=False,
         ),
     ]
 
@@ -227,7 +136,9 @@ def test_publish_on_success_check_notification_choreographies():
         updatedAt=today_time,
     )
 
-    db_access.db_mongo_client[at_db][at_collection].insert_one(automation.to_dict())
+    db_access.db_mongo_client["Automation"]["automations"].insert_one(
+        automation.to_dict()
+    )
 
     date_yesterday = (
         (datetime.now() - timedelta(days=1))
@@ -292,48 +203,30 @@ def test_publish_on_success_check_notification_choreographies():
         ]
     )
 
-    # preparing the data for publish_on_success function
-    mongo_creds = get_mongo_credentials()
-    user = mongo_creds["user"]
-    password = mongo_creds["password"]
-    host = mongo_creds["host"]
-    port = mongo_creds["port"]
-    connection_uri = f"mongodb://{user}:{password}@{host}:{port}"
-    mongo_creds = {
-        "connection_str": connection_uri,
-        "db_name": saga_db,
-        "collection_name": saga_collection,
-    }
+    automation_workflow = AutomationWorkflow()
+    automation_workflow.start(guild_id)
 
-    sample_args_data = ["sample", saga_id, mongo_creds]
-    publish_on_success(None, None, sample_args_data)
+    count = db_access.db_mongo_client["Saga"]["sagas"].count_documents({})
+    assert count == 4
 
-    notification_count = db_access.db_mongo_client[saga_db][
-        saga_collection
-    ].count_documents({"choreography.name": "DISCORD_NOTIFY_USERS"})
-
-    assert notification_count == 4
-
-    user1_doc = db_access.db_mongo_client[saga_db][saga_collection].find_one(
+    user1_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
         {"data.discordId": "1111"}
     )
-    assert user1_doc["data"]["message"] == ("hey User1NickName! please get back to us!")
+    assert user1_doc["data"]["message"] == "hey! please get back to us!"
 
-    user2_doc = db_access.db_mongo_client[saga_db][saga_collection].find_one(
+    user2_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
         {"data.discordId": "1112"}
     )
-    assert user2_doc["data"]["message"] == (
-        "hey User2GlobalName! please get back to us!"
-    )
+    assert user2_doc["data"]["message"] == "hey! please get back to us!"
 
-    user3_doc = db_access.db_mongo_client[saga_db][saga_collection].find_one(
+    user3_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
         {"data.discordId": "1113"}
     )
-    assert user3_doc["data"]["message"] == ("hey user3! please get back to us!")
+    assert user3_doc["data"]["message"] == "hey! please get back to us!"
 
-    user_cm_doc = db_access.db_mongo_client[saga_db][saga_collection].find_one(
+    user_cm_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
         {"data.discordId": "999"}
     )
     expected_msg = "hey body! This users were messaged:\n"
-    expected_msg += "- User1NickName\n- User2GlobalName\n- user3\n"
+    expected_msg += "- 1111\n- 1112\n- 1113\n"
     assert user_cm_doc["data"]["message"] == expected_msg
