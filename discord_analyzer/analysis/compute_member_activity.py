@@ -151,6 +151,7 @@ def compute_member_activity(
         "all_lurker": {},
         "all_about_to_disengage": {},
         "all_disengaged_in_past": {},
+        "all_inconsistent": {},
     }
     activities_name = list(activity_dict.keys())
 
