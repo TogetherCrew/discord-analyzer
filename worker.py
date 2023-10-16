@@ -1,11 +1,8 @@
 import logging
-import os
 
 import redis
-from dotenv import load_dotenv
 from rq import Worker
-
-load_dotenv()
+from utils.daolytics_uitls import get_redis_credentials
 
 
 def worker_exception_handler(job, exc_type, exc_value, traceback):
@@ -17,18 +14,18 @@ def worker_exception_handler(job, exc_type, exc_value, traceback):
 
 
 if __name__ == "__main__":
-    host = os.getenv("REDIS_HOST", "")
-    port = int(os.getenv("REDIS_PORT", 6379))
-    password = os.getenv("REDIS_PASSWORD")
+    redis_creds = get_redis_credentials()
 
     logging.basicConfig()
     logging.getLogger().setLevel(logging.INFO)
 
-    redis_connection = redis.Redis(host=host, port=port, password=password)
+    host = redis_creds["host"]
+    port = redis_creds["port"]
+    password = redis_creds["pass"]
+
+    r = redis.Redis(host=host, port=port, password=password)
     worker = Worker(
-        queues=["default"],
-        connection=redis_connection,
-        exception_handlers=worker_exception_handler,
+        queues=["default"], connection=r, exception_handlers=worker_exception_handler
     )
     try:
         worker.work(with_scheduler=True, max_jobs=1)
