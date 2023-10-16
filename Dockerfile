@@ -9,4 +9,4 @@ RUN chmod +x docker-entrypoint.sh
 CMD ["./docker-entrypoint.sh"]
 
 FROM base AS prod
-CMD ["python3", "start_rabbit_mq.py"]
+CMD ["python3", "server.py"]
