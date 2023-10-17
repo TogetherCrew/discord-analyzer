@@ -101,11 +101,16 @@ class Member_activities:
         date_range = [first_date, last_date]
 
         if load_past_data:
-            # num_days_to_load = (
-            #       max([CON_T_THR, VITAL_T_THR, STILL_T_THR, PAUSED_T_THR])+1
-            # ) * WINDOW_D
             num_days_to_load = (
-                max([action[3], action[7], action[9], action[2]]) + 1
+                max(
+                    [
+                        action["CON_T_THR"],
+                        action["VITAL_T_THR"],
+                        action["STILL_T_THR"],
+                        action["PAUSED_T_THR"],
+                    ]
+                )
+                + 1
             ) * window[0]
             date_range[0] = date_range[1] - timedelta(days=num_days_to_load)
 

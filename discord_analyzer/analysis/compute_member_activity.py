@@ -56,46 +56,36 @@ def compute_member_activity(
         (Currently these values will be default values,
         in the future, the user might be able to set these in the
         extraction settings page)
-    act_param: [int] -
-        entry 1: INT_THR - int :
-            minimum number of interactions to be active.
-            Default = 1
-        entry 2: UW_DEG_THR - int :
-            minimum number of connections to be active.
-            Default = 1
-        entry 3: PAUSED_T_THR - int :
-            time period to remain paused.
-            Default = 1
-        entry 4: CON_T_THR - int :
-            time period to assess consistently active.
-            Default = 4
-        entry 5: CON_O_THR - int :
-            times to be active within CON_T_THR to be consistently active.
-            Default = 3
-        entry 6: EDGE_STR_THR - int :
-            minimum number of interactions for connected.
-            Default = 5
-        entry 7: UW_THR_DEG_THR - int :
-            minimum number of accounts for connected.
-            Default = 5
-        entry 8: VITAL_T_THR - int :
-            time period to assess for vital.
-            Default = 4
-        entry 9: VITAL_O_THR - int :
-            times to be connected within VITAL_T_THR to be vital.
-            Default = 3
-        entry 10: STILL_T_THR - int :
-            time period to assess for still active.
-            Default = 3
-        entry 11: STILL_O_THR - int :
-            times to be active within STILL_T_THR to be still active.
-            Default = 2
-        entry 12: DROP_H_THR - int:
-            Default = 2
-        entry 13: DROP_I_THR - int:
-            Default = 1
-        (Currently these values will be default values,
-          in the future, the user might be able to adjust these)
+    act_param : dict[str, int]
+        parameters for activity types:
+        keys are listed below
+            - INT_THR : int
+                minimum number of interactions to be active
+            - UW_DEG_THR : int
+                minimum number of connections to be active
+            - EDGE_STR_THR : int
+                minimum number of interactions for connected
+            - UW_THR_DEG_THR : int
+                minimum number of accounts for connected
+            - CON_T_THR : int
+                time period to assess consistently active
+            - CON_O_THR : int
+                times to be active within CON_T_THR to be
+            consistently active
+            - VITAL_T_THR : int
+                time period to assess for vital
+            - VITAL_O_THR : int
+                times to be connected within VITAL_T_THR to be vital
+            - PAUSED_T_THR : int
+                time period to remain paused
+            - STILL_T_THR : int
+                time period to assess for still active
+            - STILL_O_THR : int
+                times to be active within STILL_T_THR to be still active
+            - DROP_H_THR : int
+                time periods in the past to have been newly active
+            - DROP_I_THR : int
+                time periods to have been inactive
 
     Output
     network_dict: {datetime:networkx obj} -
