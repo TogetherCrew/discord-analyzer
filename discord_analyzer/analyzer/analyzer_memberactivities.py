@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import logging
 
 from discord_analyzer.analysis.compute_member_activity import compute_member_activity
 from discord_analyzer.analyzer.memberactivity_utils import MemberActivityUtils
@@ -6,11 +7,9 @@ from discord_analyzer.models.MemberActivityModel import MemberActivityModel
 from discord_analyzer.models.RawInfoModel import RawInfoModel
 
 
-class Member_activities:
-    def __init__(self, DB_connections, logging) -> None:
+class MemberActivities:
+    def __init__(self, DB_connections) -> None:
         self.DB_connections = DB_connections
-        self.logging = logging
-
         self.utils = MemberActivityUtils(DB_connections)
 
     def analysis_member_activity(self, guildId, mongo_connection_str, from_start=False):
@@ -43,9 +42,9 @@ class Member_activities:
 
         # check current guild is exist
         if guildId not in client.list_database_names():
-            self.logging.error(f"{guild_msg} Database {guildId} doesn't exist")
-            self.logging.error(f"{guild_msg} No such databse!")
-            self.logging.info(f"{guild_msg} Continuing")
+            logging.error(f"{guild_msg} Database {guildId} doesn't exist")
+            logging.error(f"{guild_msg} No such databse!")
+            logging.info(f"{guild_msg} Continuing")
             return (None, None)
 
         member_activity_c = MemberActivityModel(client[guildId])
@@ -53,7 +52,7 @@ class Member_activities:
 
         # Testing if there are entries in the rawinfo collection
         if rawinfo_c.count() == 0:
-            self.logging.warning(
+            logging.warning(
                 f"No entries in the collection 'rawinfos' in {guildId} databse"
             )
             return (None, None)
@@ -76,7 +75,7 @@ class Member_activities:
         # get date range to be analyzed
         today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
-        self.logging.info(f"{guild_msg} memberactivities Analysis started!")
+        logging.info(f"{guild_msg} memberactivities Analysis started!")
 
         # initialize
         load_past_data = False
@@ -93,7 +92,7 @@ class Member_activities:
 
         first_date = period
         if first_date is None:
-            self.logging.error(f"No guild: {guildId} available in RnDAO.guilds!")
+            logging.error(f"No guild: {guildId} available in RnDAO.guilds!")
             return None, None
 
         last_date = today - timedelta(days=1)
@@ -130,7 +129,7 @@ class Member_activities:
             date_range,
             window,
             action,
-            logging=self.logging,
+            logging=logging,
             load_past_data=load_past_data,
         )
 

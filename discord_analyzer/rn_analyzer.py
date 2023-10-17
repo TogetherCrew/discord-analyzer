@@ -4,7 +4,7 @@ import os
 import sys
 
 from discord_analyzer.analyzer.analyzer_heatmaps import Heatmaps
-from discord_analyzer.analyzer.analyzer_memberactivities import Member_activities
+from discord_analyzer.analyzer.analyzer_memberactivities import MemberActivities
 from discord_analyzer.analyzer.base_analyzer import Base_analyzer
 from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
 from discord_analyzer.models.GuildsRnDaoModel import GuildsRnDaoModel
@@ -70,9 +70,7 @@ class RnDaoAnalyzer(Base_analyzer):
                 remove_heatmaps=False,
             )
 
-            memberactivities_analysis = Member_activities(
-                self.DB_connections, logging=logging
-            )
+            memberactivities_analysis = MemberActivities(self.DB_connections)
             (
                 member_activities_data,
                 member_acitivities_networkx_data,
@@ -213,9 +211,7 @@ class RnDaoAnalyzer(Base_analyzer):
 
         # run the member_activity analyze
         logging.info(f"Analyzing the MemberActivities data for guild: {guildId}!")
-        memberactivity_analysis = Member_activities(
-            self.DB_connections, logging=logging
-        )
+        memberactivity_analysis = MemberActivities(self.DB_connections)
         (
             member_activities_data,
             member_acitivities_networkx_data,
