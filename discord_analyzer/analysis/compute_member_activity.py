@@ -154,7 +154,7 @@ def compute_member_activity(
         "all_inconsistent": {},
         "all_new_consistent": {},
         "all_new_vital": {},
-        "all_became_inconsistent": {},
+        "all_became_not_consistent": {},
         "all_became_unvital": {},
     }
     activities_name = list(activity_dict.keys())
