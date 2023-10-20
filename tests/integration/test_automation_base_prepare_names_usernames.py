@@ -1,0 +1,195 @@
+from datetime import datetime, timedelta
+
+from automation.utils.automation_base import AutomationBase
+
+from .utils.analyzer_setup import launch_db_access
+
+
+def test_prepare_ngu_some_data_nickname_strategy():
+    """
+    test the preparation module in case of some data available
+    the output should be have the names of the field `username`
+    """
+    guildId = "1234"
+    db_access = launch_db_access(guildId)
+
+    db_access.db_mongo_client[guildId].drop_collection("guildmembers")
+
+    db_access.db_mongo_client[guildId]["guildmembers"].insert_many(
+        [
+            {
+                "discordId": "1111",
+                "username": "user1",
+                "roles": [],
+                "joinedAt": datetime.now() - timedelta(days=10),
+                "avatar": None,
+                "isBot": False,
+                "discriminator": "0",
+                "permissions": "6677",
+                "deletedAt": None,
+                "globalName": "User1GlobalName",
+                "nickname": "User1NickName",
+            },
+            {
+                "discordId": "1112",
+                "username": "user2",
+                "roles": [],
+                "joinedAt": datetime.now() - timedelta(days=10),
+                "avatar": None,
+                "isBot": False,
+                "discriminator": "0",
+                "permissions": "6677",
+                "deletedAt": None,
+                "globalName": "User2GlobalName",
+                "nickname": None,
+            },
+            {
+                "discordId": "1113",
+                "username": "user3",
+                "roles": [],
+                "joinedAt": datetime.now() - timedelta(days=10),
+                "avatar": None,
+                "isBot": False,
+                "discriminator": "0",
+                "permissions": "6677",
+                "deletedAt": None,
+                "globalName": None,
+                "nickname": None,
+            },
+            {
+                "discordId": "1116",
+                "username": "user6",
+                "roles": [],
+                "joinedAt": datetime.now() - timedelta(days=10),
+                "avatar": None,
+                "isBot": False,
+                "discriminator": "0",
+                "permissions": "6677",
+                "deletedAt": None,
+                "globalName": "User6GlobalName",
+                "nickname": "User6NickName",
+            },
+            {
+                "discordId": "1119",
+                "username": "user9",
+                "roles": [],
+                "joinedAt": datetime.now() - timedelta(days=10),
+                "avatar": None,
+                "isBot": False,
+                "discriminator": "0",
+                "permissions": "6677",
+                "deletedAt": None,
+                "globalName": "User9GlobalName",
+                "nickname": None,
+            },
+        ]
+    )
+
+    automation_base = AutomationBase()
+    id_names = automation_base.prepare_names(
+        guild_id=guildId,
+        user_ids=["1111", "1112", "1113", "1116"],
+        user_field="username",
+    )
+
+    assert id_names == [
+        ("1111", "user1"),
+        ("1112", "user2"),
+        ("1113", "user3"),
+        ("1116", "user6"),
+    ]
+
+
+def test_prepare_ngu_some_data_username_strategy():
+    """
+    test the username preparation module in case of some data available
+    the output should be have the names of the field `username`
+    """
+    guildId = "1234"
+    db_access = launch_db_access(guildId)
+
+    db_access.db_mongo_client[guildId].drop_collection("guildmembers")
+
+    db_access.db_mongo_client[guildId]["guildmembers"].insert_many(
+        [
+            {
+                "discordId": "1111",
+                "username": "user1",
+                "roles": [],
+                "joinedAt": datetime.now() - timedelta(days=10),
+                "avatar": None,
+                "isBot": False,
+                "discriminator": "0",
+                "permissions": "6677",
+                "deletedAt": None,
+                "globalName": "User1GlobalName",
+                "nickname": "User1NickName",
+            },
+            {
+                "discordId": "1112",
+                "username": "user2",
+                "roles": [],
+                "joinedAt": datetime.now() - timedelta(days=10),
+                "avatar": None,
+                "isBot": False,
+                "discriminator": "0",
+                "permissions": "6677",
+                "deletedAt": None,
+                "globalName": "User2GlobalName",
+                "nickname": None,
+            },
+            {
+                "discordId": "1113",
+                "username": "user3",
+                "roles": [],
+                "joinedAt": datetime.now() - timedelta(days=10),
+                "avatar": None,
+                "isBot": False,
+                "discriminator": "0",
+                "permissions": "6677",
+                "deletedAt": None,
+                "globalName": None,
+                "nickname": None,
+            },
+            {
+                "discordId": "1116",
+                "username": "user6",
+                "roles": [],
+                "joinedAt": datetime.now() - timedelta(days=10),
+                "avatar": None,
+                "isBot": False,
+                "discriminator": "0",
+                "permissions": "6677",
+                "deletedAt": None,
+                "globalName": "User6GlobalName",
+                "nickname": "User6NickName",
+            },
+            {
+                "discordId": "1119",
+                "username": "user9",
+                "roles": [],
+                "joinedAt": datetime.now() - timedelta(days=10),
+                "avatar": None,
+                "isBot": False,
+                "discriminator": "0",
+                "permissions": "6677",
+                "deletedAt": None,
+                "globalName": "User9GlobalName",
+                "nickname": None,
+            },
+        ]
+    )
+
+    automation_base = AutomationBase()
+    id_names = automation_base.prepare_names(
+        guild_id=guildId,
+        user_ids=["1111", "1112", "1113", "1116"],
+        user_field="username",
+    )
+
+    assert id_names == [
+        ("1111", "user1"),
+        ("1112", "user2"),
+        ("1113", "user3"),
+        ("1116", "user6"),
+    ]

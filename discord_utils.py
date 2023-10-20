@@ -2,6 +2,7 @@ import logging
 from typing import Any
 
 from analyzer_init import AnalyzerInit
+from automation.automation_workflow import AutomationWorkflow
 from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
 from utils.get_rabbitmq import prepare_rabbit_mq
 from utils.transactions_ordering import sort_transactions
@@ -81,7 +82,9 @@ def get_saga_instance(sagaId: str, connection: str, saga_db: str, saga_collectio
 def publish_on_success(connection, result, *args, **kwargs):
     # we must get these three things
     try:
-        rabbit_creds = args[0][0]
+        # rabbitmq creds
+        # TODO: remove sending it in future
+        _ = args[0][0]
         sagaId = args[0][1]
         mongo_creds = args[0][2]
         logging.info(f"SAGAID: {sagaId}: ON_SUCCESS callback! ")
@@ -92,17 +95,18 @@ def publish_on_success(connection, result, *args, **kwargs):
             saga_db=mongo_creds["db_name"],
             saga_collection=mongo_creds["collection_name"],
         )
-        rabbitmq = prepare_rabbit_mq(rabbit_creds)
+        rabbitmq = prepare_rabbit_mq()
 
         transactions = saga.choreography.transactions
 
         (transactions_ordered, tx_not_started_count) = sort_transactions(transactions)
 
+        guildId = saga.data["guildId"]
+        msg = f"GUILDID: {guildId}: "
         if tx_not_started_count != 0:
-            guildId = saga.data["guildId"]
             tx = transactions_ordered[0]
 
-            logging.info(f"GUILDID: {guildId}: Publishing for {tx.queue}")
+            logging.info(f"{msg}Publishing for {tx.queue}")
 
             rabbitmq.connect(tx.queue)
             rabbitmq.publish(
@@ -110,5 +114,9 @@ def publish_on_success(connection, result, *args, **kwargs):
                 event=tx.event,
                 content={"uuid": sagaId, "data": saga.data},
             )
+
+        automation_workflow = AutomationWorkflow()
+        automation_workflow.start(guild_id=guildId)
+
     except Exception as exp:
         logging.info(f"Exception occured in job on_success callback: {exp}")

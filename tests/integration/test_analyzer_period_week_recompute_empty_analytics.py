@@ -46,6 +46,7 @@ def test_analyzer_week_period_recompute_empty_analytics():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
+            "isGeneratedByWebhook": False,
         }
         rawinfo_samples.append(sample)
 

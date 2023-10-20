@@ -6,6 +6,7 @@ from discord_analyzer.analysis.neo4j_analysis.centrality import Centerality
 from discord_analyzer.analysis.neo4j_analysis.local_clustering_coefficient import (
     LocalClusteringCoeff,
 )
+from discord_analyzer.analysis.neo4j_analysis.louvain import Louvain
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
@@ -30,9 +31,11 @@ class Neo4JAnalytics:
             Note: only some metrics support this
             others would be computed from_start=True
         """
-        if from_start:
-            self._remove_analytics_interacted_in(guildId)
+        # we don't need this, as the data will be replaced after
+        # if from_start:
+        #     self._remove_analytics_interacted_in(guildId)
 
+        self.compute_louvain_algorithm(guildId, from_start)
         self.compute_local_clustering_coefficient(guildId, from_start)
         self.compute_network_decentrality(guildId, from_start)
         self.compute_node_stats(guildId, from_start)
@@ -155,3 +158,18 @@ class Neo4JAnalytics:
                 DELETE r
             """
             session.run(query=query, guildId=guildId)
+
+    def compute_louvain_algorithm(self, guild_id: str, from_start: bool) -> None:
+        """
+        compute the louvain algorithm and save the results within the db
+
+        Parameters
+        ------------
+        guild_id : str
+            the guild string that the algorithm would be computed on
+        from_start : bool
+            compute from the start of the data available or continue the previous
+        """
+        louvain = Louvain(self.neo4j_ops)
+
+        louvain.compute(guild_id, from_start)

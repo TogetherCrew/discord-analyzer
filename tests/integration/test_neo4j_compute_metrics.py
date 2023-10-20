@@ -98,3 +98,17 @@ def test_guild_results_available():
         assert row["date"] in [yesterday, today]
         assert row["guildId"] == guildId
         assert bool(np.isnan(row["decentralizationScore"])) is False
+
+    results = neo4j_ops.gds.run_cypher(
+        f"""
+        MATCH (g:Guild {{guildId: '{guildId}'}})-[r:HAVE_METRICS]->(g)
+        RETURN r.date as date, r.louvainModularityScore as modularityScore
+        """
+    )
+
+    assert len(results) == 2
+    print(results)
+    assert results["date"].iloc[0] in [yesterday, today]
+    assert results["date"].iloc[1] in [yesterday, today]
+    assert results["modularityScore"].iloc[0] is not None
+    assert results["modularityScore"].iloc[1] is not None

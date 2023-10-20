@@ -67,6 +67,7 @@ def test_analyzer_six_month_period_run_once_available_analytics():
             "channelName": "general",
             "threadId": None,
             "threadName": None,
+            "isGeneratedByWebhook": False,
         }
         rawinfo_samples.append(sample)
 
