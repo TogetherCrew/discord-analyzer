@@ -110,7 +110,6 @@ class Member_activities:
             date_range[0] = date_range[1] - timedelta(days=num_days_to_load)
 
             # if the date range goes back more than the "7 days `period` forward"
-            # if date_range[0] < period:
             if date_range[0] < period + timedelta(days=window[0]):
                 date_range[0] = period + timedelta(days=window[0])
 
