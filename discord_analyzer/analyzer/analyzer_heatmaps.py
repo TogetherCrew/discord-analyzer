@@ -69,7 +69,7 @@ class Heatmaps:
         # guild parameter is the name of the database
         rawinfo_c = RawInfoModel(client[guildId])
         heatmap_c = HeatMapModel(client[guildId])
-        guild_rndao_c = GuildsRnDaoModel(client["RnDAO"])
+        guild_rndao_c = GuildsRnDaoModel(client["Core"])
 
         # Testing if there are entries in the rawinfo collection
         if rawinfo_c.count() == 0:

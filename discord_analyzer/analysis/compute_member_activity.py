@@ -6,6 +6,7 @@
 #  Author Ene SS Rawa / Tjitse van der Molen
 
 from datetime import datetime, timedelta
+import logging
 
 import networkx as nx
 import numpy as np
@@ -39,7 +40,6 @@ def compute_member_activity(
     date_range,
     window_param,
     act_param,
-    logging,
     load_past_data=True,
 ):
     """

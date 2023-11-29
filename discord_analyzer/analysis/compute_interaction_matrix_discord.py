@@ -14,13 +14,14 @@ from .utils.compute_interaction_mtx_utils import (
     generate_interaction_matrix,
     prepare_per_account,
 )
+from discord_analyzer.DB_operations.mongodb_access import DB_access
 
 
 def compute_interaction_matrix_discord(
-    acc_names,
-    dates,
-    channels,
-    db_access,
+    acc_names: list[str],
+    dates: list[str],
+    channels: list[str],
+    db_access: DB_access,
     activities: list[str] = [Activity.Mention, Activity.Reply, Activity.Reaction],
 ) -> dict[str, ndarray]:
     """
@@ -64,7 +65,7 @@ def compute_interaction_matrix_discord(
     query_dict = query.create_query_filter_account_channel_dates(
         acc_names=acc_names,
         channels=channels,
-        dates=dates,
+        dates=list(dates),
         date_key="date",
         channel_key="channelId",
         account_key="account_name",

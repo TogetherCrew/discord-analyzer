@@ -4,10 +4,11 @@ from discord_analyzer.analysis.compute_member_activity import compute_member_act
 from discord_analyzer.analyzer.memberactivity_utils import MemberActivityUtils
 from discord_analyzer.models.MemberActivityModel import MemberActivityModel
 from discord_analyzer.models.RawInfoModel import RawInfoModel
+from discord_analyzer.DB_operations.mongo_neo4j_ops import MongoNeo4jDB
 
 
 class Member_activities:
-    def __init__(self, DB_connections, logging) -> None:
+    def __init__(self, DB_connections: MongoNeo4jDB, logging) -> None:
         self.DB_connections = DB_connections
         self.logging = logging
 
@@ -58,18 +59,15 @@ class Member_activities:
             )
             return (None, None)
 
-        # get current guild setting
-        setting = self.utils.get_one_guild(guildId)
+        # get current guild_info
+        guild_info = self.utils.get_one_guild(guildId)
 
         channels, window, action = (
-            setting["selectedChannels"],
-            setting["window"],
-            setting["action"],
+            guild_info["metadata"]["selectedChannels"],
+            guild_info["metadata"]["window"],
+            guild_info["metadata"]["action"],
         )
-        channels = setting["selectedChannels"]
-        window = setting["window"]
-        action = setting["action"]
-        period = setting["period"]
+        period = guild_info["metadata"]["period"]
 
         channels = list(map(lambda x: x["channelId"], channels))
 
@@ -93,7 +91,7 @@ class Member_activities:
 
         first_date = period
         if first_date is None:
-            self.logging.error(f"No guild: {guildId} available in RnDAO.guilds!")
+            self.logging.error(f"No guild: {guildId} available in Platforms.core!")
             return None, None
 
         last_date = today - timedelta(days=1)
@@ -126,7 +124,6 @@ class Member_activities:
             date_range,
             window,
             action,
-            logging=self.logging,
             load_past_data=load_past_data,
         )
 

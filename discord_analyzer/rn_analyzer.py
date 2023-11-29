@@ -96,9 +96,9 @@ class RnDaoAnalyzer(Base_analyzer):
                 remove_memberactivities=False,
             )
 
-        self.neo4j_analytics.compute_metrics(guildId=guildId, from_start=False)
+            self.neo4j_analytics.compute_metrics(guildId=guild, from_start=False)
 
-        self._update_isin_progress(guildId=guild)
+            self._update_isin_progress(guildId=guild)
 
     def get_guilds(self):
         """Returns the list of all guilds"""
@@ -109,8 +109,8 @@ class RnDaoAnalyzer(Base_analyzer):
 
     def recompute_analytics_on_guilds(self, guildId_list):
         """
-        recompute the analytics for the guilds available in RnDAO table
-        if the guildId_list wasn't available in RnDAO then don't recompute the analytics
+        recompute the analytics for the guilds available in Core table
+        if the guildId_list wasn't available in Core then don't recompute the analytics
 
         Parameters:
         --------------
@@ -124,7 +124,7 @@ class RnDaoAnalyzer(Base_analyzer):
         """
         client = self.DB_connections.mongoOps.mongo_db_access.db_mongo_client
 
-        # check if the guild was available in RnDAO table
+        # check if the guild was available in Core table
         guilds_c = GuildsRnDaoModel(client["Core"])
         guilds = guilds_c.get_connected_guilds(guildId_list)
 
@@ -143,7 +143,7 @@ class RnDaoAnalyzer(Base_analyzer):
          for a new selection of channels
 
 
-        - first it would update the channel selection in RnDAO
+        - first it would update the channel selection in Core.Platform
 
         - Second the memebracitivites collection
          of the input guildId would become empty
@@ -249,7 +249,7 @@ class RnDaoAnalyzer(Base_analyzer):
 
     def _update_isin_progress(self, guildId):
         """
-        update isInProgress field of RnDAO collection
+        update isInProgress field of Platforms collection
 
         Parameters:
         ------------
@@ -258,7 +258,7 @@ class RnDaoAnalyzer(Base_analyzer):
         """
         client = self.DB_connections.mongoOps.mongo_db_access.db_mongo_client
 
-        client["Core"]["platforms"].update_one(
+        client["Core"]["Platforms"].update_one(
             {"metadata.id": guildId}, {"$set": {"isInProgress": False}}
         )
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from bson.objectid import ObjectId
 from pymongo.database import Database
 
 from discord_analyzer.models.BaseModel import BaseModel
@@ -7,7 +6,7 @@ from discord_analyzer.models.BaseModel import BaseModel
 
 class GuildsRnDaoModel(BaseModel):
     def __init__(self, database: Database):
-        super().__init__(collection_name="platforms", database=database)
+        super().__init__(collection_name="Platforms", database=database)
         # print(self.database[self.collection_name].find_one())
 
     def get_connected_guilds(self, guildId: str | None = None):
@@ -15,9 +14,9 @@ class GuildsRnDaoModel(BaseModel):
         Returns the list of the connected guilds if guildId is None
         Otherwise the list of one connected guild with given guildId
         """
-        findOption = {"isDisconnected": False, "name": "discord"}
+        findOption = {"disconnectedAt": None, "name": "discord"}
         if guildId is not None:
-            findOption["_id"] = ObjectId(guildId)
+            findOption["metadata.id"] = guildId
         guilds = self.database[self.collection_name].find(findOption)
         return [x["metadata"]["id"] for x in guilds]
 
@@ -31,14 +30,14 @@ class GuildsRnDaoModel(BaseModel):
 
     def get_guild_period(self, guildId: str):
         """
-        get the period field from guild saved in RnDAO collection
+        get the period field from guild saved in Platforms collection
         """
         data = self.database[self.collection_name].find_one(
             {"metadata.id": guildId, "name": "discord"},
             {"metadata.period": 1, "_id": 0},
         )
         if data is not None:
-            return data["metadata.period"]
+            return data["metadata"]["period"]
         else:
             return None
 
@@ -61,16 +60,14 @@ class GuildsRnDaoModel(BaseModel):
         query = {"metadata.id": guildId, "name": "discord"}
         feature_projection = {"metadata.selectedChannels": 1, "_id": 0}
 
-        cursor = self.database[self.collection_name].find_one(
+        results = self.database[self.collection_name].find_one(
             query, projection=feature_projection
         )
-
-        results = list(cursor)
 
         selected_channels: list[dict]
         if results is None:
             selected_channels = []
         else:
-            selected_channels = results["metadata.selectedChannels"]
+            selected_channels = results["metadata"]["selectedChannels"]
 
         return selected_channels

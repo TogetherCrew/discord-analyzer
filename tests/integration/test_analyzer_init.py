@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from bson.objectid import ObjectId
 from pymongo import MongoClient
 
 from analyzer_init import AnalyzerInit
@@ -10,6 +11,7 @@ def test_analyzer_init():
     analyzer = AnalyzerInit()
 
     guildId = "1234"
+    platform_id = "515151515151515151515151"
     days_ago_period = 30
     mongo_creds = get_mongo_credentials()
     user = mongo_creds["user"]
@@ -21,27 +23,30 @@ def test_analyzer_init():
 
     mongo_client: MongoClient = MongoClient(url)
 
-    mongo_client["RnDAO"]["guilds"].delete_one({"guildId": guildId})
+    mongo_client["Core"]["Platforms"].delete_one({"metadata.id": guildId})
     mongo_client.drop_database(guildId)
 
-    mongo_client["RnDAO"]["guilds"].insert_one(
+    mongo_client["Core"]["Platforms"].insert_one(
         {
-            "guildId": guildId,
-            "user": "876487027099582524",
-            "name": "Sample Guild",
-            "connectedAt": (datetime.now() - timedelta(days=10)),
+            "_id": ObjectId(platform_id),
+            "name": "discord",
+            "metadata": {
+                "id": guildId,
+                "icon": "111111111111111111111111",
+                "name": "A guild",
+                "selectedChannels": [
+                    {"channelId": "1020707129214111827", "channelName": "general"}
+                ],
+                "window": [7, 1],
+                "action": [1, 1, 1, 4, 3, 5, 5, 4, 3, 3, 2, 2, 1],
+                "period": datetime.now() - timedelta(days=days_ago_period),
+            },
+            "community": ObjectId("aabbccddeeff001122334455"),
+            "disconnectedAt": None,
+            "connectedAt": (datetime.now() - timedelta(days=days_ago_period + 10)),
             "isInProgress": True,
-            "isDisconnected": False,
-            "icon": "afd0d06fd12b2905c53708ca742e6c66",
-            "window": [7, 1],
-            "action": [1, 1, 1, 4, 3, 5, 5, 4, 3, 3, 2, 2, 1],
-            "selectedChannels": [
-                {
-                    "channelId": "1020707129214111827",
-                    "channelName": "general",
-                },
-            ],
-            "period": (datetime.now() - timedelta(days=days_ago_period)),
+            "createdAt": datetime(2023, 11, 1),
+            "updatedAt": datetime(2023, 11, 1),
         }
     )
 
