@@ -5,14 +5,12 @@
 #
 #  Author Ene SS Rawa / Tjitse van der Molen
 
-from datetime import datetime, timedelta
 import logging
+from datetime import datetime, timedelta
 
 import networkx as nx
 import numpy as np
 from dateutil.relativedelta import relativedelta
-from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
-from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
 from discord_analyzer.analysis.compute_interaction_matrix_discord import (
     compute_interaction_matrix_discord,
@@ -30,6 +28,8 @@ from discord_analyzer.analysis.utils.member_activity_utils import (
     update_activities,
 )
 from discord_analyzer.DB_operations.mongodb_access import DB_access
+from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
+from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
 
 def compute_member_activity(

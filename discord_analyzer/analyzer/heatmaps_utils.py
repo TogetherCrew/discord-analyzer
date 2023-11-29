@@ -1,6 +1,5 @@
-from pymongo import MongoClient
-
 from discord_analyzer.schemas.accounts import AccountCounts
+from pymongo import MongoClient
 
 
 def store_counts_dict(counts_dict):

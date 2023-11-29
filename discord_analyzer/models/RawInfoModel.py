@@ -3,10 +3,9 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any
 
+from discord_analyzer.models.BaseModel import BaseModel
 from pymongo import ASCENDING
 from pymongo.database import Database
-
-from discord_analyzer.models.BaseModel import BaseModel
 
 
 class RawInfoModel(BaseModel):

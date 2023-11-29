@@ -6,7 +6,7 @@ def test_mongo_db_info_set():
 
     port = 1234
     host = "http://www.google.com"
-    password = "sample_passxyz"
+    password = "sample_pass"
     user = "sample_user"
 
     analyzer.set_mongo_database_info(

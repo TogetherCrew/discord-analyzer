@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-from pymongo.database import Database
-
 from discord_analyzer.models.BaseModel import BaseModel
+from pymongo.database import Database
 
 
 class GuildsRnDaoModel(BaseModel):

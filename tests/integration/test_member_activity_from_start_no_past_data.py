@@ -1,7 +1,6 @@
 # test analyzing memberactivities
 from datetime import datetime, timedelta
 from bson.objectid import ObjectId
-
 from .utils.analyzer_setup import launch_db_access, setup_analyzer
 
 

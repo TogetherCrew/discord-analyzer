@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-import logging
 from datetime import datetime
 
+from discord_analyzer.models.BaseModel import BaseModel
 from pymongo import DESCENDING
 from pymongo.database import Database
-
-from discord_analyzer.models.BaseModel import BaseModel
 
 
 class HeatMapModel(BaseModel):

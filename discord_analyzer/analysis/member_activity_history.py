@@ -4,7 +4,6 @@
 import datetime
 
 from dateutil import parser
-
 from discord_analyzer.analysis.utils.member_activity_history_utils import (
     MemberActivityPastUtils,
 )

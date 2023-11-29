@@ -2,9 +2,9 @@ from datetime import datetime, timedelta
 
 from discord_analyzer.analysis.compute_member_activity import compute_member_activity
 from discord_analyzer.analyzer.memberactivity_utils import MemberActivityUtils
+from discord_analyzer.DB_operations.mongo_neo4j_ops import MongoNeo4jDB
 from discord_analyzer.models.MemberActivityModel import MemberActivityModel
 from discord_analyzer.models.RawInfoModel import RawInfoModel
-from discord_analyzer.DB_operations.mongo_neo4j_ops import MongoNeo4jDB
 
 
 class Member_activities:

@@ -1,7 +1,6 @@
 import logging
 
 from dateutil import parser
-
 from discord_analyzer.DB_operations.mongo_neo4j_ops import MongoNeo4jDB
 
 

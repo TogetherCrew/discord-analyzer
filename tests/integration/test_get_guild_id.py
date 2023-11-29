@@ -2,7 +2,6 @@ from datetime import datetime
 from unittest import TestCase
 
 from bson.objectid import ObjectId
-
 from utils.get_guild_id import get_guild_id
 from utils.get_mongo_client import MongoSingleton
 
