@@ -5,7 +5,6 @@ from bson.objectid import ObjectId
 from .utils.analyzer_setup import launch_db_access, setup_analyzer
 
 
-
 def test_analyzer_member_activities_from_start_empty_memberactivities():
     """
     run the analyzer for a specific guild with from_start option equal to True
