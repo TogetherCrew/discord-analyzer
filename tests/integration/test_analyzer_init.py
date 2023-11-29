@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from analyzer_init import AnalyzerInit
 from bson.objectid import ObjectId
 from pymongo import MongoClient
-
 from utils.daolytics_uitls import get_mongo_credentials
 
 

@@ -3,7 +3,6 @@ from typing import Optional
 
 import numpy as np
 from bson.objectid import ObjectId
-
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 
 

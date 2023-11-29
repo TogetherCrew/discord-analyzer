@@ -11,7 +11,6 @@ from datetime import datetime, timedelta
 import networkx as nx
 import numpy as np
 from dateutil.relativedelta import relativedelta
-
 from discord_analyzer.analysis.compute_interaction_matrix_discord import (
     compute_interaction_matrix_discord,
 )

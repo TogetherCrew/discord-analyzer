@@ -4,8 +4,8 @@ from typing import Any
 from analyzer_init import AnalyzerInit
 from automation.automation_workflow import AutomationWorkflow
 from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
-from utils.get_rabbitmq import prepare_rabbit_mq
 from utils.get_guild_id import get_guild_id
+from utils.get_rabbitmq import prepare_rabbit_mq
 from utils.transactions_ordering import sort_transactions
 
 
