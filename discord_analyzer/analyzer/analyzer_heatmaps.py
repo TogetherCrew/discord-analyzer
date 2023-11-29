@@ -9,13 +9,14 @@ from discord_analyzer.analyzer.heatmaps_utils import (
     getNumberOfActions,
     store_counts_dict,
 )
+from discord_analyzer.DB_operations.mongo_neo4j_ops import MongoNeo4jDB
 from discord_analyzer.models.GuildsRnDaoModel import GuildsRnDaoModel
 from discord_analyzer.models.HeatMapModel import HeatMapModel
 from discord_analyzer.models.RawInfoModel import RawInfoModel
 
 
 class Heatmaps:
-    def __init__(self, DB_connections, testing) -> None:
+    def __init__(self, DB_connections: MongoNeo4jDB, testing: bool) -> None:
         self.DB_connections = DB_connections
         self.testing = testing
 
@@ -30,7 +31,7 @@ class Heatmaps:
 
         return document is None
 
-    def analysis_heatmap(self, guildId, from_start=False):
+    def analysis_heatmap(self, guildId: str, from_start: bool = False):
         """
         Based on the rawdata creates and stores the heatmap data
 

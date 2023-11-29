@@ -3,6 +3,8 @@ import logging
 import os
 import sys
 
+from dotenv import load_dotenv
+
 from discord_analyzer.analyzer.analyzer_heatmaps import Heatmaps
 from discord_analyzer.analyzer.analyzer_memberactivities import Member_activities
 from discord_analyzer.analyzer.base_analyzer import Base_analyzer
@@ -10,7 +12,6 @@ from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
 from discord_analyzer.models.GuildsRnDaoModel import GuildsRnDaoModel
 from discord_analyzer.models.HeatMapModel import HeatMapModel
 from discord_analyzer.models.RawInfoModel import RawInfoModel
-from dotenv import load_dotenv
 
 
 class RnDaoAnalyzer(Base_analyzer):
@@ -39,7 +40,7 @@ class RnDaoAnalyzer(Base_analyzer):
         """Run analysis once (Wrapper)"""
 
         guilds_c = GuildsRnDaoModel(
-            self.DB_connections.mongoOps.mongo_db_access.db_mongo_client["RnDAO"]
+            self.DB_connections.mongoOps.mongo_db_access.db_mongo_client["Core"]
         )
 
         guilds = guilds_c.get_connected_guilds(guildId)
@@ -124,7 +125,7 @@ class RnDaoAnalyzer(Base_analyzer):
         client = self.DB_connections.mongoOps.mongo_db_access.db_mongo_client
 
         # check if the guild was available in RnDAO table
-        guilds_c = GuildsRnDaoModel(client["RnDAO"])
+        guilds_c = GuildsRnDaoModel(client["Core"])
         guilds = guilds_c.get_connected_guilds(guildId_list)
 
         logging.info(f"Recomputing analytics for {guilds}")
@@ -163,7 +164,7 @@ class RnDaoAnalyzer(Base_analyzer):
 
         client = self.DB_connections.mongoOps.mongo_db_access.db_mongo_client
 
-        guild_c = GuildsRnDaoModel(client["RnDAO"])
+        guild_c = GuildsRnDaoModel(client["Core"])
         selectedChannels = guild_c.get_guild_channels(guildId=guildId)
 
         if selectedChannels != []:
@@ -257,13 +258,9 @@ class RnDaoAnalyzer(Base_analyzer):
         """
         client = self.DB_connections.mongoOps.mongo_db_access.db_mongo_client
 
-        client["RnDAO"]["guilds"].update_one(
-            {"guildId": guildId}, {"$set": {"isInProgress": False}}
+        client["Core"]["platforms"].update_one(
+            {"metadata.id": guildId}, {"$set": {"metadata.isInProgress": False}}
         )
-
-
-# get guildId from command, if not given return None
-# python ./analyzer.py guildId
 
 
 def getParamsFromCmd():

@@ -3,44 +3,16 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any
 
-import pymongo
+from pymongo import ASCENDING
+from pymongo.database import Database
+
 from discord_analyzer.models.BaseModel import BaseModel
 
 
 class RawInfoModel(BaseModel):
-    def __init__(self, database=None):
-        if database is None:
-            logging.info("Database does not exist.")
-            raise Exception("Database should not be None")
+    def __init__(self, database: Database):
         super().__init__(collection_name="rawinfos", database=database)
         self.guild_msg = f"GUILDID: {self.database.name}:"
-        self.validator = {
-            "$jsonSchema": {
-                "bsonType": "object",
-                "properties": {
-                    "type": {"bsonType": "string"},
-                    "author": {"bsonType": "string"},
-                    "content": {"bsonType": "string"},
-                    "user_Mentions": {
-                        "bsonType": "array",
-                        "items": {"bsonType": "string"},
-                    },
-                    "roles_Mentions": {
-                        "bsonType": "array",
-                        "items": {"bsonType": "string"},
-                    },
-                    "reactions": {"bsonType": "array", "items": {"bsonType": "string"}},
-                    "replied_User": {"bsonType": "string"},
-                    "reference_Message": {"bsonType": "int"},
-                    "datetime": {
-                        "bsonType": "string",
-                    },
-                    "channelId": {
-                        "bsonType": "string",
-                    },
-                },
-            }
-        }
 
     def get_first_date(self):
         """
@@ -50,24 +22,14 @@ class RawInfoModel(BaseModel):
         """
         if self.database[self.collection_name].count_documents({}) > 0:
             record = self.database[self.collection_name].find_one(
-                {}, sort=[("createdDate", pymongo.ASCENDING)]
+                {}, sort=[("createdDate", ASCENDING)]
             )
 
             first_date = record["createdDate"]
-
-            # (
-            #     self.database[self.collection_name]
-            #     .find()
-            #     .sort([("createdDate", pymongo.ASCENDING)])
-            #     .limit(1)[0]["createdDate"]
-            # )
-            # date_obj = datetime.strptime(first_date, "%Y-%m-%d %H:%M:%S")
-
             return first_date
-            # do something with the first document
         else:
             # handle the case where no documents are returned by the query
-            print(f"{self.guild_msg} No documents found in the collection")
+            logging.info(f"{self.guild_msg} No documents found in the collection")
             return None
 
     def get_day_entries(self, day: datetime, msg: str = "") -> list[dict[str, Any]]:

@@ -2,9 +2,11 @@ import logging
 
 from dateutil import parser
 
+from discord_analyzer.DB_operations.mongo_neo4j_ops import MongoNeo4jDB
+
 
 class MemberActivityUtils:
-    def __init__(self, DB_connection) -> None:
+    def __init__(self, DB_connection: MongoNeo4jDB) -> None:
         self.DB_connection = DB_connection
 
     def refine_memberactivities_data(self, all_member_activities, first_date):

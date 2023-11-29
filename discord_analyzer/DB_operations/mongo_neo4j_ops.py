@@ -1,8 +1,9 @@
 import logging
 
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
+
 from discord_analyzer.DB_operations.mongodb_interaction import MongoDBOps
 from discord_analyzer.DB_operations.network_graph import make_neo4j_networkx_query_dict
-from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 class MongoNeo4jDB:
@@ -51,7 +52,10 @@ class MongoNeo4jDB:
         self.mongoOps.set_mongo_db_access()
 
     def store_analytics_data(
-        self, analytics_data, remove_memberactivities=False, remove_heatmaps=False
+        self,
+        analytics_data: dict,
+        remove_memberactivities: bool = False,
+        remove_heatmaps: bool = False,
     ):
         """
         store the analytics data into database

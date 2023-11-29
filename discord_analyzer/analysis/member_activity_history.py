@@ -4,17 +4,19 @@
 import datetime
 
 from dateutil import parser
+
 from discord_analyzer.analysis.utils.member_activity_history_utils import (
     MemberActivityPastUtils,
 )
+from discord_analyzer.DB_operations.mongodb_access import DB_access
 
 
 # the main script function
 def check_past_history(
-    db_access,
-    date_range,
-    window_param,
-    collection_name="memberactivities",
+    db_access: DB_access,
+    date_range: list[str],
+    window_param: tuple[int, int],
+    collection_name: str = "memberactivities",
     verbose=False,
 ):
     """

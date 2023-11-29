@@ -1,8 +1,9 @@
 import os
 
-from discord_analyzer.analysis.neo4j_utils.compute_metrics import Neo4JMetrics
 from dotenv import load_dotenv
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
+
+from discord_analyzer.analysis.neo4j_utils.compute_metrics import Neo4JMetrics
 
 
 def degree_centrality(

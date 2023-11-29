@@ -5,9 +5,10 @@
 #
 #  Author Ene SS Rawa / Tjitse van der Molen
 
+from numpy import ndarray
+
 from discord_analyzer.analysis.utils.activity import Activity
 from discord_analyzer.DB_operations.mongodb_query import MongodbQuery
-from numpy import ndarray
 
 from .utils.compute_interaction_mtx_utils import (
     generate_interaction_matrix,

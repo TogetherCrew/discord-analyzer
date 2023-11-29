@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import logging
 
+from pymongo.database import Database
+
 
 class BaseModel:
     """
@@ -8,7 +10,7 @@ class BaseModel:
     All integrated models inherit from this object
     """
 
-    def __init__(self, collection_name, database):
+    def __init__(self, collection_name: str, database: Database):
         self.collection_name = collection_name
         self.database = database
         self.exists = False

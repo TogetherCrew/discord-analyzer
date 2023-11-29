@@ -2,6 +2,7 @@ import logging
 from typing import Any
 
 import numpy as np
+
 from discord_analyzer.analysis.analytics_interactions_script import (
     per_account_interactions,
 )

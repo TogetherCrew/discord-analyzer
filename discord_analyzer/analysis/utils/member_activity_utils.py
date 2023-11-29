@@ -1,12 +1,13 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any
 
 import numpy as np
 import pymongo
+
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 
 
-def get_joined_accounts(db_access, date_range):
+def get_joined_accounts(db_access: DB_access, date_range: tuple[datetime, datetime]):
     """
     get the joined accounts for a time interval to a date range
 
