@@ -1,6 +1,8 @@
 import os
 from datetime import datetime, timedelta
 
+from dotenv import load_dotenv
+
 from automation.utils.interfaces import (
     Automation,
     AutomationAction,
@@ -8,7 +10,6 @@ from automation.utils.interfaces import (
     AutomationTrigger,
 )
 from discord_utils import publish_on_success
-from dotenv import load_dotenv
 from utils.daolytics_uitls import get_mongo_credentials
 
 from .utils.analyzer_setup import launch_db_access

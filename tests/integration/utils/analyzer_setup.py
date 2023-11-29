@@ -1,8 +1,9 @@
 import os
 
+from dotenv import load_dotenv
+
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 from discord_analyzer.rn_analyzer import RnDaoAnalyzer
-from dotenv import load_dotenv
 
 
 def setup_analyzer() -> RnDaoAnalyzer:

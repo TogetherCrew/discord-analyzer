@@ -7,6 +7,8 @@ from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
 from utils.get_rabbitmq import prepare_rabbit_mq
 from utils.transactions_ordering import sort_transactions
 
+from utils.get_guild_id import get_guild_id
+
 
 def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, Any]):
     analyzer_init = AnalyzerInit()
@@ -23,7 +25,8 @@ def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, Any]):
             f"Warn: Saga not found!, stopping the recompute for sagaId: {sagaId}"
         )
     else:
-        guildId = saga.data["guildId"]
+        platform_id = saga.data["platform._id"]
+        guildId = get_guild_id(platform_id)
 
         def recompute_wrapper(**kwargs):
             analyzer.recompute_analytics(guildId=guildId)
@@ -53,7 +56,8 @@ def analyzer_run_once(sagaId: str, rabbit_creds: dict[str, Any]):
     if saga is None:
         logging.warn(f"Saga not found!, stopping the run_once for sagaId: {sagaId}")
     else:
-        guildId = saga.data["guildId"]
+        platform_id = saga.data["platform._id"]
+        guildId = get_guild_id(platform_id)
 
         def run_once_wrapper(**kwargs):
             analyzer.run_once(guildId=guildId)
@@ -101,7 +105,9 @@ def publish_on_success(connection, result, *args, **kwargs):
 
         (transactions_ordered, tx_not_started_count) = sort_transactions(transactions)
 
-        guildId = saga.data["guildId"]
+        platform_id = saga.data["platform._id"]
+        guildId = get_guild_id(platform_id)
+
         msg = f"GUILDID: {guildId}: "
         if tx_not_started_count != 0:
             tx = transactions_ordered[0]

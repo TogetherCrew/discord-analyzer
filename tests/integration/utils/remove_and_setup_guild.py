@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 import numpy as np
+
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 
 

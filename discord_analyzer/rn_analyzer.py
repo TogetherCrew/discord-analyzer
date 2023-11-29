@@ -259,7 +259,7 @@ class RnDaoAnalyzer(Base_analyzer):
         client = self.DB_connections.mongoOps.mongo_db_access.db_mongo_client
 
         client["Core"]["platforms"].update_one(
-            {"metadata.id": guildId}, {"$set": {"metadata.isInProgress": False}}
+            {"metadata.id": guildId}, {"$set": {"isInProgress": False}}
         )
 
 
