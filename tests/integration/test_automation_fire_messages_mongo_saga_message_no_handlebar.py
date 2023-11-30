@@ -232,7 +232,7 @@ def test_automation_fire_message_check_mongodb_document_messages_ngu_strategy():
     user_cm_doc_splitted = user_cm_doc["data"]["message"].split("\n")
     assert len(user_cm_doc_splitted) == 5
 
-    assert user_cm_doc_splitted[0] == "hey body! This users were messaged:\n"
+    assert user_cm_doc_splitted[0] == "hey body! This users were messaged:"
     assert user_cm_doc_splitted[1] in ["- 1111", "- 1112", "- 1113", ""]
     assert user_cm_doc_splitted[2] in ["- 1111", "- 1112", "- 1113", ""]
     assert user_cm_doc_splitted[3] in ["- 1111", "- 1112", "- 1113", ""]
