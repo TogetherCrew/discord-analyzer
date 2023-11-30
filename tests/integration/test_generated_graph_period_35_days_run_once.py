@@ -108,7 +108,7 @@ def test_networkgraph_35_days_period_run_once_available_analytics():
 
     results = neo4j_ops.gds.run_cypher(
         f"""
-        MATCH 
+        MATCH
             (g:Guild {{guildId: '{guildId}'}})
                 -[r:IS_WITHIN]-> (c:Community {{id: '1234555'}})
         RETURN c.id as cid
