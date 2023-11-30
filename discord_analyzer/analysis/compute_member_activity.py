@@ -327,7 +327,7 @@ def compute_member_activity(
 
     # get the accounts with their joining date
     joined_acc_dict = get_joined_accounts(
-        db_access=db_access, date_range=[start_dt, end_dt + timedelta(days=1)]
+        db_access=db_access, date_range=(start_dt, end_dt + timedelta(days=1))
     )
 
     activity_dict_per_date = store_based_date(
