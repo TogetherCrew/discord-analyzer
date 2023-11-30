@@ -49,8 +49,7 @@ class AutomationWorkflow(AutomationBase):
                         users1, users2 = self._get_users_from_memberactivities(
                             guild_id, category
                         )
-                        users = users1
-                        # users = self._subtract_users(users1, users2)
+                        users = self._subtract_users(users1, users2)
 
                         for action in at.actions:
                             if action.enabled:
