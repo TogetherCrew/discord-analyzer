@@ -9,7 +9,7 @@ from utils.get_mongo_client import MongoSingleton
 class TestGetGuildId(TestCase):
     def test_get_guild_id_avalable_guild(self):
         client = MongoSingleton.get_instance().client
-        platform_id = "515151515151515151515151"
+        platform_id = ObjectId("515151515151515151515151")
 
         client.drop_database("Core")
         client["Core"]["Platforms"].insert_one(
@@ -46,7 +46,7 @@ class TestGetGuildId(TestCase):
 
     def test_guild_id_no_document_raise_error(self):
         client = MongoSingleton.get_instance().client
-        platform_id = "515151515151515151515151"
+        platform_id = ObjectId("515151515151515151515151")
 
         client.drop_database("Core")
 

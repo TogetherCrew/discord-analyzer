@@ -2,7 +2,7 @@ from bson.objectid import ObjectId
 from utils.get_mongo_client import MongoSingleton
 
 
-def get_guild_id(platform_id: str) -> str:
+def get_guild_id(platform_id: ObjectId) -> str:
     """
     get the guild id from the platform id
 
@@ -19,7 +19,7 @@ def get_guild_id(platform_id: str) -> str:
     mongo_client = MongoSingleton.get_instance().client
 
     platform = mongo_client["Core"]["Platforms"].find_one(
-        {"name": "discord", "_id": ObjectId(platform_id)}
+        {"name": "discord", "_id": platform_id}
     )
     if platform is None:
         raise AttributeError("No guild found!")
