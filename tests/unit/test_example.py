@@ -1,4 +1,5 @@
 import os
+
 from discord_analyzer import RnDaoAnalyzer
 from dotenv import load_dotenv
 
