@@ -1,12 +1,16 @@
+import os
 from discord_analyzer import RnDaoAnalyzer
+from dotenv import load_dotenv
 
 
 def test_mongo_db_info_set():
     analyzer = RnDaoAnalyzer()
+    load_dotenv()
 
     port = 1234
     host = "http://www.google.com"
-    password = "sample_pass"
+    # to ignore gitleaks
+    password = os.getenv("MONGODB_PASS")
     user = "sample_user"
 
     analyzer.set_mongo_database_info(
@@ -22,12 +26,14 @@ def test_mongo_db_info_set():
 
 
 def test_neo4j_db_info_set():
+    load_dotenv()
     port = 1234
     db_name = "db"
     protocol = "bolt"
     user = "user"
     host = "localhost"
-    password = "password"
+    # to ignore gitleaks
+    password = os.getenv("NEO4J_PASSWORD")
     neo4j_creds = {
         "db_name": db_name,
         "password": password,

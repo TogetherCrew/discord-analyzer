@@ -1,6 +1,5 @@
 import os
 from datetime import datetime, timedelta
-from bson.objectid import ObjectId
 
 from automation.utils.interfaces import (
     Automation,
@@ -8,6 +7,7 @@ from automation.utils.interfaces import (
     AutomationReport,
     AutomationTrigger,
 )
+from bson.objectid import ObjectId
 from discord_utils import publish_on_success
 from dotenv import load_dotenv
 from utils.daolytics_uitls import get_mongo_credentials
