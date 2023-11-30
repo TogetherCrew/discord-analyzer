@@ -124,7 +124,7 @@ def compute_member_activity(
     network_dict = {}
 
     # initiate result dictionaries for engagement types
-    activity_dict = {
+    activity_dict: dict[str, dict] = {
         "all_joined": {},
         "all_joined_day": {},
         "all_consistent": {},
@@ -185,7 +185,9 @@ def compute_member_activity(
         # so make it as a window_d lenght to have the computations
         new_date_range_interval = (new_date_range[1] - new_date_range[0]).days
         if new_date_range_interval < window_param["period_size"] - 1:
-            interval_before = (new_date_range_interval) + (window_param["period_size"] - 1)
+            interval_before = (new_date_range_interval) + (
+                window_param["period_size"] - 1
+            )
             new_date_range[0] = new_date_range[1] - timedelta(days=interval_before)
 
         member_activity_utils = MemberActivityPastUtils(db_access=db_access)
@@ -255,7 +257,9 @@ def compute_member_activity(
                 for i in range(len(date_list_w_str)):
                     date_list_w_str[i] = date_list_w[i].strftime("%Y-%m-%d")
 
-                window_start = last_date - relativedelta(days=window_param["period_size"])
+                window_start = last_date - relativedelta(
+                    days=window_param["period_size"]
+                )
 
                 # updating account names for past 7 days
                 acc_names = get_users_past_window(

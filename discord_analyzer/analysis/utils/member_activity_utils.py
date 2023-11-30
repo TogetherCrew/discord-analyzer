@@ -151,7 +151,7 @@ def update_activities(past_activities, activities_list):
     return activity_dictionaries
 
 
-def convert_to_dict(data: list[Any], dict_keys: list[str]) -> dict:
+def convert_to_dict(data: list[Any], dict_keys: list[str]) -> dict[str, dict]:
     """
     convert data into dictionary
     Note: the length of data and dict_keys always must be the same
@@ -165,7 +165,7 @@ def convert_to_dict(data: list[Any], dict_keys: list[str]) -> dict:
 
     Returns:
     ---------
-    converted_data : dict
+    converted_data : dict[str, dict]
         the data that is converted to dictionary
         with their corresponding keys
     """

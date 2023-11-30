@@ -54,10 +54,7 @@ def setup_db_guild(
                 "selectedChannels": [
                     {"channelId": "1020707129214111827", "channelName": "general"}
                 ],
-                "window": {
-                    "period_size": 7,
-                    "step_size": 1
-                },
+                "window": {"period_size": 7, "step_size": 1},
                 "action": action,
                 "period": datetime.now() - timedelta(days=days_ago_period),
             },

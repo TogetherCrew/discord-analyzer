@@ -13,8 +13,8 @@ from discord_analyzer.DB_operations.mongodb_access import DB_access
 # the main script function
 def check_past_history(
     db_access: DB_access,
-    date_range: list[str],
-    window_param: tuple[int, int],
+    date_range: tuple[str, str],
+    window_param: dict[str, int],
     collection_name: str = "memberactivities",
     verbose=False,
 ):
@@ -30,9 +30,10 @@ def check_past_history(
         a list of length 2, the first index has the start of the interval
         and the second index is end of the interval
         *Note*: Each value of the array should be in the format of `str(%y/%m/%d)`
-    window_param : tuple of int
-        a tuple with length 2, first parameter is window length
-        and the second one is the step
+    window_param : dict[str, int]
+        a dictionary 2 values, the keys and values
+        - "period_size": window size in days. default = 7
+        - "step_size": step size of sliding window in days. default = 1
     collection_name: string
         the collection of db to use
         default is `memberactivities`

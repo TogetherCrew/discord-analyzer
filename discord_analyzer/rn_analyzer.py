@@ -70,9 +70,7 @@ class RnDaoAnalyzer(Base_analyzer):
                 remove_heatmaps=False,
             )
 
-            memberactivities_analysis = MemberActivities(
-                self.DB_connections
-            )
+            memberactivities_analysis = MemberActivities(self.DB_connections)
             (
                 member_activities_data,
                 member_acitivities_networkx_data,
@@ -213,9 +211,7 @@ class RnDaoAnalyzer(Base_analyzer):
 
         # run the member_activity analyze
         logging.info(f"Analyzing the MemberActivities data for guild: {guildId}!")
-        memberactivity_analysis = MemberActivities(
-            self.DB_connections
-        )
+        memberactivity_analysis = MemberActivities(self.DB_connections)
         (
             member_activities_data,
             member_acitivities_networkx_data,
