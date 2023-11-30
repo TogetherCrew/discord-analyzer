@@ -112,12 +112,12 @@ class MemberActivities:
                     ]
                 )
                 + 1
-            ) * window[0]
+            ) * window["period_size"]
             date_range[0] = date_range[1] - timedelta(days=num_days_to_load)
 
             # if the date range goes back more than the "7 days `period` forward"
-            if date_range[0] < period + timedelta(days=window[0]):
-                date_range[0] = period + timedelta(days=window[0])
+            if date_range[0] < period + timedelta(days=window["period_size"]):
+                date_range[0] = period + timedelta(days=window["period_size"])
 
         # get all users during date_range
         all_users = self.utils.get_all_users(guildId)
