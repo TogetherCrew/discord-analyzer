@@ -1,5 +1,6 @@
 import unittest
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
+
 from discord_analyzer.DB_operations.network_graph import get_timestamp
 
 

@@ -6,7 +6,7 @@ import networkx
 
 
 def make_neo4j_networkx_query_dict(
-    networkx_graphs: dict[networkx.classes.graph.Graph],
+    networkx_graphs: dict[datetime.datetime, networkx.classes.graph.Graph],
     guildId: str,
     community_id: str,
 ):
