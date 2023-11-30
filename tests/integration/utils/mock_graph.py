@@ -64,7 +64,7 @@ def generate_mock_graph(int_matrix, acc_names):
     return graph
 
 
-def store_mock_data_in_neo4j(graph_dict, guildId):
+def store_mock_data_in_neo4j(graph_dict, guildId, community_id):
     # CREDS
     load_dotenv()
     user = os.getenv("MONGODB_USER")
@@ -80,7 +80,7 @@ def store_mock_data_in_neo4j(graph_dict, guildId):
     neo4j_creds["password"] = os.getenv("NEO4J_PASSWORD")
     neo4j_creds["user"] = os.getenv("NEO4J_USER")
 
-    analyzer = RnDaoAnalyzer()
+    analyzer = RnDaoAnalyzer(community_id)
 
     analyzer.set_mongo_database_info(
         mongo_db_host=host,
@@ -103,6 +103,7 @@ def store_mock_data_in_neo4j(graph_dict, guildId):
 
     analyzer.DB_connections.store_analytics_data(
         analytics_data=guilds_data,
+        community_id=community_id,
         remove_heatmaps=False,
         remove_memberactivities=False,
     )

@@ -4,14 +4,14 @@ from typing import Any
 from analyzer_init import AnalyzerInit
 from automation.automation_workflow import AutomationWorkflow
 from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
-from utils.get_guild_id import get_guild_id
+from utils.get_guild_community_ids import get_guild_community_ids
 from utils.get_rabbitmq import prepare_rabbit_mq
 from utils.transactions_ordering import sort_transactions
+from utils.daolytics_uitls import get_mongo_credentials
 
 
 def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, Any]):
-    analyzer_init = AnalyzerInit()
-    analyzer, mongo_creds = analyzer_init.get_analyzer()
+    mongo_creds = get_mongo_credentials()
 
     saga = get_saga_instance(
         sagaId=sagaId,
@@ -25,7 +25,10 @@ def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, Any]):
         )
     else:
         platform_id = saga.data["PlatformId"]
-        guildId = get_guild_id(platform_id)
+        guildId, commnity_id = get_guild_community_ids(platform_id)
+
+        analyzer_init = AnalyzerInit(commnity_id)
+        analyzer, mongo_creds = analyzer_init.get_analyzer()
 
         def recompute_wrapper(**kwargs):
             analyzer.recompute_analytics(guildId=guildId)
@@ -43,8 +46,7 @@ def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, Any]):
 
 
 def analyzer_run_once(sagaId: str, rabbit_creds: dict[str, Any]):
-    analyzer_init = AnalyzerInit()
-    analyzer, mongo_creds = analyzer_init.get_analyzer()
+    mongo_creds = get_mongo_credentials()
 
     saga = get_saga_instance(
         sagaId=sagaId,
@@ -56,7 +58,10 @@ def analyzer_run_once(sagaId: str, rabbit_creds: dict[str, Any]):
         logging.warn(f"Saga not found!, stopping the run_once for sagaId: {sagaId}")
     else:
         platform_id = saga.data["PlatformId"]
-        guildId = get_guild_id(platform_id)
+        guildId, commnity_id = get_guild_community_ids(platform_id)
+
+        analyzer_init = AnalyzerInit(commnity_id)
+        analyzer, mongo_creds = analyzer_init.get_analyzer()
 
         def run_once_wrapper(**kwargs):
             analyzer.run_once(guildId=guildId)
@@ -105,7 +110,7 @@ def publish_on_success(connection, result, *args, **kwargs):
         (transactions_ordered, tx_not_started_count) = sort_transactions(transactions)
 
         platform_id = saga.data["PlatformId"]
-        guildId = get_guild_id(platform_id)
+        guildId, _ = get_guild_community_ids(platform_id)
 
         msg = f"GUILDID: {guildId}: "
         if tx_not_started_count != 0:

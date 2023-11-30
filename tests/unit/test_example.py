@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 
 
 def test_mongo_db_info_set():
-    analyzer = RnDaoAnalyzer()
+    community_id = "4321"
+    analyzer = RnDaoAnalyzer(community_id)
     load_dotenv()
 
     port = 1234
@@ -44,7 +45,8 @@ def test_neo4j_db_info_set():
         "user": user,
     }
 
-    analyzer = RnDaoAnalyzer()
+    community_id = "4321"
+    analyzer = RnDaoAnalyzer(community_id)
     analyzer.set_neo4j_database_info(neo4j_creds=neo4j_creds)
 
     assert analyzer.neo4j_port == port

@@ -7,7 +7,8 @@ from utils.daolytics_uitls import get_mongo_credentials
 
 
 def test_analyzer_init():
-    analyzer = AnalyzerInit()
+    community_id = "aabbccddeeff001122334455"
+    analyzer = AnalyzerInit(community_id)
 
     guildId = "1234"
     platform_id = "515151515151515151515151"
@@ -60,7 +61,7 @@ def test_analyzer_init():
                 "action": act_param,
                 "period": datetime.now() - timedelta(days=days_ago_period),
             },
-            "community": ObjectId("aabbccddeeff001122334455"),
+            "community": ObjectId(community_id),
             "disconnectedAt": None,
             "connectedAt": (datetime.now() - timedelta(days=days_ago_period + 10)),
             "isInProgress": True,

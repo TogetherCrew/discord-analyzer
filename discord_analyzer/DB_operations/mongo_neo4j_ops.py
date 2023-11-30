@@ -53,6 +53,7 @@ class MongoNeo4jDB:
     def store_analytics_data(
         self,
         analytics_data: dict,
+        community_id: str,
         remove_memberactivities: bool = False,
         remove_heatmaps: bool = False,
     ):
@@ -68,6 +69,8 @@ class MongoNeo4jDB:
             heatmaps is also a list of dictinoaries
             and memberactivities is a tuple of memberactivities dictionary list
              and memebractivities networkx object dictionary list
+        community_id : str
+            the community id to save the data for
         remove_memberactivities : bool
             remove the whole memberactivity data and insert
             default is `False` which means don't delete the existing data
@@ -101,7 +104,9 @@ class MongoNeo4jDB:
                     and memberactivities_networkx_data != []
                 ):
                     queries_list = make_neo4j_networkx_query_dict(
-                        networkx_graphs=memberactivities_networkx_data, guildId=guildId
+                        networkx_graphs=memberactivities_networkx_data,
+                        guildId=guildId,
+                        community_id=community_id,
                     )
                     self.run_operations_transaction(
                         guildId=guildId,

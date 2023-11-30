@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import logging
-import os
 import sys
 
 from discord_analyzer.analyzer.analyzer_heatmaps import Heatmaps
@@ -10,7 +9,6 @@ from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
 from discord_analyzer.models.GuildsRnDaoModel import GuildsRnDaoModel
 from discord_analyzer.models.HeatMapModel import HeatMapModel
 from discord_analyzer.models.RawInfoModel import RawInfoModel
-from dotenv import load_dotenv
 
 
 class RnDaoAnalyzer(Base_analyzer):
@@ -19,12 +17,13 @@ class RnDaoAnalyzer(Base_analyzer):
     class that handles database connection and data analysis
     """
 
-    def __init__(self, testing=False):
+    def __init__(self, community_id: str, testing=False):
         """
         Class initiation function
         """
         """ Testing, prevents from data upload"""
         self.testing = testing
+        self.community_id = community_id
         logging.basicConfig()
         logging.getLogger().setLevel(logging.INFO)
 
@@ -66,6 +65,7 @@ class RnDaoAnalyzer(Base_analyzer):
             }
             self.DB_connections.store_analytics_data(
                 analytics_data=analytics_data,
+                community_id=self.community_id,
                 remove_memberactivities=False,
                 remove_heatmaps=False,
             )
@@ -89,6 +89,7 @@ class RnDaoAnalyzer(Base_analyzer):
 
             self.DB_connections.store_analytics_data(
                 analytics_data=guilds_data,
+                community_id=self.community_id,
                 remove_heatmaps=False,
                 remove_memberactivities=False,
             )
@@ -205,6 +206,7 @@ class RnDaoAnalyzer(Base_analyzer):
         }
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
+            community_id=self.community_id,
             remove_memberactivities=False,
             remove_heatmaps=not is_available,
         )
@@ -231,6 +233,7 @@ class RnDaoAnalyzer(Base_analyzer):
 
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
+            community_id=self.community_id,
             remove_memberactivities=True,
             remove_heatmaps=False,
         )
@@ -282,45 +285,3 @@ def getParamsFromCmd():
         guildId = args[1]
         recompute_analysis = True
     return guildId, recompute_analysis
-
-
-if __name__ == "__main__":
-    load_dotenv()
-
-    # logging.basicConfig()
-    # logging.getLogger().setLevel(logging.INFO)
-    analyzer = RnDaoAnalyzer()
-
-    user = os.getenv("MONGODB_USER", "")
-    password = os.getenv("MONGODB_PASS", "")
-    host = os.getenv("MONGODB_HOST", "")
-    port = os.getenv("MONGODB_PORT", "")
-
-    neo4j_creds = {}
-    neo4j_creds["db_name"] = os.getenv("NEO4J_DB", "")
-    neo4j_creds["protocol"] = os.getenv("NEO4J_PROTOCOL", "")
-    neo4j_creds["host"] = os.getenv("NEO4J_HOST", "")
-    neo4j_creds["port"] = os.getenv("NEO4J_PORT", "")
-    neo4j_creds["password"] = os.getenv("NEO4J_PASSWORD", "")
-    neo4j_creds["user"] = os.getenv("NEO4J_USER", "")
-
-    neo4j_user = os.getenv("NEO4J_USER", "")
-    neo4j_password = os.getenv("NEO4J_PASSWORD", "")
-
-    analyzer.set_mongo_database_info(
-        mongo_db_host=host,
-        mongo_db_password=password,
-        mongo_db_user=user,
-        mongo_db_port=port,
-    )
-
-    analyzer.set_neo4j_database_info(neo4j_creds=neo4j_creds)
-
-    guildId, recompute_analysis = getParamsFromCmd()
-    analyzer.database_connect()
-    analyzer.setup_neo4j_metrics()
-
-    if not recompute_analysis:
-        analyzer.run_once(guildId)
-    else:
-        analyzer.recompute_analytics_on_guilds(guildId)
