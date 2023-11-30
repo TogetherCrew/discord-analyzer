@@ -28,6 +28,21 @@ def setup_db_guild(
     )
     db_access.db_mongo_client.drop_database(guildId)
 
+    action = {
+        "INT_THR": 1,
+        "UW_DEG_THR": 1,
+        "PAUSED_T_THR": 1,
+        "CON_T_THR": 4,
+        "CON_O_THR": 3,
+        "EDGE_STR_THR": 5,
+        "UW_THR_DEG_THR": 5,
+        "VITAL_T_THR": 4,
+        "VITAL_O_THR": 3,
+        "STILL_T_THR": 2,
+        "STILL_O_THR": 2,
+        "DROP_H_THR": 2,
+        "DROP_I_THR": 1,
+    }
     db_access.db_mongo_client["Core"]["Platforms"].insert_one(
         {
             "_id": ObjectId(platform_id),
@@ -39,8 +54,11 @@ def setup_db_guild(
                 "selectedChannels": [
                     {"channelId": "1020707129214111827", "channelName": "general"}
                 ],
-                "window": [7, 1],
-                "action": [1, 1, 1, 4, 3, 5, 5, 4, 3, 3, 2, 2, 1],
+                "window": {
+                    "period_size": 7,
+                    "step_size": 1
+                },
+                "action": action,
                 "period": datetime.now() - timedelta(days=days_ago_period),
             },
             "community": ObjectId("aabbccddeeff001122334455"),
