@@ -13,8 +13,8 @@ class AnalyzerInit:
     initialize the analyzer with its configs
     """
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, community_id: str) -> None:
+        self.community_id = community_id
 
     def get_analyzer(self) -> tuple[RnDaoAnalyzer, dict[str, Any]]:
         """
@@ -23,7 +23,7 @@ class AnalyzerInit:
         analyzer : RnDaoAnalyzer
         mongo_creds : dict[str, Any]
         """
-        analyzer = RnDaoAnalyzer()
+        analyzer = RnDaoAnalyzer(self.community_id)
 
         # credentials
         mongo_creds = get_mongo_credentials()

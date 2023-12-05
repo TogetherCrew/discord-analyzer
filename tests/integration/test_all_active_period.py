@@ -122,52 +122,52 @@ def test_two_weeks_period_active_members():
     )
     memberactivities = list(memberactivities_cursor)
 
-    print(f"memberactivities: {memberactivities}")
+    # print(f"memberactivities: {memberactivities}")
 
     date_now = datetime.now()
 
     for activities in memberactivities:
         date = datetime.fromisoformat(activities["date"]).date()
-        print("date: ", date)
+        # print("date: ", date)
         # 14 days minues 7
         if date == (date_now - timedelta(days=14)).date():
-            print("time delta days: 14")
+            # print("time delta days: 14")
             assert set(activities["all_active"]) == set(["user0", "user1"])
         elif date == (date_now - timedelta(days=13)).date():
-            print("time delta days: 13")
+            # print("time delta days: 13")
             assert set(activities["all_active"]) == set(["user0", "user1"])
         elif date == (date_now - timedelta(days=12)).date():
-            print("time delta days: 12")
+            # print("time delta days: 12")
             assert set(activities["all_active"]) == set(["user0", "user1"])
         elif date == (date_now - timedelta(days=11)).date():
-            print("time delta days: 11")
+            # print("time delta days: 11")
             assert set(activities["all_active"]) == set(
                 ["user0", "user1", "user2", "user3"]
             )
         elif date == (date_now - timedelta(days=10)).date():
-            print("time delta days: 10")
+            # print("time delta days: 10")
             assert set(activities["all_active"]) == set(
                 ["user0", "user1", "user2", "user3"]
             )
         elif date == (date_now - timedelta(days=9)).date():
-            print("time delta days: 9")
+            # print("time delta days: 9")
             assert set(activities["all_active"]) == set(
                 ["user0", "user1", "user2", "user3"]
             )
         elif date == (date_now - timedelta(days=8)).date():
-            print("time delta days: 8")
+            # print("time delta days: 8")
             assert set(activities["all_active"]) == set(
                 ["user0", "user1", "user2", "user3"]
             )
         elif date == (date_now - timedelta(days=7)).date():
-            print("time delta days: 7")
+            # print("time delta days: 7")
             assert set(activities["all_active"]) == set(["user2", "user3"])
         elif date == (date_now - timedelta(days=6)).date():
-            print("time delta days: 6")
+            # print("time delta days: 6")
             assert set(activities["all_active"]) == set(["user2", "user3"])
         elif date == (date_now - timedelta(days=5)).date():
-            print("time delta days: 5")
+            # print("time delta days: 5")
             assert set(activities["all_active"]) == set(["user2", "user3"])
         else:
-            print("time delta days: else")
+            # print("time delta days: else")
             assert set(activities["all_active"]) == set()

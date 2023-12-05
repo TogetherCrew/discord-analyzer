@@ -5,6 +5,7 @@
 #
 #  Author Ene SS Rawa / Tjitse van der Molen
 
+import logging
 from datetime import datetime, timedelta
 
 import networkx as nx
@@ -31,73 +32,66 @@ from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
 
 def compute_member_activity(
-    db_name,
-    connection_string,
-    channels,
-    acc_names,
-    date_range,
-    window_param,
-    act_param,
-    logging,
+    db_name: str,
+    connection_string: str,
+    channels: list[str],
+    acc_names: list[str],
+    date_range: tuple[str, str],
+    window_param: dict[str, int],
+    act_param: dict[str, int],
     load_past_data=True,
 ):
     """
     Computes member activity and member interaction network
 
-    Input
+    Parameters
+    ------------
     db_name: (str) - guild id
     connection_string: (str) - connection to db string
     channels: [str] - list of all channel ids that should be analysed
     acc_names: [str] - list of all account names that should be analysed
     date_range: [str] - list of first and last date to be analysed (one output per date)
-    window_param: [int] -
-        entry 1: window size in days. default = 7
-        entry 2: step size of sliding window in days. default = 1
+    window_param: dict[str, int] -
+        "period_size": window size in days. default = 7
+        "step_size": step size of sliding window in days. default = 1
         (Currently these values will be default values,
         in the future, the user might be able to set these in the
         extraction settings page)
-    act_param: [int] -
-        entry 1: INT_THR - int :
-            minimum number of interactions to be active.
-            Default = 1
-        entry 2: UW_DEG_THR - int :
-            minimum number of connections to be active.
-            Default = 1
-        entry 3: PAUSED_T_THR - int :
-            time period to remain paused.
-            Default = 1
-        entry 4: CON_T_THR - int :
-            time period to assess consistently active.
-            Default = 4
-        entry 5: CON_O_THR - int :
-            times to be active within CON_T_THR to be consistently active.
-            Default = 3
-        entry 6: EDGE_STR_THR - int :
-            minimum number of interactions for connected.
-            Default = 5
-        entry 7: UW_THR_DEG_THR - int :
-            minimum number of accounts for connected.
-            Default = 5
-        entry 8: VITAL_T_THR - int :
-            time period to assess for vital.
-            Default = 4
-        entry 9: VITAL_O_THR - int :
-            times to be connected within VITAL_T_THR to be vital.
-            Default = 3
-        entry 10: STILL_T_THR - int :
-            time period to assess for still active.
-            Default = 3
-        entry 11: STILL_O_THR - int :
-            times to be active within STILL_T_THR to be still active.
-            Default = 2
-        entry 12: DROP_H_THR - int:
-            Default = 2
-        entry 13: DROP_I_THR - int:
-            Default = 1
+    act_param : dict[str, int]
+        parameters for activity types:
+        keys are listed below
+            - INT_THR : int
+                minimum number of interactions to be active
+            - UW_DEG_THR : int
+                minimum number of connections to be active
+            - EDGE_STR_THR : int
+                minimum number of interactions for connected
+            - UW_THR_DEG_THR : int
+                minimum number of accounts for connected
+            - CON_T_THR : int
+                time period to assess consistently active
+            - CON_O_THR : int
+                times to be active within CON_T_THR to be
+            consistently active
+            - VITAL_T_THR : int
+                time period to assess for vital
+            - VITAL_O_THR : int
+                times to be connected within VITAL_T_THR to be vital
+            - PAUSED_T_THR : int
+                time period to remain paused
+            - STILL_T_THR : int
+                time period to assess for still active
+            - STILL_O_THR : int
+                times to be active within STILL_T_THR to be still active
+            - DROP_H_THR : int
+                time periods in the past to have been newly active
+            - DROP_I_THR : int
+                time periods to have been inactive
         (Currently these values will be default values,
           in the future, the user might be able to adjust these)
 
-    Output
+    Returns
+    ----------
     network_dict: {datetime:networkx obj} -
         dictionary with python datetime objects as keys and networkx graph
         objects as values.
@@ -130,7 +124,7 @@ def compute_member_activity(
     network_dict = {}
 
     # initiate result dictionaries for engagement types
-    activity_dict = {
+    activity_dict: dict[str, dict] = {
         "all_joined": {},
         "all_joined_day": {},
         "all_consistent": {},
@@ -190,8 +184,10 @@ def compute_member_activity(
         # no analytics for the days would be computed
         # so make it as a window_d lenght to have the computations
         new_date_range_interval = (new_date_range[1] - new_date_range[0]).days
-        if new_date_range_interval < window_param[0] - 1:
-            interval_before = (new_date_range_interval) + (window_param[0] - 1)
+        if new_date_range_interval < window_param["period_size"] - 1:
+            interval_before = (new_date_range_interval) + (
+                window_param["period_size"] - 1
+            )
             new_date_range[0] = new_date_range[1] - timedelta(days=interval_before)
 
         member_activity_utils = MemberActivityPastUtils(db_access=db_access)
@@ -203,7 +199,7 @@ def compute_member_activity(
             end_dt=new_date_range[1],
             all_joined_day=activity_dict["all_joined_day"],
             starting_key=starting_key,
-            window_d=window_param[0],
+            window_d=window_param["period_size"],
         )
 
         # # # DEFINE SLIDING WINDOW RANGE # # #
@@ -215,7 +211,7 @@ def compute_member_activity(
         time_diff = end_dt - start_dt
 
         # determine maximum start time (include last day in date_range)
-        last_start = time_diff - relativedelta(days=window_param[0] - 1)
+        last_start = time_diff - relativedelta(days=window_param["period_size"] - 1)
 
         # # # ACTUAL ANALYSIS # # #
 
@@ -230,7 +226,7 @@ def compute_member_activity(
         )
 
         # for every window index
-        max_range = int(np.floor(last_start.days / window_param[1]) + 1)
+        max_range = int(np.floor(last_start.days / window_param["step_size"]) + 1)
         # if max range was chosen negative,
         # then we have to make it zero
         # (won't affect the loop but will affect codes after it)
@@ -245,13 +241,13 @@ def compute_member_activity(
 
                 last_date = (
                     new_date_range[0]
-                    + relativedelta(days=window_param[1] * w_i)
-                    + relativedelta(days=window_param[0] - 1)
+                    + relativedelta(days=window_param["step_size"] * w_i)
+                    + relativedelta(days=window_param["period_size"] - 1)
                 )
 
                 # make list of all dates in window
                 date_list_w = []
-                for x in range(window_param[0]):
+                for x in range(window_param["period_size"]):
                     date_list_w.append(last_date - relativedelta(days=x))
 
                 # make empty array for date string values
@@ -261,7 +257,9 @@ def compute_member_activity(
                 for i in range(len(date_list_w_str)):
                     date_list_w_str[i] = date_list_w[i].strftime("%Y-%m-%d")
 
-                window_start = last_date - relativedelta(days=window_param[0])
+                window_start = last_date - relativedelta(
+                    days=window_param["period_size"]
+                )
 
                 # updating account names for past 7 days
                 acc_names = get_users_past_window(
@@ -300,7 +298,7 @@ def compute_member_activity(
                     w_i=new_window_i,
                     acc_names=np.asarray(acc_names),
                     act_param=act_param,
-                    WINDOW_D=window_param[0],
+                    WINDOW_D=window_param["period_size"],
                     **activity_dict,
                 )
 
@@ -329,13 +327,13 @@ def compute_member_activity(
 
     # get the accounts with their joining date
     joined_acc_dict = get_joined_accounts(
-        db_access=db_access, date_range=[start_dt, end_dt + timedelta(days=1)]
+        db_access=db_access, date_range=(start_dt, end_dt + timedelta(days=1))
     )
 
     activity_dict_per_date = store_based_date(
         start_date=start_dt,
         all_activities=activity_dict,
-        analytics_day_range=window_param[0] - 1,
+        analytics_day_range=window_param["period_size"] - 1,
         joined_acc_dict=joined_acc_dict,
         load_past=load_past_data,
         empty_channel_acc=(len(channels) != 0 and len(acc_names) != 0),

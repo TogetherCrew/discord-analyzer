@@ -227,6 +227,13 @@ def test_automation_fire_message_check_mongodb_document_messages_ngu_strategy():
     user_cm_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
         {"data.discordId": "999"}
     )
-    expected_msg = "hey body! This users were messaged:\n"
-    expected_msg += "- 1111\n- 1112\n- 1113\n"
-    assert user_cm_doc["data"]["message"] == expected_msg
+
+    # splitting because sometimes the orders change
+    user_cm_doc_splitted = user_cm_doc["data"]["message"].split("\n")
+    assert len(user_cm_doc_splitted) == 5
+
+    assert user_cm_doc_splitted[0] == "hey body! This users were messaged:"
+    assert user_cm_doc_splitted[1] in ["- 1111", "- 1112", "- 1113", ""]
+    assert user_cm_doc_splitted[2] in ["- 1111", "- 1112", "- 1113", ""]
+    assert user_cm_doc_splitted[3] in ["- 1111", "- 1112", "- 1113", ""]
+    assert user_cm_doc_splitted[4] in ["- 1111", "- 1112", "- 1113", ""]

@@ -7,6 +7,7 @@ from automation.utils.interfaces import (
     AutomationReport,
     AutomationTrigger,
 )
+from bson.objectid import ObjectId
 from discord_utils import publish_on_success
 from dotenv import load_dotenv
 from utils.daolytics_uitls import get_mongo_credentials
@@ -20,7 +21,7 @@ def test_publish_on_success_check_notification_choreographies():
     we want to check the database if the notify choreographies are created
     """
     load_dotenv()
-
+    platform_id = "515151515151515151515151"
     guild_id = "1234"
     saga_id = "000000011111113333377777ie0w"
     expected_owner_id = "334461287892"
@@ -30,30 +31,36 @@ def test_publish_on_success_check_notification_choreographies():
     at_db = os.getenv("AUTOMATION_DB_NAME")
     at_collection = os.getenv("AUTOMATION_DB_COLLECTION")
 
-    db_access.db_mongo_client["RnDAO"].drop_collection("guilds")
+    db_access.db_mongo_client["Core"]["Platforms"].delete_one(
+        {"_id": ObjectId(platform_id)}
+    )
 
     db_access.db_mongo_client[guild_id].drop_collection("memberactivities")
     db_access.db_mongo_client[saga_db].drop_collection(saga_collection)
     db_access.db_mongo_client[guild_id].drop_collection("guildmembers")
     db_access.db_mongo_client[at_db].drop_collection(at_collection)
 
-    db_access.db_mongo_client["RnDAO"]["guilds"].insert_one(
+    db_access.db_mongo_client["Core"]["Platforms"].insert_one(
         {
-            "guildId": guild_id,
-            "user": expected_owner_id,
-            "name": "Sample Guild",
-            "connectedAt": datetime.now(),
-            "isInProgress": False,
-            "isDisconnected": False,
-            "icon": "4256asdiqwjo032",
-            "window": [7, 1],
-            "action": [1, 1, 1, 4, 3, 5, 5, 4, 3, 2, 2, 2, 1],
-            "selectedChannels": [
-                {
-                    "channelId": "11111111111111",
-                    "channelName": "general",
-                },
-            ],
+            "_id": ObjectId(platform_id),
+            "name": "discord",
+            "metadata": {
+                "id": guild_id,
+                "icon": "111111111111111111111111",
+                "name": "A guild",
+                "selectedChannels": [
+                    {"channelId": "4455178", "channelName": "general"}
+                ],
+                "window": [7, 1],
+                "action": [1, 1, 1, 4, 3, 5, 5, 4, 3, 3, 2, 2, 1],
+                "period": datetime.now() - timedelta(days=10),
+            },
+            "community": ObjectId("aabbccddeeff001122334455"),
+            "disconnectedAt": None,
+            "connectedAt": (datetime.now() - timedelta(days=10)),
+            "isInProgress": True,
+            "createdAt": datetime(2023, 11, 1),
+            "updatedAt": datetime(2023, 11, 1),
         }
     )
 
@@ -97,7 +104,7 @@ def test_publish_on_success_check_notification_choreographies():
             },
             "status": "IN_PROGRESS",
             "data": {
-                "guildId": guild_id,
+                "PlatformId": ObjectId(platform_id),
                 "created": False,
                 "discordId": expected_owner_id,
                 "message": "data is ready",

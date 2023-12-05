@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 def setup_analyzer() -> RnDaoAnalyzer:
     load_dotenv()
-    analyzer = RnDaoAnalyzer()
+    analyzer = RnDaoAnalyzer(community_id="1234555")
 
     user = os.getenv("MONGODB_USER", "")
     password = os.getenv("MONGODB_PASS", "")

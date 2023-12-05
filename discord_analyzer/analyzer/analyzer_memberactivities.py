@@ -1,15 +1,16 @@
+import logging
 from datetime import datetime, timedelta
 
 from discord_analyzer.analysis.compute_member_activity import compute_member_activity
 from discord_analyzer.analyzer.memberactivity_utils import MemberActivityUtils
+from discord_analyzer.DB_operations.mongo_neo4j_ops import MongoNeo4jDB
 from discord_analyzer.models.MemberActivityModel import MemberActivityModel
 from discord_analyzer.models.RawInfoModel import RawInfoModel
 
 
-class Member_activities:
-    def __init__(self, DB_connections, logging) -> None:
+class MemberActivities:
+    def __init__(self, DB_connections: MongoNeo4jDB) -> None:
         self.DB_connections = DB_connections
-        self.logging = logging
 
         self.utils = MemberActivityUtils(DB_connections)
 
@@ -43,9 +44,9 @@ class Member_activities:
 
         # check current guild is exist
         if guildId not in client.list_database_names():
-            self.logging.error(f"{guild_msg} Database {guildId} doesn't exist")
-            self.logging.error(f"{guild_msg} No such databse!")
-            self.logging.info(f"{guild_msg} Continuing")
+            logging.error(f"{guild_msg} Database {guildId} doesn't exist")
+            logging.error(f"{guild_msg} No such databse!")
+            logging.info(f"{guild_msg} Continuing")
             return (None, None)
 
         member_activity_c = MemberActivityModel(client[guildId])
@@ -53,30 +54,27 @@ class Member_activities:
 
         # Testing if there are entries in the rawinfo collection
         if rawinfo_c.count() == 0:
-            self.logging.warning(
+            logging.warning(
                 f"No entries in the collection 'rawinfos' in {guildId} databse"
             )
             return (None, None)
 
-        # get current guild setting
-        setting = self.utils.get_one_guild(guildId)
+        # get current guild_info
+        guild_info = self.utils.get_one_guild(guildId)
 
         channels, window, action = (
-            setting["selectedChannels"],
-            setting["window"],
-            setting["action"],
+            guild_info["metadata"]["selectedChannels"],
+            guild_info["metadata"]["window"],
+            guild_info["metadata"]["action"],
         )
-        channels = setting["selectedChannels"]
-        window = setting["window"]
-        action = setting["action"]
-        period = setting["period"]
+        period = guild_info["metadata"]["period"]
 
         channels = list(map(lambda x: x["channelId"], channels))
 
         # get date range to be analyzed
         today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
-        self.logging.info(f"{guild_msg} memberactivities Analysis started!")
+        logging.info(f"{guild_msg} memberactivities Analysis started!")
 
         # initialize
         load_past_data = False
@@ -93,7 +91,7 @@ class Member_activities:
 
         first_date = period
         if first_date is None:
-            self.logging.error(f"No guild: {guildId} available in RnDAO.guilds!")
+            logging.error(f"No guild: {guildId} available in Platforms.core!")
             return None, None
 
         last_date = today - timedelta(days=1)
@@ -105,13 +103,21 @@ class Member_activities:
             #       max([CON_T_THR, VITAL_T_THR, STILL_T_THR, PAUSED_T_THR])+1
             # ) * WINDOW_D
             num_days_to_load = (
-                max([action[3], action[7], action[9], action[2]]) + 1
-            ) * window[0]
+                max(
+                    [
+                        action["CON_T_THR"],
+                        action["VITAL_T_THR"],
+                        action["STILL_T_THR"],
+                        action["PAUSED_T_THR"],
+                    ]
+                )
+                + 1
+            ) * window["period_size"]
             date_range[0] = date_range[1] - timedelta(days=num_days_to_load)
 
             # if the date range goes back more than the "7 days `period` forward"
-            if date_range[0] < period + timedelta(days=window[0]):
-                date_range[0] = period + timedelta(days=window[0])
+            if date_range[0] < period + timedelta(days=window["period_size"]):
+                date_range[0] = period + timedelta(days=window["period_size"])
 
         # get all users during date_range
         all_users = self.utils.get_all_users(guildId)
@@ -126,7 +132,6 @@ class Member_activities:
             date_range,
             window,
             action,
-            logging=self.logging,
             load_past_data=load_past_data,
         )
 

@@ -215,7 +215,9 @@ class MemberActivityPastUtils:
 
         for idx in range(len(retrieved_data)):
             db_record = retrieved_data[idx]
-            parser.parse(db_record["date"]) - timedelta(days=window_param[0])
+            parser.parse(db_record["date"]) - timedelta(
+                days=window_param["period_size"]
+            )
 
             for activity in activity_dict.keys():
                 try:
@@ -235,7 +237,7 @@ class MemberActivityPastUtils:
                     logging.error(str(exp))
 
         activity_dict["first_end_date"] = (
-            date_start - timedelta(days=window_param[0])
+            date_start - timedelta(days=window_param["period_size"])
         ).isoformat()
 
         return activity_dict
