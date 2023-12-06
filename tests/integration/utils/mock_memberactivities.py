@@ -35,6 +35,7 @@ def create_empty_memberactivities_data(
             "all_lurker": [],
             "all_about_to_disengage": [],
             "all_disengaged_in_past": [],
+            "all_inconsistent": [],
         }
 
         data.append(document)

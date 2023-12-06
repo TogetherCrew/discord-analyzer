@@ -33,6 +33,7 @@ def generate_mock_graph(int_matrix, acc_names):
         "all_lurker": {},
         "all_about_to_disengage": {},
         "all_disengaged_in_past": {},
+        "all_inconsistent": {},
     }
 
     WINDOW_D = 7
