@@ -48,10 +48,18 @@ def get_mongo_credentials():
 
     mongo_creds = {}
 
-    mongo_creds["user"] = os.getenv("MONGODB_USER")
-    mongo_creds["password"] = os.getenv("MONGODB_PASS")
-    mongo_creds["host"] = os.getenv("MONGODB_HOST")
-    mongo_creds["port"] = os.getenv("MONGODB_PORT")
+    user = os.getenv("MONGODB_USER")
+    password = os.getenv("MONGODB_PASS")
+    host = os.getenv("MONGODB_HOST")
+    port = os.getenv("MONGODB_PORT")
+
+    mongo_creds["user"] = user
+    mongo_creds["password"] = password
+    mongo_creds["host"] = host
+    mongo_creds["port"] = port
+
+    connection = f"mongodb://{user}:{password}@{host}:{port}"
+    mongo_creds["connection_str"] = connection
 
     return mongo_creds
 
