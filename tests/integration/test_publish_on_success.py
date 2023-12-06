@@ -104,7 +104,7 @@ def test_publish_on_success_check_notification_choreographies():
             },
             "status": "IN_PROGRESS",
             "data": {
-                "PlatformId": ObjectId(platform_id),
+                "platformId": ObjectId(platform_id),
                 "created": False,
                 "discordId": expected_owner_id,
                 "message": "data is ready",
