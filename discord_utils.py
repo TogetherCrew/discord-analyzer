@@ -24,7 +24,7 @@ def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, Any]):
             f"Warn: Saga not found!, stopping the recompute for sagaId: {sagaId}"
         )
     else:
-        platform_id = saga.data["PlatformId"]
+        platform_id = saga.data["platformId"]
         guildId, commnity_id = get_guild_community_ids(platform_id)
 
         analyzer_init = AnalyzerInit(commnity_id)
@@ -57,7 +57,7 @@ def analyzer_run_once(sagaId: str, rabbit_creds: dict[str, Any]):
     if saga is None:
         logging.warn(f"Saga not found!, stopping the run_once for sagaId: {sagaId}")
     else:
-        platform_id = saga.data["PlatformId"]
+        platform_id = saga.data["platformId"]
         guildId, commnity_id = get_guild_community_ids(platform_id)
 
         analyzer_init = AnalyzerInit(commnity_id)
@@ -109,7 +109,7 @@ def publish_on_success(connection, result, *args, **kwargs):
 
         (transactions_ordered, tx_not_started_count) = sort_transactions(transactions)
 
-        platform_id = saga.data["PlatformId"]
+        platform_id = saga.data["platformId"]
         guildId, _ = get_guild_community_ids(platform_id)
 
         msg = f"GUILDID: {guildId}: "
