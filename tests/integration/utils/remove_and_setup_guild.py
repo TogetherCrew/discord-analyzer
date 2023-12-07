@@ -23,7 +23,7 @@ def setup_db_guild(
     """
     platform_id = "515151515151515151515151"
 
-    db_access.db_mongo_client["Core"]["Platforms"].delete_one(
+    db_access.db_mongo_client["Core"]["platforms"].delete_one(
         {"_id": ObjectId(platform_id)}
     )
     db_access.db_mongo_client.drop_database(guildId)
@@ -43,7 +43,7 @@ def setup_db_guild(
         "DROP_H_THR": 2,
         "DROP_I_THR": 1,
     }
-    db_access.db_mongo_client["Core"]["Platforms"].insert_one(
+    db_access.db_mongo_client["Core"]["platforms"].insert_one(
         {
             "_id": ObjectId(platform_id),
             "name": "discord",

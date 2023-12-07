@@ -37,6 +37,7 @@ class MongoNeo4jDB:
             neo4j_port=port,
         )
         self.neo4j_ops.neo4j_database_connect()
+        logging.info("Neo4j Connected Successfully!")
 
     def set_mongo_db_ops(
         self, mongo_user: str, mongo_pass: str, mongo_host: str, mongo_port: str
@@ -49,6 +50,11 @@ class MongoNeo4jDB:
             user=mongo_user, password=mongo_pass, host=mongo_host, port=mongo_port
         )
         self.mongoOps.set_mongo_db_access()
+        try:
+            info = self.mongoOps.mongo_db_access.db_mongo_client.server_info()
+            logging.info(f"MongoDB Connected, server info: {info}")
+        except Exception as exp:
+            logging.error(f"Error connecting to Mongodb, exp: {exp}")
 
     def store_analytics_data(
         self,

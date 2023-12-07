@@ -5,7 +5,7 @@ from pymongo.database import Database
 
 class GuildsRnDaoModel(BaseModel):
     def __init__(self, database: Database):
-        super().__init__(collection_name="Platforms", database=database)
+        super().__init__(collection_name="platforms", database=database)
         # print(self.database[self.collection_name].find_one())
 
     def get_connected_guilds(self, guildId: str | None = None):
@@ -16,6 +16,7 @@ class GuildsRnDaoModel(BaseModel):
         findOption = {"disconnectedAt": None, "name": "discord"}
         if guildId is not None:
             findOption["metadata.id"] = guildId
+
         guilds = self.database[self.collection_name].find(findOption)
         return [x["metadata"]["id"] for x in guilds]
 
@@ -29,7 +30,7 @@ class GuildsRnDaoModel(BaseModel):
 
     def get_guild_period(self, guildId: str):
         """
-        get the period field from guild saved in Platforms collection
+        get the period field from guild saved in platforms collection
         """
         data = self.database[self.collection_name].find_one(
             {"metadata.id": guildId, "name": "discord"},

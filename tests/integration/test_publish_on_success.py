@@ -31,7 +31,7 @@ def test_publish_on_success_check_notification_choreographies():
     at_db = os.getenv("AUTOMATION_DB_NAME")
     at_collection = os.getenv("AUTOMATION_DB_COLLECTION")
 
-    db_access.db_mongo_client["Core"]["Platforms"].delete_one(
+    db_access.db_mongo_client["Core"]["platforms"].delete_one(
         {"_id": ObjectId(platform_id)}
     )
 
@@ -40,7 +40,7 @@ def test_publish_on_success_check_notification_choreographies():
     db_access.db_mongo_client[guild_id].drop_collection("guildmembers")
     db_access.db_mongo_client[at_db].drop_collection(at_collection)
 
-    db_access.db_mongo_client["Core"]["Platforms"].insert_one(
+    db_access.db_mongo_client["Core"]["platforms"].insert_one(
         {
             "_id": ObjectId(platform_id),
             "name": "discord",

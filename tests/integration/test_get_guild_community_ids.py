@@ -12,7 +12,7 @@ class TestGetGuildId(TestCase):
         platform_id = ObjectId("515151515151515151515151")
 
         client.drop_database("Core")
-        client["Core"]["Platforms"].insert_one(
+        client["Core"]["platforms"].insert_one(
             {
                 "_id": ObjectId(platform_id),
                 "name": "discord",

@@ -63,7 +63,7 @@ def test_analyzer_member_activities_from_start_available_heatmaps():
         "memberactivities"
     ].find_one({})
     heatmaps_data = db_access.db_mongo_client[guildId]["heatmaps"].find_one({})
-    guild_document = db_access.db_mongo_client["Core"]["Platforms"].find_one(
+    guild_document = db_access.db_mongo_client["Core"]["platforms"].find_one(
         {"metadata.id": guildId}
     )
 
