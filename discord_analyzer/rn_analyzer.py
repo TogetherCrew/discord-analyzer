@@ -247,7 +247,7 @@ class RnDaoAnalyzer(Base_analyzer):
 
     def _update_isin_progress(self, guildId):
         """
-        update isInProgress field of Platforms collection
+        update isInProgress field of platforms collection
 
         Parameters:
         ------------

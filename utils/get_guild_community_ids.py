@@ -9,7 +9,7 @@ def get_guild_community_ids(platform_id: ObjectId) -> tuple[str, str]:
     Parameters
     -----------
     platform_id : str
-        the platform `_id` within the Platforms collection
+        the platform `_id` within the platforms collection
 
     Returns
     --------

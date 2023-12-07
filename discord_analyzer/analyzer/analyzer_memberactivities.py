@@ -91,7 +91,7 @@ class MemberActivities:
 
         first_date = period
         if first_date is None:
-            logging.error(f"No guild: {guildId} available in Platforms.core!")
+            logging.error(f"No guild: {guildId} available in platforms.core!")
             return None, None
 
         last_date = today - timedelta(days=1)

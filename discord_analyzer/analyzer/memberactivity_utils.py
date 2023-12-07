@@ -34,7 +34,7 @@ class MemberActivityUtils:
         """Get one guild setting from guilds collection by guild"""
 
         result = self.DB_connection.mongoOps.mongo_db_access.db_mongo_client["Core"][
-            "Platforms"
+            "platforms"
         ].find_one({"metadata.id": guild})
         return result
 
