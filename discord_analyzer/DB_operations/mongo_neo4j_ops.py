@@ -51,8 +51,8 @@ class MongoNeo4jDB:
         )
         self.mongoOps.set_mongo_db_access()
         try:
-            info = self.mongoOps.DB_access.db_mongo_client.server_info()
-            logging.info("MongoDB Connected!")
+            info = self.mongoOps.mongo_db_access.db_mongo_client.server_info()
+            logging.info(f"MongoDB Connected, server info: {info}")
         except Exception as exp:
             logging.error(f"Error connecting to Mongodb, exp: {exp}")
 
