@@ -16,7 +16,7 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
     platform_id = "515151515151515151515151"
     db_access = launch_db_access(guildId)
 
-    db_access.db_mongo_client["Core"]["Platforms"].delete_one({"metadata.id": guildId})
+    db_access.db_mongo_client["Core"]["platforms"].delete_one({"metadata.id": guildId})
     db_access.db_mongo_client.drop_database(guildId)
 
     action = {
@@ -35,7 +35,7 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
         "DROP_I_THR": 1,
     }
 
-    db_access.db_mongo_client["Core"]["Platforms"].insert_one(
+    db_access.db_mongo_client["Core"]["platforms"].insert_one(
         {
             "_id": ObjectId(platform_id),
             "name": "discord",
@@ -103,7 +103,7 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
         "memberactivities"
     ].find_one({})
     heatmaps_data = db_access.db_mongo_client[guildId]["heatmaps"].find_one({})
-    guild_document = db_access.db_mongo_client["Core"]["Platforms"].find_one(
+    guild_document = db_access.db_mongo_client["Core"]["platforms"].find_one(
         {"metadata.id": guildId}
     )
 

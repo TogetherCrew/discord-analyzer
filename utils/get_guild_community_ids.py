@@ -20,11 +20,11 @@ def get_guild_community_ids(platform_id: ObjectId) -> tuple[str, str]:
     """
     mongo_client = MongoSingleton.get_instance().client
 
-    platform = mongo_client["Core"]["Platforms"].find_one(
+    platform = mongo_client["Core"]["platforms"].find_one(
         {"name": "discord", "_id": platform_id}
     )
     if platform is None:
-        raise AttributeError("No guild found!")
+        raise AttributeError(f"PLATFORM_ID: {platform_id}, No guild found!")
 
     guild_id = platform["metadata"]["id"]
     community_id = str(platform["community"])

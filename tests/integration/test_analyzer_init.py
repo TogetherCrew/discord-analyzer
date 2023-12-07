@@ -23,7 +23,7 @@ def test_analyzer_init():
 
     mongo_client: MongoClient = MongoClient(url)
 
-    mongo_client["Core"]["Platforms"].delete_one({"metadata.id": guildId})
+    mongo_client["Core"]["platforms"].delete_one({"metadata.id": guildId})
     mongo_client.drop_database(guildId)
 
     act_param = {
@@ -46,7 +46,7 @@ def test_analyzer_init():
         "step_size": 1,
     }
 
-    mongo_client["Core"]["Platforms"].insert_one(
+    mongo_client["Core"]["platforms"].insert_one(
         {
             "_id": ObjectId(platform_id),
             "name": "discord",
