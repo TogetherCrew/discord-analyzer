@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import logging
-import sys
 
 from discord_analyzer.analyzer.analyzer_heatmaps import Heatmaps
 from discord_analyzer.analyzer.analyzer_memberactivities import MemberActivities
@@ -165,18 +164,10 @@ class RnDaoAnalyzer(Base_analyzer):
         guild_c = GuildsRnDaoModel(client["Core"])
         selectedChannels = guild_c.get_guild_channels(guildId=guildId)
 
-        if selectedChannels != []:
-            # get the `channel_id`s
-            channel_id_list = list(
-                map(lambda channel_info: channel_info["channelId"], selectedChannels)
-            )
-        else:
-            channel_id_list = []
-
         # check if all the channels were available in heatmaps
         is_available = self.DB_connections.mongoOps.check_heatmaps(
             guildId=guildId,
-            selectedChannels=channel_id_list,
+            selectedChannels=selectedChannels,
             heatmap_model=HeatMapModel,
         )
 
@@ -259,29 +250,3 @@ class RnDaoAnalyzer(Base_analyzer):
         client["Core"]["platforms"].update_one(
             {"metadata.id": guildId}, {"$set": {"isInProgress": False}}
         )
-
-
-def getParamsFromCmd():
-    """
-    get guildId and recompute analysis arguments from cmd
-    the second argument should be guildId,
-    and the third one should be recompute_analysis
-    (if third args not given, then recompute analysis will be False)
-
-    Returns:
-    ----------
-    guildId : str
-        the guildId to analyze
-    recompute_analysis : bool
-        whether to recompute the analysis or just run once
-
-    """
-    args = sys.argv
-    guildId = None
-    recompute_analysis = False
-    if len(args) == 2:
-        guildId = args[1]
-    elif len(args) == 3:
-        guildId = args[1]
-        recompute_analysis = True
-    return guildId, recompute_analysis
