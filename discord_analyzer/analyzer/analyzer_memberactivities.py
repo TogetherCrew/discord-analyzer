@@ -69,8 +69,6 @@ class MemberActivities:
         )
         period = guild_info["metadata"]["period"]
 
-        channels = list(map(lambda x: x["channelId"], channels))
-
         # get date range to be analyzed
         today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 

@@ -54,9 +54,7 @@ def test_analyzer_init():
                 "id": guildId,
                 "icon": "111111111111111111111111",
                 "name": "A guild",
-                "selectedChannels": [
-                    {"channelId": "1020707129214111827", "channelName": "general"}
-                ],
+                "selectedChannels": ["1020707129214111827"],
                 "window": window,
                 "action": act_param,
                 "period": datetime.now() - timedelta(days=days_ago_period),
