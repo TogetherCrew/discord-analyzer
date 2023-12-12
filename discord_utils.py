@@ -28,15 +28,19 @@ def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, Any]):
         platform_id = saga.data["platformId"]
         guildId, commnity_id = get_guild_community_ids(platform_id)
 
+        logging.info("Initializing the analyzer")
         analyzer_init = AnalyzerInit(commnity_id)
         analyzer, mongo_creds = analyzer_init.get_analyzer()
+        logging.info("Analyzer initialized")
 
         def recompute_wrapper(**kwargs):
+            logging.info("recompute wrapper")
             analyzer.recompute_analytics(guildId=guildId)
 
         def publish_wrapper(**kwargs):
             pass
 
+        logging.info("Calling the saga.next()")
         saga.next(
             publish_method=publish_wrapper,
             call_function=recompute_wrapper,
@@ -62,15 +66,19 @@ def analyzer_run_once(sagaId: str, rabbit_creds: dict[str, Any]):
         platform_id = saga.data["platformId"]
         guildId, commnity_id = get_guild_community_ids(platform_id)
 
+        logging.info("Initializing the analyzer")
         analyzer_init = AnalyzerInit(commnity_id)
         analyzer, mongo_creds = analyzer_init.get_analyzer()
+        logging.info("Analyzer initialized")
 
         def run_once_wrapper(**kwargs):
+            logging.info("run_once wrapper")
             analyzer.run_once(guildId=guildId)
 
         def publish_wrapper(**kwargs):
             pass
 
+        logging.info("Calling the saga.next()")
         saga.next(
             publish_method=publish_wrapper,
             call_function=run_once_wrapper,

@@ -158,6 +158,7 @@ class RnDaoAnalyzer(Base_analyzer):
         ---------
         `None`
         """
+        logging.info(f"GUILDID: {guildId} | recompute_analytics")
 
         client = self.DB_connections.mongoOps.mongo_db_access.db_mongo_client
 
