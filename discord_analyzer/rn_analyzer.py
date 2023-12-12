@@ -158,8 +158,6 @@ class RnDaoAnalyzer(Base_analyzer):
         ---------
         `None`
         """
-        logging.info(f"GUILDID: {guildId} | recompute_analytics")
-
         client = self.DB_connections.mongoOps.mongo_db_access.db_mongo_client
 
         guild_c = GuildsRnDaoModel(client["Core"])
@@ -249,5 +247,5 @@ class RnDaoAnalyzer(Base_analyzer):
         client = self.DB_connections.mongoOps.mongo_db_access.db_mongo_client
 
         client["Core"]["platforms"].update_one(
-            {"metadata.id": guildId}, {"$set": {"isInProgress": False}}
+            {"metadata.id": guildId}, {"$set": {"metadata.isInProgress": False}}
         )
