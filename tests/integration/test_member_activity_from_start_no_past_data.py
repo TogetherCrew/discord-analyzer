@@ -1,6 +1,8 @@
 # test analyzing memberactivities
 from datetime import datetime, timedelta
 
+from bson.objectid import ObjectId
+
 from .utils.analyzer_setup import launch_db_access, setup_analyzer
 
 
@@ -11,29 +13,47 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
     """
     # first create the collections
     guildId = "1234"
+    platform_id = "515151515151515151515151"
     db_access = launch_db_access(guildId)
 
-    db_access.db_mongo_client["RnDAO"]["guilds"].delete_one({"guildId": guildId})
+    db_access.db_mongo_client["Core"]["platforms"].delete_one({"metadata.id": guildId})
     db_access.db_mongo_client.drop_database(guildId)
 
-    db_access.db_mongo_client["RnDAO"]["guilds"].insert_one(
+    action = {
+        "INT_THR": 1,
+        "UW_DEG_THR": 1,
+        "PAUSED_T_THR": 1,
+        "CON_T_THR": 4,
+        "CON_O_THR": 3,
+        "EDGE_STR_THR": 5,
+        "UW_THR_DEG_THR": 5,
+        "VITAL_T_THR": 4,
+        "VITAL_O_THR": 3,
+        "STILL_T_THR": 2,
+        "STILL_O_THR": 2,
+        "DROP_H_THR": 2,
+        "DROP_I_THR": 1,
+    }
+
+    db_access.db_mongo_client["Core"]["platforms"].insert_one(
         {
-            "guildId": guildId,
-            "user": "1223455",
-            "name": "Loud place",
-            "connectedAt": (datetime.now() - timedelta(days=10)),
+            "_id": ObjectId(platform_id),
+            "name": "discord",
+            "metadata": {
+                "id": guildId,
+                "icon": "111111111111111111111111",
+                "name": "A guild",
+                "selectedChannels": ["1020707129214111827"],
+                "window": {"period_size": 7, "step_size": 1},
+                "action": action,
+                "period": datetime.now() - timedelta(days=30),
+            },
+            "community": ObjectId("aabbccddeeff001122334455"),
+            "disconnectedAt": None,
+            "connectedAt": (datetime.now() - timedelta(days=40)),
             "isInProgress": True,
-            "isDisconnected": False,
-            "icon": "afd0d06fd12b2905c53708ca742e6c66",
-            "window": [7, 1],
-            "action": [1, 1, 1, 4, 3, 5, 5, 4, 3, 3, 2, 2, 1],
-            "selectedChannels": [
-                {
-                    "channelId": "41414262",
-                    "channelName": "general",
-                },
-            ],
-            "period": (datetime.now() - timedelta(days=30)),
+            "createdAt": datetime(2023, 11, 1),
+            "updatedAt": datetime(2023, 11, 1),
         }
     )
     db_access.db_mongo_client[guildId].create_collection("heatmaps")
@@ -81,8 +101,8 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
         "memberactivities"
     ].find_one({})
     heatmaps_data = db_access.db_mongo_client[guildId]["heatmaps"].find_one({})
-    guild_document = db_access.db_mongo_client["RnDAO"]["guilds"].find_one(
-        {"guildId": guildId}
+    guild_document = db_access.db_mongo_client["Core"]["platforms"].find_one(
+        {"metadata.id": guildId}
     )
 
     # testing whether any data is available

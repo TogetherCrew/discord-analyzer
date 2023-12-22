@@ -10,7 +10,7 @@ from .utils.neo4j_conn import neo4j_setup
 
 
 def test_network_graph_create():
-    """ """
+    community_id = "4321"
     neo4j_ops = neo4j_setup()
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
@@ -158,7 +158,9 @@ def test_network_graph_create():
 
     # DATABASE SAVING
 
-    store_mock_data_in_neo4j(graph_dict=graph_dict, guildId=guildId)
+    store_mock_data_in_neo4j(
+        graph_dict=graph_dict, guildId=guildId, community_id=community_id
+    )
 
     results = neo4j_ops.gds.run_cypher(
         f"""

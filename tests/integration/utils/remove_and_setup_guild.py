@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 import numpy as np
+from bson.objectid import ObjectId
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 
 
@@ -14,34 +15,53 @@ def setup_db_guild(
     days_ago_period: int = 30,
 ):
     """
-    Remove the guild from RnDAO databse and then insert it there
+    Remove the guild from Core databse and then insert it there
     also drop the guildId database and re-create
       it then create the guildmembers collection in it
 
     `discordId_isbot` is representative if each user is bot or not
     """
+    platform_id = "515151515151515151515151"
 
-    db_access.db_mongo_client["RnDAO"]["guilds"].delete_one({"guildId": guildId})
+    db_access.db_mongo_client["Core"]["platforms"].delete_one(
+        {"_id": ObjectId(platform_id)}
+    )
     db_access.db_mongo_client.drop_database(guildId)
 
-    db_access.db_mongo_client["RnDAO"]["guilds"].insert_one(
+    action = {
+        "INT_THR": 1,
+        "UW_DEG_THR": 1,
+        "PAUSED_T_THR": 1,
+        "CON_T_THR": 4,
+        "CON_O_THR": 3,
+        "EDGE_STR_THR": 5,
+        "UW_THR_DEG_THR": 5,
+        "VITAL_T_THR": 4,
+        "VITAL_O_THR": 3,
+        "STILL_T_THR": 2,
+        "STILL_O_THR": 2,
+        "DROP_H_THR": 2,
+        "DROP_I_THR": 1,
+    }
+    db_access.db_mongo_client["Core"]["platforms"].insert_one(
         {
-            "guildId": guildId,
-            "user": "876487027099582524",
-            "name": "Sample Guild",
-            "connectedAt": (datetime.now() - timedelta(days=10)),
+            "_id": ObjectId(platform_id),
+            "name": "discord",
+            "metadata": {
+                "id": guildId,
+                "icon": "111111111111111111111111",
+                "name": "A guild",
+                "selectedChannels": ["1020707129214111827"],
+                "window": {"period_size": 7, "step_size": 1},
+                "action": action,
+                "period": datetime.now() - timedelta(days=days_ago_period),
+            },
+            "community": ObjectId("aabbccddeeff001122334455"),
+            "disconnectedAt": None,
+            "connectedAt": (datetime.now() - timedelta(days=days_ago_period + 10)),
             "isInProgress": True,
-            "isDisconnected": False,
-            "icon": "afd0d06fd12b2905c53708ca742e6c66",
-            "window": [7, 1],
-            "action": [1, 1, 1, 4, 3, 5, 5, 4, 3, 3, 2, 2, 1],
-            "selectedChannels": [
-                {
-                    "channelId": "1020707129214111827",
-                    "channelName": "general",
-                },
-            ],
-            "period": (datetime.now() - timedelta(days=days_ago_period)),
+            "createdAt": datetime(2023, 11, 1),
+            "updatedAt": datetime(2023, 11, 1),
         }
     )
 

@@ -104,3 +104,14 @@ def test_networkgraph_35_days_period_recompute_available_analytics():
 
     assert dates[-1] == start_analytics_date.timestamp() * 1000
     assert dates[0] == end_analytics_date.timestamp() * 1000
+
+    results = neo4j_ops.gds.run_cypher(
+        f"""
+        MATCH
+            (g:Guild {{guildId: '{guildId}'}})
+                -[r:IS_WITHIN]-> (c:Community {{id: '1234555'}})
+        RETURN c.id as cid
+        """
+    )
+    assert len(results.values) == 1
+    assert results["cid"].values == ["1234555"]

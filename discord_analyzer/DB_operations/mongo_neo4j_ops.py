@@ -37,6 +37,7 @@ class MongoNeo4jDB:
             neo4j_port=port,
         )
         self.neo4j_ops.neo4j_database_connect()
+        logging.info("Neo4j Connected Successfully!")
 
     def set_mongo_db_ops(
         self, mongo_user: str, mongo_pass: str, mongo_host: str, mongo_port: str
@@ -49,9 +50,18 @@ class MongoNeo4jDB:
             user=mongo_user, password=mongo_pass, host=mongo_host, port=mongo_port
         )
         self.mongoOps.set_mongo_db_access()
+        try:
+            info = self.mongoOps.mongo_db_access.db_mongo_client.server_info()
+            logging.info(f"MongoDB Connected, server info: {info}")
+        except Exception as exp:
+            logging.error(f"Error connecting to Mongodb, exp: {exp}")
 
     def store_analytics_data(
-        self, analytics_data, remove_memberactivities=False, remove_heatmaps=False
+        self,
+        analytics_data: dict,
+        community_id: str,
+        remove_memberactivities: bool = False,
+        remove_heatmaps: bool = False,
     ):
         """
         store the analytics data into database
@@ -65,6 +75,8 @@ class MongoNeo4jDB:
             heatmaps is also a list of dictinoaries
             and memberactivities is a tuple of memberactivities dictionary list
              and memebractivities networkx object dictionary list
+        community_id : str
+            the community id to save the data for
         remove_memberactivities : bool
             remove the whole memberactivity data and insert
             default is `False` which means don't delete the existing data
@@ -98,7 +110,9 @@ class MongoNeo4jDB:
                     and memberactivities_networkx_data != []
                 ):
                     queries_list = make_neo4j_networkx_query_dict(
-                        networkx_graphs=memberactivities_networkx_data, guildId=guildId
+                        networkx_graphs=memberactivities_networkx_data,
+                        guildId=guildId,
+                        community_id=community_id,
                     )
                     self.run_operations_transaction(
                         guildId=guildId,

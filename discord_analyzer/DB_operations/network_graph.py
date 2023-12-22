@@ -5,7 +5,11 @@ import datetime
 import networkx
 
 
-def make_neo4j_networkx_query_dict(networkx_graphs, guildId):
+def make_neo4j_networkx_query_dict(
+    networkx_graphs: dict[datetime.datetime, networkx.classes.graph.Graph],
+    guildId: str,
+    community_id: str,
+):
     """
     make a list of queries to store networkx graphs into the neo4j
 
@@ -17,6 +21,8 @@ def make_neo4j_networkx_query_dict(networkx_graphs, guildId):
          are the actual networkx graphs
     guildId : str
         the guild that the members belong to
+    community_id : str
+        the community id to save the data for
 
     Returns:
     -----------
@@ -34,6 +40,7 @@ def make_neo4j_networkx_query_dict(networkx_graphs, guildId):
         networkx_graphs=graph_list,
         networkx_dates=graph_dates,
         guildId=guildId,
+        community_id=community_id,
         toGuildRelation="IS_MEMBER",
     )
 
@@ -44,6 +51,7 @@ def make_graph_list_query(
     networkx_graphs: networkx.classes.graph.Graph,
     networkx_dates: list[datetime.datetime],
     guildId: str,
+    community_id: str,
     toGuildRelation: str = "IS_MEMBER",
 ):
     """
@@ -59,6 +67,8 @@ def make_graph_list_query(
     guildId : str
         the guild that the members belong to
         default is `None` meaning that it wouldn't be belonged to any guild
+    community_id : str
+        the community id to save the data for
     toGuildRelation : str
         the relationship label that connect the users to guilds
         default value is `IS_MEMBER`
@@ -81,11 +91,44 @@ def make_graph_list_query(
             guildId=guildId,
             toGuildRelation=toGuildRelation,
         )
+        community_query = create_community_node_query(community_id, guildId)
 
         final_queries.extend(node_queries)
         final_queries.extend(query_relations)
+        final_queries.append(community_query)
 
     return final_queries
+
+
+def create_community_node_query(
+    community_id: str,
+    guild_id: str,
+    community_node: str = "Community",
+) -> str:
+    """
+    create the community node
+
+    Parameters
+    ------------
+    community_id : str
+        the community id to create its node
+    guild_id : str
+        the guild node to attach to community
+    """
+    date_now_timestamp = get_timestamp()
+
+    query = f"""
+        MERGE (g:Guild {{guildId: '{guild_id}'}})
+        ON CREATE SET g.createdAt = {int(date_now_timestamp)}
+        WITH g
+        MERGE (c:{community_node} {{id: '{community_id}'}})
+        ON CREATE SET c.createdAt = {int(date_now_timestamp)}
+        WITH g, c
+        MERGE (g) -[r:IS_WITHIN]-> (c)
+        ON CREATE SET r.createdAt = {int(date_now_timestamp)}
+    """
+
+    return query
 
 
 def create_network_query(
@@ -127,19 +170,8 @@ def create_network_query(
         the list of MERGE queries for creating all relationships
     """
     # getting the timestamp `date`
-    graph_date_timestamp = (
-        graph_date.replace(
-            hour=0, minute=0, second=0, microsecond=0, tzinfo=datetime.timezone.utc
-        ).timestamp()
-        * 1000
-    )
-    date_now_timestamp = (
-        datetime.datetime.now()
-        .replace(
-            hour=0, minute=0, second=0, microsecond=0, tzinfo=datetime.timezone.utc
-        )
-        .timestamp()
-    ) * 1000
+    graph_date_timestamp = get_timestamp(graph_date)
+    date_now_timestamp = get_timestamp()
 
     # initializiation of queries
     rel_queries = []
@@ -208,3 +240,34 @@ def create_network_query(
         rel_queries.append(rel_str_query + ";")
 
     return node_queries, rel_queries
+
+
+def get_timestamp(time: datetime.datetime | None = None) -> float:
+    """
+    get the timestamp of the given time or just now
+
+    Parameters
+    ------------
+    time : datetime.datetime
+        the time to get its timestamp
+        default is `None` meaning to send the time of now
+
+    Returns
+    --------
+    timestamp : float
+        the timestamp of the time multiplied to 1000
+    """
+    using_time: datetime.datetime
+    if time is not None:
+        using_time = time
+    else:
+        using_time = datetime.datetime.now()
+
+    timestamp = (
+        using_time.replace(
+            hour=0, minute=0, second=0, microsecond=0, tzinfo=datetime.timezone.utc
+        ).timestamp()
+        * 1000
+    )
+
+    return timestamp

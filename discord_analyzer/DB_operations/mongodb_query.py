@@ -5,46 +5,12 @@ class MongodbQuery:
         """
         pass
 
-    def _check_inputs(
-        self,
-        acc_names,
-        channels,
-        dates,
-        variable_aggregation_type="and",
-        value_aggregation_type="or",
-    ):
-        """
-        just check whether the inputs are correctly entered or not
-        """
-        # checking the length of arrays
-        if len(acc_names) < 1:
-            raise ValueError("acc_names array is empty!")
-        if len(channels) < 1:
-            raise ValueError("channels array is empty!")
-        if len(dates) < 1:
-            raise ValueError("dates array is empty!")
-
-        # checking the variable aggregation_type variable
-        if variable_aggregation_type not in ["and", "or"]:
-            raise ValueError(
-                f"variable aggregation type must be either `and` or \
-                  `or`!\nentered value is:{variable_aggregation_type}"
-            )
-
-        # checking the value aggregation_type variable
-        if value_aggregation_type not in ["and", "or"]:
-            raise ValueError(
-                f"value aggregation type must be either `and` or \
-                      `or`!\nentered value is:{value_aggregation_type}"
-            )
-
     def create_query_filter_account_channel_dates(
         self,
         acc_names,
         channels,
         dates,
         variable_aggregation_type="and",
-        value_aggregation_type="or",
         date_key="date",
         channel_key="channelId",
         account_key="account_name",
@@ -94,35 +60,13 @@ class MongodbQuery:
         query : dictionary
             the query to get access
         """
-
-        # creating each part of query seperately
-
-        # creating date query
-        date_query = []
-        for date in dates:
-            date_query.append({date_key: {"$regex": date}})
-
-        # creating channels query
-        channel_query = []
-
-        for ch in channels:
-            channel_query.append({channel_key: ch})
-
-        # creating the account_name query
-        account_query = []
-
-        for account in acc_names:
-            account_query.append({account_key: account})
-
         # creating the query
         query = {
             "$"
             + variable_aggregation_type: [
-                {"$" + value_aggregation_type: account_query},
-                {"$" + value_aggregation_type: channel_query},
-                # for time we should definitly use `or` because
-                # `and` would result in nothing!
-                {"$or": date_query},
+                {account_key: {"$in": acc_names}},
+                {channel_key: {"$in": channels}},
+                {date_key: {"$in": dates}},
             ]
         }
 

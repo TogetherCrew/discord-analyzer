@@ -1,10 +1,11 @@
 import logging
 
 from dateutil import parser
+from discord_analyzer.DB_operations.mongo_neo4j_ops import MongoNeo4jDB
 
 
 class MemberActivityUtils:
-    def __init__(self, DB_connection) -> None:
+    def __init__(self, DB_connection: MongoNeo4jDB) -> None:
         self.DB_connection = DB_connection
 
     def refine_memberactivities_data(self, all_member_activities, first_date):
@@ -32,14 +33,9 @@ class MemberActivityUtils:
     def get_one_guild(self, guild):
         """Get one guild setting from guilds collection by guild"""
 
-        # guild_c = GuildsRnDaoModel(
-        #     self.DB_connection.mongoOps.mongo_db_access.db_mongo_client["RnDAO"]
-        # )
-
-        # result = guild_c.get_guild_info(guild)
-        result = self.DB_connection.mongoOps.mongo_db_access.db_mongo_client["RnDAO"][
-            "guilds"
-        ].find_one({"guildId": guild})
+        result = self.DB_connection.mongoOps.mongo_db_access.db_mongo_client["Core"][
+            "platforms"
+        ].find_one({"metadata.id": guild})
         return result
 
     # get all user accounts during date_range in guild from rawinfo data

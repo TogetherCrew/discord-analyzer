@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from pymongo import MongoClient
@@ -14,6 +15,7 @@ class MongoSingleton:
             creds = get_mongo_credentials()
             connection_uri = config_mogno_creds(creds)
             self.client = MongoClient(connection_uri)
+            logging.info(f"MongoDB connected! server info: {self.client.server_info()}")
             MongoSingleton.__instance = self
 
     @staticmethod
