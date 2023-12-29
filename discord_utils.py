@@ -5,7 +5,7 @@ from analyzer_init import AnalyzerInit
 from automation.automation_workflow import AutomationWorkflow
 from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
 from utils.daolytics_uitls import get_mongo_credentials, get_saga_db_location
-from utils.get_guild_community_ids import get_guild_community_ids
+from utils.get_guild_utils import get_guild_community_ids
 from utils.get_rabbitmq import prepare_rabbit_mq
 from utils.transactions_ordering import sort_transactions
 
