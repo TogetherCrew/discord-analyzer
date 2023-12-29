@@ -2,7 +2,7 @@ from datetime import datetime
 from unittest import TestCase
 
 from bson.objectid import ObjectId
-from utils.get_guild_utils import get_guild_community_ids
+from utils.get_guild_utils import get_guild_platform_id
 from utils.get_mongo_client import MongoSingleton
 
 
@@ -10,6 +10,7 @@ class TestGetGuildId(TestCase):
     def test_get_avalable_guild(self):
         client = MongoSingleton.get_instance().client
         platform_id = ObjectId("515151515151515151515151")
+        guild_id = "999888877766655"
 
         client.drop_database("Core")
         client["Core"]["platforms"].insert_one(
@@ -17,7 +18,7 @@ class TestGetGuildId(TestCase):
                 "_id": ObjectId(platform_id),
                 "name": "discord",
                 "metadata": {
-                    "id": "999888877766655",
+                    "id": guild_id,
                     "icon": "111111111111111111111111",
                     "name": "A guild",
                     "selectedChannels": [
@@ -41,15 +42,14 @@ class TestGetGuildId(TestCase):
             }
         )
 
-        guild_id, community_id = get_guild_community_ids(str(platform_id))
-        self.assertEqual(guild_id, "999888877766655")
-        self.assertEqual(community_id, "aabbccddeeff001122334455")
+        platform_id = get_guild_platform_id(guild_id)
+        self.assertEqual(platform_id, "515151515151515151515151")
 
     def test_no_document_raise_error(self):
         client = MongoSingleton.get_instance().client
-        platform_id = ObjectId("515151515151515151515151")
+        guild_id = "999888877766655"
 
         client.drop_database("Core")
 
-        with self.assertRaises(AttributeError):
-            get_guild_community_ids(str(platform_id))
+        with self.assertRaises(ValueError):
+            get_guild_platform_id(guild_id)
