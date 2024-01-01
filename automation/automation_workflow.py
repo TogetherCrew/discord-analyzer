@@ -6,6 +6,7 @@ from automation.utils.model import AutomationDB
 from pybars import Compiler
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
+from utils.get_guild_utils import get_guild_platform_id
 
 
 class AutomationWorkflow(AutomationBase):
@@ -194,8 +195,9 @@ class AutomationWorkflow(AutomationBase):
         message : str
             the message to send the user
         """
+        platform_id = get_guild_platform_id(guild_id)
         data = {
-            "guildId": guild_id,
+            "platformId": platform_id,
             "created": False,
             "discordId": user_id,
             "message": message,

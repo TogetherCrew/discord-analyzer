@@ -108,4 +108,4 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
     # testing whether any data is available
     assert memberactivities_data is not None
     assert heatmaps_data is not None
-    assert guild_document["isInProgress"] is False
+    assert guild_document["metadata"]["isInProgress"] is False
