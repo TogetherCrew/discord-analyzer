@@ -175,7 +175,9 @@ def convert_to_dict(data: list[Any], dict_keys: list[str]) -> dict[str, dict]:
 
 
 def get_users_past_window(
-    window_start_date: str, collection: pymongo.collection.Collection
+    window_start_date: str,
+    window_end_date: str,
+    collection: pymongo.collection.Collection,
 ) -> list[str]:
     """
     get all users in the past date window from specific collection
@@ -183,8 +185,11 @@ def get_users_past_window(
     Parameters:
     ------------
     window_start_date : str
-        the starting point of the window until today
+        the starting point of the window
         must be in format of the database which for now is %Y-%m-%d
+    window_end_date : str
+            the ending point of the window
+            must be in format of the database which for now is %Y-%m-%d
     collection : pymongo.collection.Collection
         the mongodb collection to do the aggregation
 
@@ -195,7 +200,7 @@ def get_users_past_window(
     """
     pipeline = [
         # Filter documents based on date
-        {"$match": {"date": {"$gte": window_start_date}}},
+        {"$match": {"date": {"$gte": window_start_date, "$lte": window_end_date}}},
         {"$group": {"_id": "$account_name"}},
         {
             "$group": {
