@@ -264,6 +264,7 @@ def compute_member_activity(
                 # updating account names for past 7 days
                 acc_names = get_users_past_window(
                     window_start_date=window_start.strftime("%Y-%m-%d"),
+                    window_end_date=last_date.strftime("%Y-%m-%d"),
                     collection=db_access.db_mongo_client[db_name]["heatmaps"],
                 )
 
