@@ -5,7 +5,9 @@ import functools
 import logging
 from typing import Any
 
+import backoff
 from discord_utils import analyzer_recompute, analyzer_run_once, publish_on_success
+from pika.exceptions import AMQPConnectionError, ConnectionClosedByBroker
 from redis import Redis
 from rq import Queue as RQ_Queue
 from tc_messageBroker.message_broker import RabbitMQ
@@ -19,6 +21,12 @@ from utils.daolytics_uitls import (
 from utils.sentryio_service import set_up_sentryio
 
 
+@backoff.on_exception(
+    wait_gen=backoff.expo,
+    exception=(ConnectionClosedByBroker, ConnectionError, AMQPConnectionError),
+    # waiting for 3 hours
+    max_time=60 * 60 * 3,
+)
 def analyzer():
     rabbit_mq_creds = get_rabbit_mq_credentials()
     sentry_creds = get_sentryio_service_creds()
@@ -56,7 +64,7 @@ def analyzer():
     rabbit_mq.on_event(Event.DISCORD_ANALYZER.RUN_ONCE, analyzer_run_once)
 
     if rabbit_mq.channel is None:
-        logging.info("Error: was not connected to RabbitMQ broker!")
+        raise ConnectionError("Couldn't connect to rmq server!")
     else:
         logging.info("Started Consuming!")
         rabbit_mq.channel.start_consuming()
