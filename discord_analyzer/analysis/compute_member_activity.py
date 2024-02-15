@@ -184,7 +184,7 @@ def compute_member_activity(
         # no analytics for the days would be computed
         # so make it as a window_d lenght to have the computations
         new_date_range_interval = (new_date_range[1] - new_date_range[0]).days
-        if new_date_range_interval < window_param["period_size"] - 1:
+        if load_past_data is True:
             interval_before = (new_date_range_interval) + (
                 window_param["period_size"] - 1
             )
