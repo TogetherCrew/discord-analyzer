@@ -6,10 +6,11 @@
 #  Author Ene SS Rawa / Tjitse van der Molen
 import copy
 from typing import Any
+
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 from discord_analyzer.DB_operations.mongodb_query import MongodbQuery
-from tc_core_analyzer_lib.utils.activity import DiscordActivity
 from numpy import ndarray, diag_indices_from
+from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
 from .utils.compute_interaction_mtx_utils import (
     generate_interaction_matrix,
