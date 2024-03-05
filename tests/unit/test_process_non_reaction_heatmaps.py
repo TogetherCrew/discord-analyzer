@@ -1,9 +1,9 @@
 from unittest import TestCase
 
+import numpy as np
 from discord_analyzer.analysis.compute_interaction_matrix_discord import (
     process_non_reactions,
 )
-import numpy as np
 
 
 class TestProcessNonReactions(TestCase):

@@ -4,8 +4,8 @@
 #  compute_interaction_matrix_discord.py
 #
 #  Author Ene SS Rawa / Tjitse van der Molen
-from typing import Any
 import copy
+from typing import Any
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 from discord_analyzer.DB_operations.mongodb_query import MongodbQuery
 from tc_core_analyzer_lib.utils.activity import DiscordActivity
