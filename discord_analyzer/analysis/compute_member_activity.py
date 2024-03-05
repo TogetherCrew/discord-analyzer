@@ -214,12 +214,13 @@ def compute_member_activity(
         last_start = time_diff - relativedelta(days=window_param["period_size"] - 1)
 
         # # # ACTUAL ANALYSIS # # #
-
         assess_engagment = EngagementAssessment(
             activities=[
                 DiscordActivity.Mention,
                 DiscordActivity.Reply,
                 DiscordActivity.Reaction,
+                DiscordActivity.Lone_msg,
+                DiscordActivity.Mention,
             ],
             activities_ignore_0_axis=[DiscordActivity.Mention],
             activities_ignore_1_axis=[],
@@ -288,10 +289,10 @@ def compute_member_activity(
                     acc_names, date_list_w_str, channels, db_access
                 )
 
-                # for each int_mat type
-                for key in list(int_mat.keys()):
-                    # remove interactions with self
-                    int_mat[key][np.diag_indices_from(int_mat[key])] = 0
+                # # for each int_mat type
+                # for key in list(int_mat.keys()):
+                #     # remove interactions with self
+                #     int_mat[key][np.diag_indices_from(int_mat[key])] = 0
 
                 # assess engagement
                 (graph_out, *activity_dict) = assess_engagment.compute(

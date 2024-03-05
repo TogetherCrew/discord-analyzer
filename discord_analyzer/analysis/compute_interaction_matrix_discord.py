@@ -4,8 +4,9 @@
 #  compute_interaction_matrix_discord.py
 #
 #  Author Ene SS Rawa / Tjitse van der Molen
-
-from discord_analyzer.analysis.utils.activity import Activity
+from typing import Any
+import copy
+from tc_core_analyzer_lib.utils.activity import DiscordActivity
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 from discord_analyzer.DB_operations.mongodb_query import MongodbQuery
 from numpy import ndarray
@@ -21,7 +22,13 @@ def compute_interaction_matrix_discord(
     dates: list[str],
     channels: list[str],
     db_access: DB_access,
-    activities: list[str] = [Activity.Mention, Activity.Reply, Activity.Reaction],
+    activities: list[str] = [
+        DiscordActivity.Mention,
+        DiscordActivity.Reply,
+        DiscordActivity.Reaction,
+        DiscordActivity.Lone_msg,
+        DiscordActivity.Thread_msg,
+    ],
 ) -> dict[str, ndarray]:
     """
     Computes interaction matrix from discord data
@@ -34,7 +41,7 @@ def compute_interaction_matrix_discord(
     db_access - obj : database access object
     activities - list[Activity] :
         the list of activities to generate the matrix for
-        default is to include all 3 `Activity` types
+        default is to include all activity types
         minimum length is 1
 
     Output:
@@ -45,8 +52,7 @@ def compute_interaction_matrix_discord(
     """
 
     feature_projection = {
-        "thr_messages": 0,
-        "lone_messages": 0,
+        "channelId": 0,
         "replier": 0,
         "replied": 0,
         "mentioner": 0,
@@ -77,15 +83,66 @@ def compute_interaction_matrix_discord(
     db_results = list(cursor)
 
     per_acc_query_result = prepare_per_account(db_results=db_results)
+    per_acc_interaction = process_non_reactions(per_acc_query_result)
 
     # And now compute the interactions per account_name (`acc`)
     int_mat = {}
     # computing `int_mat` per activity
     for activity in activities:
         int_mat[activity] = generate_interaction_matrix(
-            per_acc_interactions=per_acc_query_result,
+            per_acc_interactions=per_acc_interaction,
             acc_names=acc_names,
             activities=[activity],
         )
 
     return int_mat
+
+
+def process_non_reactions(
+    heatmaps_data_per_acc: dict[str, list[dict[str, Any]]],
+    skip_fields: list[str] = [
+        "reacted_per_acc",
+        "mentioner_per_acc",
+        "replied_per_acc",
+        "account_name",
+        "date",
+    ],
+) -> dict[str, list[dict[str, Any]]]:
+    """
+    process the non-interactions heatmap data to be like interaction
+    we will make it self interactions
+
+    Parameters
+    -----------
+    heatmaps_data_per_acc : dict[str, list[dict[str, Any]]]
+        heatmaps data per account
+        the keys are accounts
+        and the values are the list of heatmaps documents related to them
+    skip_fields : list[str]
+        the part of heatmaps document that we don't need to make them like interaction
+        can be interactions itself and account_name, and date
+
+    Returns
+    --------
+    heatmaps_interactions_per_acc : dict[str, list[dict[str, Any]]]
+        the same as before but we have changed the non interaction ones to self interaction
+    """
+    heatmaps_interactions_per_acc = copy.deepcopy(heatmaps_data_per_acc)
+
+    for account in heatmaps_interactions_per_acc.keys():
+        # for each heatmaps document
+        for document in heatmaps_interactions_per_acc[account]:
+            activities = document.keys()
+            actions = set(activities) - set(skip_fields)
+
+            for action in actions:
+                action_count = sum(document[action])
+                if action_count:
+                    document[action] = [
+                        [{"account": account, "count": sum(document[action])}]
+                    ]
+                else:
+                    # action count was zero
+                    document[action] = []
+
+    return heatmaps_interactions_per_acc
