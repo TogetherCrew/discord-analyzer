@@ -6,10 +6,10 @@
 #  Author Ene SS Rawa / Tjitse van der Molen
 from typing import Any
 import copy
-from tc_core_analyzer_lib.utils.activity import DiscordActivity
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 from discord_analyzer.DB_operations.mongodb_query import MongodbQuery
-from numpy import ndarray
+from tc_core_analyzer_lib.utils.activity import DiscordActivity
+from numpy import ndarray, diag_indices_from
 
 from .utils.compute_interaction_mtx_utils import (
     generate_interaction_matrix,
@@ -94,6 +94,13 @@ def compute_interaction_matrix_discord(
             acc_names=acc_names,
             activities=[activity],
         )
+        # a person interacting to themselves is not counted as activity
+        if activity in [
+            DiscordActivity.Reply,
+            DiscordActivity.Reaction,
+            DiscordActivity.Mention,
+        ]:
+            int_mat[activity][diag_indices_from(int_mat[activity])] = 0
 
     return int_mat
 

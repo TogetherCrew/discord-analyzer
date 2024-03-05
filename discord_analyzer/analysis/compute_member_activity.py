@@ -289,11 +289,6 @@ def compute_member_activity(
                     acc_names, date_list_w_str, channels, db_access
                 )
 
-                # # for each int_mat type
-                # for key in list(int_mat.keys()):
-                #     # remove interactions with self
-                #     int_mat[key][np.diag_indices_from(int_mat[key])] = 0
-
                 # assess engagement
                 (graph_out, *activity_dict) = assess_engagment.compute(
                     int_mat=int_mat,
