@@ -9,7 +9,7 @@ from typing import Any
 
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 from discord_analyzer.DB_operations.mongodb_query import MongodbQuery
-from numpy import ndarray, diag_indices_from
+from numpy import diag_indices_from, ndarray
 from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
 from .utils.compute_interaction_mtx_utils import (
