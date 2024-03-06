@@ -222,7 +222,11 @@ def compute_member_activity(
                 DiscordActivity.Lone_msg,
                 DiscordActivity.Mention,
             ],
-            activities_ignore_0_axis=[DiscordActivity.Mention],
+            activities_ignore_0_axis=[
+                DiscordActivity.Mention,
+                DiscordActivity.Reaction,
+                DiscordActivity.Reply,
+            ],
             activities_ignore_1_axis=[],
         )
 
