@@ -230,8 +230,6 @@ def compute_member_activity(
             ],
             activities_ignore_1_axis=[
                 DiscordActivity.Reply,
-                # TODO: Why commenting reaction doesn't make any problems?
-                # DiscordActivity.Reaction,
             ],
         )
 
