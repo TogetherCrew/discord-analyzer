@@ -2,13 +2,12 @@ from datetime import datetime, timedelta
 from typing import Any
 
 import numpy as np
-from networkx import DiGraph
 import pymongo
-
 from discord_analyzer.analysis.compute_interaction_matrix_discord import (
     compute_interaction_matrix_discord,
 )
 from discord_analyzer.DB_operations.mongodb_access import DB_access
+from networkx import DiGraph
 from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
 from tc_core_analyzer_lib.utils.activity import DiscordActivity
 

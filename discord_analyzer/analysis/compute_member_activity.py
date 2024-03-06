@@ -16,13 +16,13 @@ from discord_analyzer.analysis.utils.member_activity_history_utils import (
     MemberActivityPastUtils,
 )
 from discord_analyzer.analysis.utils.member_activity_utils import (
+    assess_engagement,
     convert_to_dict,
     get_joined_accounts,
     get_latest_joined_users,
     get_users_past_window,
     store_based_date,
     update_activities,
-    assess_engagement,
 )
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 
