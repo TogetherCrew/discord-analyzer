@@ -23,13 +23,7 @@ def compute_interaction_matrix_discord(
     dates: list[str],
     channels: list[str],
     db_access: DB_access,
-    activities: list[str] = [
-        DiscordActivity.Mention,
-        DiscordActivity.Reply,
-        DiscordActivity.Reaction,
-        DiscordActivity.Lone_msg,
-        DiscordActivity.Thread_msg,
-    ],
+    **kwargs,
 ) -> dict[str, ndarray]:
     """
     Computes interaction matrix from discord data
@@ -40,10 +34,11 @@ def compute_interaction_matrix_discord(
     dates - [str] : list of all dates to be considered for analysis
     channels - [str] : list of all channel ids to be considered for analysis
     db_access - obj : database access object
-    activities - list[Activity] :
-        the list of activities to generate the matrix for
-        default is to include all activity types
-        minimum length is 1
+    **kwargs :
+        activities - list[Activity] :
+            the list of activities to generate the matrix for
+            default is to include all activity types
+            minimum length is 1
 
     Output:
     ---------
@@ -51,7 +46,16 @@ def compute_interaction_matrix_discord(
         keys are representative of an activity
         and the 2d matrix representing the interactions for the activity
     """
-
+    activities = kwargs.get(
+        "activities",
+        [
+            DiscordActivity.Mention,
+            DiscordActivity.Reply,
+            DiscordActivity.Reaction,
+            DiscordActivity.Lone_msg,
+            DiscordActivity.Thread_msg,
+        ],
+    )
     feature_projection = {
         "channelId": 0,
         "replier": 0,

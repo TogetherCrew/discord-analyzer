@@ -214,20 +214,25 @@ def compute_member_activity(
         last_start = time_diff - relativedelta(days=window_param["period_size"] - 1)
 
         # # # ACTUAL ANALYSIS # # #
+        activities_to_analyze = [
+            DiscordActivity.Mention,
+            DiscordActivity.Reply,
+            DiscordActivity.Reaction,
+            DiscordActivity.Lone_msg,
+            DiscordActivity.Thread_msg,
+        ]
+
+        # no need to ignore reactions
         assess_engagment = EngagementAssessment(
-            activities=[
-                DiscordActivity.Mention,
-                DiscordActivity.Reply,
-                DiscordActivity.Reaction,
-                DiscordActivity.Lone_msg,
-                DiscordActivity.Thread_msg,
-            ],
+            activities=activities_to_analyze,
             activities_ignore_0_axis=[
                 DiscordActivity.Mention,
-                DiscordActivity.Reaction,
-                DiscordActivity.Reply,
             ],
-            activities_ignore_1_axis=[],
+            activities_ignore_1_axis=[
+                DiscordActivity.Reply,
+                # TODO: Why commenting reaction doesn't make any problems?
+                # DiscordActivity.Reaction,
+            ],
         )
 
         # for every window index
@@ -290,8 +295,13 @@ def compute_member_activity(
 
                 # obtain interaction matrix
                 int_mat = compute_interaction_matrix_discord(
-                    acc_names, date_list_w_str, channels, db_access
+                    acc_names,
+                    date_list_w_str,
+                    channels,
+                    db_access,
+                    activities=activities_to_analyze,
                 )
+                print(f"int_mat: {int_mat}")
 
                 # assess engagement
                 (graph_out, *activity_dict) = assess_engagment.compute(
