@@ -289,11 +289,11 @@ def assess_engagement(
             DiscordActivity.Mention,
         ],
     )
-    # no need to ignore reactions
     ignore_axis1 = kwargs.get(
         "ignore_axis1",
         [
             DiscordActivity.Reply,
+            DiscordActivity.Reaction,
         ],
     )
 
