@@ -2,8 +2,15 @@ from datetime import datetime, timedelta
 from typing import Any
 
 import numpy as np
+from networkx import DiGraph
 import pymongo
+
+from discord_analyzer.analysis.compute_interaction_matrix_discord import (
+    compute_interaction_matrix_discord,
+)
 from discord_analyzer.DB_operations.mongodb_access import DB_access
+from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
+from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
 
 def get_joined_accounts(db_access: DB_access, date_range: tuple[datetime, datetime]):
@@ -41,7 +48,7 @@ def store_based_date(
     analytics_day_range,
     joined_acc_dict,
     load_past,
-    **kwargs
+    **kwargs,
 ):
     """
     store the activities (`all_*`) in a dictionary based on their ending analytics date
@@ -249,3 +256,71 @@ def get_latest_joined_users(db_access: DB_access, count: int = 5) -> list[str]:
     usersId = list(map(lambda x: x["discordId"], usersId))
 
     return usersId
+
+
+def assess_engagement(
+    w_i: int,
+    accounts: list[str],
+    action_params: dict[str, int],
+    period_size: int,
+    db_access: DB_access,
+    channels: list[str],
+    analyze_dates: list[str],
+    activities_name: list[str],
+    activity_dict: dict[str, dict],
+    **kwargs,
+) -> tuple[DiGraph, dict[str, dict]]:
+    """
+    assess engagement of a window index for users
+
+    """
+    activities_to_analyze = kwargs.get(
+        "activities_to_analyze",
+        [
+            DiscordActivity.Mention,
+            DiscordActivity.Reply,
+            DiscordActivity.Reaction,
+            DiscordActivity.Lone_msg,
+            DiscordActivity.Thread_msg,
+        ],
+    )
+    ignore_axis0 = kwargs.get(
+        "ignore_axis0",
+        [
+            DiscordActivity.Mention,
+        ],
+    )
+    # no need to ignore reactions
+    ignore_axis1 = kwargs.get(
+        "ignore_axis1",
+        [
+            DiscordActivity.Reply,
+        ],
+    )
+
+    assess_engagment = EngagementAssessment(
+        activities=activities_to_analyze,
+        activities_ignore_0_axis=ignore_axis0,
+        activities_ignore_1_axis=ignore_axis1,
+    )
+    # obtain interaction matrix
+    int_mat = compute_interaction_matrix_discord(
+        accounts,
+        analyze_dates,
+        channels,
+        db_access,
+        activities=activities_to_analyze,
+    )
+
+    # assess engagement
+    (graph_out, *activity_dict) = assess_engagment.compute(
+        int_mat=int_mat,
+        w_i=w_i,
+        acc_names=np.asarray(accounts),
+        act_param=action_params,
+        WINDOW_D=period_size,
+        **activity_dict,
+    )
+
+    activity_dict = convert_to_dict(data=list(activity_dict), dict_keys=activities_name)
+    return graph_out, activity_dict
