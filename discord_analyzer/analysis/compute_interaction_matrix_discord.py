@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-#  compute_interaction_matrix_discord.py
-#
-#  Author Ene SS Rawa / Tjitse van der Molen
 import copy
 from typing import Any
 
