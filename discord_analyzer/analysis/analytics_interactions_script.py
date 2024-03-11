@@ -67,7 +67,7 @@ def per_account_interactions(
         # flatten the list
         samples_flattened = list(itertools.chain(*samples))
 
-        for i, sample in enumerate(samples_flattened):
+        for _, sample in enumerate(samples_flattened):
             account_name = sample[0]["account"]
             interaction_count = sample[0]["count"]
 
