@@ -5,7 +5,7 @@ import numpy as np
 from discord_analyzer.analysis.analytics_interactions_script import (
     per_account_interactions,
 )
-from discord_analyzer.analysis.utils.activity import Activity
+from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
 
 def prepare_per_account(db_results: list) -> dict[str, list[dict]]:
@@ -29,13 +29,9 @@ def prepare_per_account(db_results: list) -> dict[str, list[dict]]:
 
     # a dictionary for results of each account
     for db_record in db_results:
-        # if the data for a specific account was not created before, create one as list
         acc_name = db_record["account_name"]
-        if acc_name not in per_acc_query_result.keys():
-            per_acc_query_result[acc_name] = [db_record]
-        # else, append
-        else:
-            per_acc_query_result[acc_name].append(db_record)
+        per_acc_query_result.setdefault(acc_name, [])
+        per_acc_query_result[acc_name].append(db_record)
 
     return per_acc_query_result
 
@@ -66,7 +62,6 @@ def generate_interaction_matrix(
         an array of integer values
         each row and column are representative of account interactions
     """
-
     int_matrix = np.zeros((len(acc_names), len(acc_names)), dtype=np.uint16)
 
     for acc in per_acc_interactions.keys():
@@ -117,12 +112,16 @@ def prepare_interaction_field_names(activities: list[str]) -> list[str]:
     """
     field_names = []
     for activity in activities:
-        if activity == Activity.Mention:
+        if activity == DiscordActivity.Mention:
             field_names.append("mentioner_per_acc")
-        elif activity == Activity.Reply:
+        elif activity == DiscordActivity.Reply:
             field_names.append("replied_per_acc")
-        elif activity == Activity.Reaction:
+        elif activity == DiscordActivity.Reaction:
             field_names.append("reacted_per_acc")
+        elif activity == DiscordActivity.Thread_msg:
+            field_names.append("thr_messages")
+        elif activity == DiscordActivity.Lone_msg:
+            field_names.append("lone_messages")
         else:
             logging.warning("prepare_interaction_field_names: Wrong activity given!")
 

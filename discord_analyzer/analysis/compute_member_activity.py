@@ -11,14 +11,12 @@ from datetime import datetime, timedelta
 import networkx as nx
 import numpy as np
 from dateutil.relativedelta import relativedelta
-from discord_analyzer.analysis.compute_interaction_matrix_discord import (
-    compute_interaction_matrix_discord,
-)
 from discord_analyzer.analysis.member_activity_history import check_past_history
 from discord_analyzer.analysis.utils.member_activity_history_utils import (
     MemberActivityPastUtils,
 )
 from discord_analyzer.analysis.utils.member_activity_utils import (
+    assess_engagement,
     convert_to_dict,
     get_joined_accounts,
     get_latest_joined_users,
@@ -27,8 +25,6 @@ from discord_analyzer.analysis.utils.member_activity_utils import (
     update_activities,
 )
 from discord_analyzer.DB_operations.mongodb_access import DB_access
-from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
-from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
 
 def compute_member_activity(
@@ -215,16 +211,6 @@ def compute_member_activity(
 
         # # # ACTUAL ANALYSIS # # #
 
-        assess_engagment = EngagementAssessment(
-            activities=[
-                DiscordActivity.Mention,
-                DiscordActivity.Reply,
-                DiscordActivity.Reaction,
-            ],
-            activities_ignore_0_axis=[DiscordActivity.Mention],
-            activities_ignore_1_axis=[],
-        )
-
         # for every window index
         max_range = int(np.floor(last_start.days / window_param["step_size"]) + 1)
         # if max range was chosen negative,
@@ -283,28 +269,16 @@ def compute_member_activity(
                     # we could have empty outputs
                     acc_names = get_latest_joined_users(db_access, count=5)
 
-                # obtain interaction matrix
-                int_mat = compute_interaction_matrix_discord(
-                    acc_names, date_list_w_str, channels, db_access
-                )
-
-                # for each int_mat type
-                for key in list(int_mat.keys()):
-                    # remove interactions with self
-                    int_mat[key][np.diag_indices_from(int_mat[key])] = 0
-
-                # assess engagement
-                (graph_out, *activity_dict) = assess_engagment.compute(
-                    int_mat=int_mat,
+                graph_out, activity_dict = assess_engagement(
                     w_i=new_window_i,
-                    acc_names=np.asarray(acc_names),
-                    act_param=act_param,
-                    WINDOW_D=window_param["period_size"],
-                    **activity_dict,
-                )
-
-                activity_dict = convert_to_dict(
-                    data=list(activity_dict), dict_keys=activities_name
+                    accounts=acc_names,
+                    action_params=act_param,
+                    period_size=window_param["period_size"],
+                    db_access=db_access,
+                    channels=channels,
+                    analyze_dates=date_list_w_str,
+                    activities_name=activities_name,
+                    activity_dict=activity_dict,
                 )
 
                 # make empty dict for node attributes

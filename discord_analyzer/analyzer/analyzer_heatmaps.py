@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from discord_analyzer.analysis.activity_hourly import activity_hourly
 from discord_analyzer.analyzer.heatmaps_utils import (
     get_bot_id,
+    get_userids,
     getNumberOfActions,
     store_counts_dict,
 )
@@ -119,7 +120,10 @@ class Heatmaps:
                 continue
 
             prepared_list = []
-            account_list = []
+            account_list = get_userids(
+                db_mongo_client=self.DB_connections.mongoOps.mongo_db_access.db_mongo_client,
+                guildId=guildId,
+            )
 
             for entry in entries:
                 if "replied_user" not in entry:
@@ -147,9 +151,7 @@ class Heatmaps:
 
                     if entry["user_mentions"] is not None:
                         for account in entry["user_mentions"]:
-                            # for making the line shorter
-                            condition2 = account not in bot_ids
-                            if account not in account_list and condition2:
+                            if account not in account_list and account not in bot_ids:
                                 account_list.append(account)
 
             activity = activity_hourly(prepared_list, acc_names=account_list)

@@ -22,7 +22,7 @@ tc-messageBroker==1.4.0
 sentry-sdk
 rq
 redis
-tc-core-analyzer-lib==1.1.0
+tc-core-analyzer-lib==1.2.0
 tc-neo4j-lib==1.0.0
 pybars3
 backoff==2.2.1

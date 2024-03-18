@@ -70,3 +70,39 @@ def get_bot_id(
         bot_ids = list(map(lambda x: x[id_field_name], bots))
 
     return bot_ids
+
+
+def get_userids(
+    db_mongo_client: MongoClient,
+    guildId: str,
+    collection_name: str = "guildmembers",
+    id_field_name: str = "discordId",
+) -> list[str]:
+    """
+    get user ids that are not bot
+
+    Parameters:
+    ------------
+    db_mongo_client : MongoClient
+        the access to database
+    guildId : str
+        the guildId to connect to
+    collection_name : str
+        the collection name to use
+        default is "guildmembers"
+    id_field_name : str
+        the fieldId that the account id is saved
+        default is "discordId"
+
+    Returns:
+    ---------
+    user_ids : list[str]
+        the list of bot ids
+    """
+    cursor = db_mongo_client[guildId][collection_name].find(
+        {"isBot": False}, {"_id": 0, id_field_name: 1}
+    )
+    users = list(cursor)
+    user_ids = list(map(lambda user: user[id_field_name], users))
+
+    return user_ids
