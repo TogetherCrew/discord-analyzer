@@ -287,14 +287,14 @@ def assess_engagement(
         "ignore_axis0",
         [
             DiscordActivity.Mention,
+            # within discord replied people are also included in mentions
+            # DiscordActivity.Reply,
+            DiscordActivity.Reaction,
         ],
     )
     ignore_axis1 = kwargs.get(
         "ignore_axis1",
-        [
-            DiscordActivity.Reply,
-            DiscordActivity.Reaction,
-        ],
+        [],
     )
 
     assess_engagment = EngagementAssessment(
