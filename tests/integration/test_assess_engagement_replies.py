@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from discord_analyzer.analysis.utils.member_activity_utils import assess_engagement
 from discord_analyzer.analyzer.analyzer_heatmaps import Heatmaps
-from discord_analyzer.analyzer.base_analyzer import Base_analyzer
+from discord_analyzer.analyzer.utils.analyzer_db_manager import AnalyzerDBManager
 from tc_core_analyzer_lib.utils.activity import DiscordActivity
 from utils.daolytics_uitls import get_mongo_credentials, get_neo4j_credentials
 
@@ -18,7 +18,7 @@ class TestAssessEngagementReplies(TestCase):
         self.create_db_connections()
 
     def create_db_connections(self):
-        base_analyzer = Base_analyzer()
+        base_analyzer = AnalyzerDBManager()
         mongo_creds = get_mongo_credentials()
         base_analyzer.set_mongo_database_info(
             mongo_db_user=mongo_creds["user"],
