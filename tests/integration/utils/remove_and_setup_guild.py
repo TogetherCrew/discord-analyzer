@@ -8,6 +8,7 @@ from discord_analyzer.DB_operations.mongodb_access import DB_access
 
 def setup_db_guild(
     db_access: DB_access,
+    platform_id: str,
     guildId: str = "1234",
     discordId_list: list[str] = ["973993299281076285"],
     discordId_isbot: list[bool] = [False],
@@ -22,8 +23,6 @@ def setup_db_guild(
 
     `discordId_isbot` is representative if each user is bot or not
     """
-    platform_id = "515151515151515151515151"
-
     db_access.db_mongo_client["Core"]["platforms"].delete_one(
         {"_id": ObjectId(platform_id)}
     )

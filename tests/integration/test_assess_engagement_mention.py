@@ -72,8 +72,11 @@ class TestAssessEngagementMentions(TestCase):
             "DROP_H_THR": 2,
             "DROP_I_THR": 1,
         }
+        platform_id = "515151515151515151515151"
+
         setup_db_guild(
             self.db_access,
+            platform_id,
             self.guildId,
             discordId_list=users_id_list,
             days_ago_period=35,

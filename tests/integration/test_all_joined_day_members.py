@@ -12,6 +12,7 @@ def test_all_joined_day_members():
     testing the all_joined_day
     """
     guildId = "1234"
+    platform_id = "515151515151515151515151"
     db_access = launch_db_access(guildId)
     today = datetime.now()
 
@@ -28,6 +29,7 @@ def test_all_joined_day_members():
 
     setup_db_guild(
         db_access,
+        platform_id,
         guildId,
         discordId_list=acc_id,
         dates=acc_join_dates,
@@ -61,8 +63,8 @@ def test_all_joined_day_members():
 
     db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer()
-    analyzer.run_once(guildId=guildId)
+    analyzer = setup_analyzer(guildId, platform_id)
+    analyzer.run_once()
 
     cursor = db_access.db_mongo_client[guildId]["memberactivities"].find([])
 

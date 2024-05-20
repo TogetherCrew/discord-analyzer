@@ -10,10 +10,13 @@ def test_analyzer_from_start_one_interval():
     run the analyzer from start and just for one interval
     """
     # first create the collections
+    platform_id = "515151515151515151515151"
     guildId = "1234"
     db_access = launch_db_access(guildId)
 
-    setup_db_guild(db_access, guildId, discordId_list=["973993299281076285"])
+    setup_db_guild(
+        db_access, platform_id, guildId, discordId_list=["973993299281076285"]
+    )
 
     rawinfo_samples = []
 
@@ -41,8 +44,8 @@ def test_analyzer_from_start_one_interval():
     db_access.db_mongo_client[guildId].create_collection("heatmaps")
     db_access.db_mongo_client[guildId].create_collection("memberactivities")
 
-    analyzer = setup_analyzer()
-    analyzer.recompute_analytics(guildId=guildId)
+    analyzer = setup_analyzer(guildId, platform_id)
+    analyzer.recompute_analytics()
 
     memberactivities_data = db_access.db_mongo_client[guildId][
         "memberactivities"

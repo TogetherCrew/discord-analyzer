@@ -17,6 +17,8 @@ def test_networkgraph_six_months_period_run_once_available_analytics():
     """
     # first create the collections
     guildId = "1234"
+    platform_id = "515151515151515151515151"
+
     db_access = launch_db_access(guildId)
     neo4j_ops = neo4j_setup()
 
@@ -31,7 +33,9 @@ def test_networkgraph_six_months_period_run_once_available_analytics():
         "973993299281076286",
     ]
 
-    setup_db_guild(db_access, guildId, discordId_list=acc_id, days_ago_period=180)
+    setup_db_guild(
+        db_access, platform_id, guildId, discordId_list=acc_id, days_ago_period=180
+    )
 
     db_access.db_mongo_client[guildId].create_collection("heatmaps")
     db_access.db_mongo_client[guildId].create_collection("memberactivities")
@@ -81,8 +85,8 @@ def test_networkgraph_six_months_period_run_once_available_analytics():
 
     db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer()
-    analyzer.run_once(guildId=guildId)
+    analyzer = setup_analyzer(guildId, platform_id)
+    analyzer.run_once()
 
     results = neo4j_ops.gds.run_cypher(
         f"""

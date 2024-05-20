@@ -30,8 +30,11 @@ class TestMemberActivitiesActionsAllActivities(TestCase):
             "DROP_H_THR": 2,
             "DROP_I_THR": 1,
         }
+        platform_id = "515151515151515151515151"
+
         setup_db_guild(
             self.db_access,
+            platform_id,
             self.guildId,
             discordId_list=users_id_list,
             days_ago_period=35,
@@ -63,7 +66,7 @@ class TestMemberActivitiesActionsAllActivities(TestCase):
         self.db_access.db_mongo_client[self.guildId]["rawinfos"].insert_many(
             rawinfo_samples
         )
-        analyzer = setup_analyzer()
+        analyzer = setup_analyzer(self.guildId, platform_id)
         analyzer.recompute_analytics(self.guildId)
         cursor = self.db_access.db_mongo_client[self.guildId]["memberactivities"].find(
             {},

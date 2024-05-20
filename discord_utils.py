@@ -35,7 +35,7 @@ def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, Any]):
 
         def recompute_wrapper(**kwargs):
             logging.info("recompute wrapper")
-            analyzer.recompute_analytics(guildId=guildId)
+            analyzer.recompute_analytics()
 
         def publish_wrapper(**kwargs):
             pass
@@ -70,7 +70,7 @@ def analyzer_run_once(sagaId: str, rabbit_creds: dict[str, Any]):
         analyzer, mongo_creds = analyzer_init.get_analyzer()
 
         def run_once_wrapper(**kwargs):
-            analyzer.run_once(guildId=guildId)
+            analyzer.run_once()
 
         def publish_wrapper(**kwargs):
             pass

@@ -8,9 +8,9 @@ from utils.daolytics_uitls import get_mongo_credentials
 
 def test_analyzer_init():
     community_id = "aabbccddeeff001122334455"
-    analyzer = AnalyzerInit(community_id)
 
     guildId = "1234"
+    analyzer = AnalyzerInit(guildId)
     platform_id = "515151515151515151515151"
     days_ago_period = 30
     mongo_creds = get_mongo_credentials()

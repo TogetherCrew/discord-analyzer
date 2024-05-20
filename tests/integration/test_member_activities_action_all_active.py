@@ -11,9 +11,11 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         self.db_access = launch_db_access(self.guildId)
 
     def test_single_user_action(self):
+        platform_id = "515151515151515151515151"
         users_id_list = ["user1"]
         setup_db_guild(
             self.db_access,
+            platform_id,
             self.guildId,
             discordId_list=users_id_list,
             days_ago_period=35,
@@ -44,7 +46,7 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         self.db_access.db_mongo_client[self.guildId]["rawinfos"].insert_many(
             rawinfo_samples
         )
-        analyzer = setup_analyzer()
+        analyzer = setup_analyzer(self.guildId, platform_id)
         analyzer.recompute_analytics(self.guildId)
         cursor = self.db_access.db_mongo_client[self.guildId]["memberactivities"].find(
             {}, {"_id": 0, "all_active": 1}
@@ -58,8 +60,11 @@ class TestMemberActivitiesActionsAllActive(TestCase):
 
     def test_lone_msg_action(self):
         users_id_list = ["user1", "user2", "user3"]
+        platform_id = "515151515151515151515151"
+
         setup_db_guild(
             self.db_access,
+            platform_id,
             self.guildId,
             discordId_list=users_id_list,
             days_ago_period=35,
@@ -91,7 +96,7 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         self.db_access.db_mongo_client[self.guildId]["rawinfos"].insert_many(
             rawinfo_samples
         )
-        analyzer = setup_analyzer()
+        analyzer = setup_analyzer(self.guildId, platform_id)
         analyzer.recompute_analytics(self.guildId)
         cursor = self.db_access.db_mongo_client[self.guildId]["memberactivities"].find(
             {}, {"_id": 0, "all_active": 1}
@@ -104,9 +109,11 @@ class TestMemberActivitiesActionsAllActive(TestCase):
             self.assertEqual(set(document["all_active"]), set(["user1", "user2"]))
 
     def test_thr_message_action(self):
+        platform_id = "515151515151515151515151"
         users_id_list = ["user1", "user2", "user3", "user4"]
         setup_db_guild(
             self.db_access,
+            platform_id,
             self.guildId,
             discordId_list=users_id_list,
             days_ago_period=35,
@@ -138,7 +145,7 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         self.db_access.db_mongo_client[self.guildId]["rawinfos"].insert_many(
             rawinfo_samples
         )
-        analyzer = setup_analyzer()
+        analyzer = setup_analyzer(self.guildId, platform_id)
         analyzer.recompute_analytics(self.guildId)
         cursor = self.db_access.db_mongo_client[self.guildId]["memberactivities"].find(
             {}, {"_id": 0, "all_active": 1, "date": 1}

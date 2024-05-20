@@ -17,6 +17,7 @@ def test_analyzer_40days_period_run_once_available_analytics_overlapping_period(
     """
     # first create the collections
     guildId = "1234"
+    platform_id = "515151515151515151515151"
     db_access = launch_db_access(guildId)
 
     acc_id = [
@@ -24,7 +25,9 @@ def test_analyzer_40days_period_run_once_available_analytics_overlapping_period(
         "user2",
     ]
 
-    setup_db_guild(db_access, guildId, discordId_list=acc_id, days_ago_period=40)
+    setup_db_guild(
+        db_access, platform_id, guildId, discordId_list=acc_id, days_ago_period=40
+    )
 
     db_access.db_mongo_client[guildId].drop_collection("heatmaps")
     db_access.db_mongo_client[guildId].drop_collection("memberactivities")
@@ -76,8 +79,8 @@ def test_analyzer_40days_period_run_once_available_analytics_overlapping_period(
 
     db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer()
-    analyzer.run_once(guildId=guildId)
+    analyzer = setup_analyzer(guildId, platform_id)
+    analyzer.run_once()
 
     memberactivities_cursor = db_access.query_db_find(
         "memberactivities", {}, sorting=("date", -1)

@@ -1,13 +1,75 @@
 import os
+from datetime import datetime
+from bson import ObjectId
 
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 from discord_analyzer.rn_analyzer import RnDaoAnalyzer
 from dotenv import load_dotenv
+from utils.get_mongo_client import MongoSingleton
 
 
-def setup_analyzer() -> RnDaoAnalyzer:
+def setup_analyzer(
+    guild_id: str,
+    platform_id: str,
+) -> RnDaoAnalyzer:
     load_dotenv()
-    analyzer = RnDaoAnalyzer(community_id="1234555")
+
+    client = MongoSingleton.get_instance().get_client()
+
+    client["Core"].drop_collection("platforms")
+
+    act_param = {
+        "INT_THR": 1,
+        "UW_DEG_THR": 1,
+        "PAUSED_T_THR": 1,
+        "CON_T_THR": 4,
+        "CON_O_THR": 3,
+        "EDGE_STR_THR": 5,
+        "UW_THR_DEG_THR": 5,
+        "VITAL_T_THR": 4,
+        "VITAL_O_THR": 3,
+        "STILL_T_THR": 2,
+        "STILL_O_THR": 2,
+        "DROP_H_THR": 2,
+        "DROP_I_THR": 1,
+    }
+    window = {
+        "period_size": 7,
+        "step_size": 1,
+    }
+
+    client["Core"]["platforms"].insert_one(
+        {
+            "_id": ObjectId(platform_id),
+            "name": "discord",
+            "metadata": {
+                "id": guild_id,
+                "icon": "111111111111111111111111",
+                "name": "A guild",
+                "selectedChannels": [
+                    "11111111",
+                    "22222222",
+                    "33333333",
+                    "44444444",
+                    "55555555",
+                    "66666666",
+                    "77777777",
+                ],
+                "window": window,
+                "action": act_param,
+                "period": datetime(2023, 6, 1),
+            },
+            "community": ObjectId("aabbccddeeff001122334455"),
+            "disconnectedAt": None,
+            "connectedAt": datetime(2023, 11, 1),
+            "isInProgress": True,
+            "createdAt": datetime(2023, 11, 1),
+            "updatedAt": datetime(2023, 11, 1),
+            "__v": 0,
+        }
+    )
+
+    analyzer = RnDaoAnalyzer(guild_id)
 
     user = os.getenv("MONGODB_USER", "")
     password = os.getenv("MONGODB_PASS", "")

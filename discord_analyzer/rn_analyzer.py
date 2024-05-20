@@ -40,18 +40,13 @@ class RnDaoAnalyzer(AnalyzerDBManager):
 
         logging.info(f"Creating heatmaps for guild: {self.guild_id}")
 
-        # each guild data in a nested dictionary format
-        guilds_data = {}
-
-        logging.info(f"Doing Analytics for guild: {self.guild_id}")
-
         heatmaps_analysis = Heatmaps(self.DB_connections, self.testing)
         heatmaps_data = heatmaps_analysis.analysis_heatmap(self.guild_id)
 
         # storing heatmaps since memberactivities use them
         analytics_data = {}
-        guilds_data["heatmaps"] = heatmaps_data
-        guilds_data["memberactivities"] = (None, None)
+        analytics_data["heatmaps"] = heatmaps_data
+        analytics_data["memberactivities"] = (None, None)
 
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
@@ -71,14 +66,14 @@ class RnDaoAnalyzer(AnalyzerDBManager):
 
         analytics_data = {}
         # storing whole data into a dictinoary
-        guilds_data["heatmaps"] = None
-        guilds_data["memberactivities"] = (
+        analytics_data["heatmaps"] = None
+        analytics_data["memberactivities"] = (
             member_activities_data,
             member_acitivities_networkx_data,
         )
 
         self.DB_connections.store_analytics_data(
-            analytics_data=guilds_data,
+            analytics_data=analytics_data,
             guild_id=self.guild_id,
             community_id=self.community_id,
             remove_heatmaps=False,
@@ -87,7 +82,7 @@ class RnDaoAnalyzer(AnalyzerDBManager):
 
         self.neo4j_analytics.compute_metrics(guildId=self.guild_id, from_start=False)
 
-        self.guild_object.update_isin_progress(guildId=self.guild_id)
+        self.guild_object.update_isin_progress()
 
     def recompute_analytics(self):
         """
@@ -161,7 +156,7 @@ class RnDaoAnalyzer(AnalyzerDBManager):
         )
 
         self.neo4j_analytics.compute_metrics(guildId=self.guild_id, from_start=True)
-        self.guild_object.update_isin_progress(guildId=self.guild_id)
+        self.guild_object.update_isin_progress()
 
     def check_guild(self):
         """

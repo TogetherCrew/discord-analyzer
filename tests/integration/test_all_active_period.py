@@ -9,6 +9,7 @@ def test_two_weeks_period_active_members():
     test all_active members for the two weeks period in the new schema
     """
     guildId = "1234567"
+    platform_id = "515151515151515151515151"
     db_access = launch_db_access(guildId)
 
     acc_id = [
@@ -21,7 +22,11 @@ def test_two_weeks_period_active_members():
     # A guild connected at 35 days ago
     connected_days_before = 35
     setup_db_guild(
-        db_access, guildId, discordId_list=acc_id, days_ago_period=connected_days_before
+        db_access,
+        platform_id,
+        guildId,
+        discordId_list=acc_id,
+        days_ago_period=connected_days_before,
     )
 
     db_access.db_mongo_client[guildId].create_collection("heatmaps")
@@ -112,8 +117,8 @@ def test_two_weeks_period_active_members():
 
     db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer()
-    analyzer.run_once(guildId=guildId)
+    analyzer = setup_analyzer(guildId, platform_id)
+    analyzer.run_once()
 
     memberactivities_cursor = db_access.query_db_find(
         "memberactivities",

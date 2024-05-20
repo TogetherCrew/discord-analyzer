@@ -17,13 +17,16 @@ def test_analyzer_week_period_recompute_available_analytics():
     """
     # first create the collections
     guildId = "1234"
+    platform_id = "515151515151515151515151"
     db_access = launch_db_access(guildId)
 
     acc_id = [
         "973993299281076285",
         "973993299281076286",
     ]
-    setup_db_guild(db_access, guildId, discordId_list=acc_id, days_ago_period=8)
+    setup_db_guild(
+        db_access, platform_id, guildId, discordId_list=acc_id, days_ago_period=8
+    )
 
     db_access.db_mongo_client[guildId].create_collection("heatmaps")
     db_access.db_mongo_client[guildId].create_collection("memberactivities")
@@ -68,8 +71,8 @@ def test_analyzer_week_period_recompute_available_analytics():
 
     db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer()
-    analyzer.recompute_analytics(guildId=guildId)
+    analyzer = setup_analyzer(guildId, platform_id)
+    analyzer.recompute_analytics()
 
     memberactivities_cursor = db_access.query_db_find("memberactivities", {})
     memberactivities_data = list(memberactivities_cursor)

@@ -13,9 +13,12 @@ def test_analyzer_member_activities_from_start_available_member_activity():
     """
     # first create the collections
     guildId = "1234"
+    platform_id = "515151515151515151515151"
     db_access = launch_db_access(guildId)
 
-    setup_db_guild(db_access, guildId, discordId_list=["973993299281076285"])
+    setup_db_guild(
+        db_access, platform_id, guildId, discordId_list=["973993299281076285"]
+    )
 
     db_access.db_mongo_client[guildId].create_collection("heatmaps")
     db_access.db_mongo_client[guildId].create_collection("memberactivities")
@@ -50,8 +53,8 @@ def test_analyzer_member_activities_from_start_available_member_activity():
 
     db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer()
-    analyzer.recompute_analytics(guildId=guildId)
+    analyzer = setup_analyzer(guildId, platform_id)
+    analyzer.recompute_analytics()
 
     memberactivities_data = db_access.db_mongo_client[guildId][
         "memberactivities"

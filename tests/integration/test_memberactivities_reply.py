@@ -12,6 +12,8 @@ class TestMemberActivitiesReply(TestCase):
 
     def test_single_user_interaction(self):
         users_id_list = ["user1", "user2"]
+        platform_id = "515151515151515151515151"
+
         action = {
             "INT_THR": 1,
             "UW_DEG_THR": 1,
@@ -29,6 +31,7 @@ class TestMemberActivitiesReply(TestCase):
         }
         setup_db_guild(
             self.db_access,
+            platform_id,
             self.guildId,
             discordId_list=users_id_list,
             days_ago_period=35,
@@ -60,7 +63,7 @@ class TestMemberActivitiesReply(TestCase):
         self.db_access.db_mongo_client[self.guildId]["rawinfos"].insert_many(
             rawinfo_samples
         )
-        analyzer = setup_analyzer()
+        analyzer = setup_analyzer(self.guildId, platform_id)
         analyzer.recompute_analytics(self.guildId)
         cursor = self.db_access.db_mongo_client[self.guildId]["memberactivities"].find(
             {},
