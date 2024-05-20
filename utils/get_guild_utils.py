@@ -22,14 +22,14 @@ def get_guild_community_ids(platform_id: str) -> tuple[str, str]:
 
     obj_platform_id = ObjectId(platform_id)
     platform = mongo_client["Core"]["platforms"].find_one(
-        {"name": "discord", "_id": obj_platform_id}
+        {"name": "discord", "_id": obj_platform_id},
+        {"metadata.id": 1},
     )
     if platform is None:
         raise AttributeError(f"PLATFORM_ID: {platform_id}, No guild found!")
 
     guild_id = platform["metadata"]["id"]
-    community_id = str(platform["community"])
-    return guild_id, community_id
+    return guild_id
 
 
 def get_guild_platform_id(guild_id: str) -> str:

@@ -2,7 +2,6 @@ import logging
 from collections import Counter
 from datetime import datetime, timedelta
 
-# from analyzer.analyzer.base_analyzer import Base_analyzer
 from discord_analyzer.analysis.activity_hourly import activity_hourly
 from discord_analyzer.analyzer.heatmaps_utils import (
     get_bot_id,
@@ -20,17 +19,6 @@ class Heatmaps:
     def __init__(self, DB_connections: MongoNeo4jDB, testing: bool) -> None:
         self.DB_connections = DB_connections
         self.testing = testing
-
-    def is_empty(self, guildId: str):
-        """
-        check whether the heatmaps for the guild is empty or not
-        """
-        client = self.DB_connections.mongoOps.mongo_db_access.db_mongo_client
-
-        heatmap_c = HeatMapModel(client[guildId])
-        document = heatmap_c.get_one()
-
-        return document is None
 
     def analysis_heatmap(self, guildId: str, from_start: bool = False):
         """

@@ -13,8 +13,9 @@ class AnalyzerInit:
     initialize the analyzer with its configs
     """
 
-    def __init__(self, community_id: str) -> None:
-        self.community_id = community_id
+    # TODO: update to platform_id as input
+    def __init__(self, guild_id: str) -> None:
+        self.guild_id = guild_id
 
     def get_analyzer(self) -> tuple[RnDaoAnalyzer, dict[str, Any]]:
         """
@@ -23,7 +24,7 @@ class AnalyzerInit:
         analyzer : RnDaoAnalyzer
         mongo_creds : dict[str, Any]
         """
-        analyzer = RnDaoAnalyzer(self.community_id)
+        analyzer = RnDaoAnalyzer(self.guild_id)
 
         # credentials
         mongo_creds = get_mongo_credentials()

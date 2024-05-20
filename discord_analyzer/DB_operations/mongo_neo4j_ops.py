@@ -59,6 +59,7 @@ class MongoNeo4jDB:
     def store_analytics_data(
         self,
         analytics_data: dict,
+        guild_id: str,
         community_id: str,
         remove_memberactivities: bool = False,
         remove_heatmaps: bool = False,
@@ -69,12 +70,13 @@ class MongoNeo4jDB:
 
         Parameters:
         -------------
-        analytics_data : dictionary
-            a nested dictinoary with keys as guildId
-            and values as heatmaps and memberactivities data
-            heatmaps is also a list of dictinoaries
+        analytics_data : dict
+            a nested dictinoary with keys as `heatmaps`, and `memberactivities`
+            values of the heatmaps is a list of dictinoaries
             and memberactivities is a tuple of memberactivities dictionary list
-             and memebractivities networkx object dictionary list
+            and memebractivities networkx object dictionary list
+        guild_id: str
+            what the data is related to
         community_id : str
             the community id to save the data for
         remove_memberactivities : bool
@@ -88,39 +90,38 @@ class MongoNeo4jDB:
         ----------
         `None`
         """
-        for guildId in analytics_data.keys():
-            heatmaps_data = analytics_data[guildId]["heatmaps"]
-            (memberactivities_data, memberactivities_networkx_data) = analytics_data[
-                guildId
-            ]["memberactivities"]
+        heatmaps_data = analytics_data["heatmaps"]
+        (memberactivities_data, memberactivities_networkx_data) = analytics_data[
+            "memberactivities"
+        ]
 
-            if not self.testing:
-                # mongodb transactions
-                self.mongoOps._do_analytics_write_transaction(
-                    guildId=guildId,
-                    delete_heatmaps=remove_heatmaps,
-                    delete_member_acitivities=remove_memberactivities,
-                    acitivties_list=memberactivities_data,
-                    heatmaps_list=heatmaps_data,
+        if not self.testing:
+            # mongodb transactions
+            self.mongoOps._do_analytics_write_transaction(
+                guildId=guild_id,
+                delete_heatmaps=remove_heatmaps,
+                delete_member_acitivities=remove_memberactivities,
+                acitivties_list=memberactivities_data,
+                heatmaps_list=heatmaps_data,
+            )
+
+            # neo4j transactions
+            if (
+                memberactivities_networkx_data is not None
+                and memberactivities_networkx_data != []
+            ):
+                queries_list = make_neo4j_networkx_query_dict(
+                    networkx_graphs=memberactivities_networkx_data,
+                    guildId=guild_id,
+                    community_id=community_id,
                 )
-
-                # neo4j transactions
-                if (
-                    memberactivities_networkx_data is not None
-                    and memberactivities_networkx_data != []
-                ):
-                    queries_list = make_neo4j_networkx_query_dict(
-                        networkx_graphs=memberactivities_networkx_data,
-                        guildId=guildId,
-                        community_id=community_id,
-                    )
-                    self.run_operations_transaction(
-                        guildId=guildId,
-                        queries_list=queries_list,
-                        remove_memberactivities=remove_memberactivities,
-                    )
-            else:
-                logging.warning("Testing mode enabled! Not saving any data")
+                self.run_operations_transaction(
+                    guildId=guild_id,
+                    queries_list=queries_list,
+                    remove_memberactivities=remove_memberactivities,
+                )
+        else:
+            logging.warning("Testing mode enabled! Not saving any data")
 
     def run_operations_transaction(
         self, guildId, queries_list, remove_memberactivities
