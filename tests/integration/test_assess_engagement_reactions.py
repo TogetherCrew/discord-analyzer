@@ -38,14 +38,10 @@ class TestAssessEngagementReactions(TestCase):
         heatmaps = Heatmaps(DB_connections=self.db_connections, testing=False)
         heatmaps_data = heatmaps.analysis_heatmap(guildId=self.guildId, from_start=True)
         analytics_data = {}
-        analytics_data[f"{self.guildId}"] = {
-            "heatmaps": heatmaps_data,
-            "memberactivities": (
-                None,
-                None,
-            ),
-        }
+        analytics_data["heatmaps"] = heatmaps_data
+        analytics_data["memberactivities"] = (None, None)
         self.db_connections.store_analytics_data(
+            guild_id=self.guildId,
             analytics_data=analytics_data,
             community_id="123",
             remove_memberactivities=False,

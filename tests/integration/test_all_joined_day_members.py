@@ -63,7 +63,7 @@ def test_all_joined_day_members():
 
     db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer(guildId, platform_id)
+    analyzer = setup_analyzer(guildId)
     analyzer.run_once()
 
     cursor = db_access.db_mongo_client[guildId]["memberactivities"].find([])

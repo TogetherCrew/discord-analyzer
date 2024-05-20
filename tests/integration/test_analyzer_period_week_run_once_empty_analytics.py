@@ -54,7 +54,7 @@ def test_analyzer_week_period_run_once_empty_analytics():
 
     db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer(guildId, platform_id)
+    analyzer = setup_analyzer(guildId)
     analyzer.run_once()
 
     memberactivities_cursor = db_access.query_db_find(

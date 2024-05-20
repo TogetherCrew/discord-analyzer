@@ -76,7 +76,7 @@ def test_analyzer_six_month_period_recompute_available_analytics():
 
     db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer(guildId, platform_id)
+    analyzer = setup_analyzer(guildId)
     analyzer.recompute_analytics()
 
     memberactivities_cursor = db_access.query_db_find(

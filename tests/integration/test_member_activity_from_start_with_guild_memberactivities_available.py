@@ -53,7 +53,7 @@ def test_analyzer_member_activities_from_start_available_member_activity():
 
     db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer(guildId, platform_id)
+    analyzer = setup_analyzer(guildId)
     analyzer.recompute_analytics()
 
     memberactivities_data = db_access.db_mongo_client[guildId][

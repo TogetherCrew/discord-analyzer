@@ -41,9 +41,8 @@ class TestGetGuildId(TestCase):
             }
         )
 
-        guild_id, community_id = get_guild_community_ids(str(platform_id))
+        guild_id = get_guild_community_ids(str(platform_id))
         self.assertEqual(guild_id, "999888877766655")
-        self.assertEqual(community_id, "aabbccddeeff001122334455")
 
     def test_no_document_raise_error(self):
         client = MongoSingleton.get_instance().client

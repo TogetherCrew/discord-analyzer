@@ -55,7 +55,7 @@ def test_analyzer_week_period_recompute_empty_analytics():
 
     db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer(guildId, platform_id)
+    analyzer = setup_analyzer(guildId)
     analyzer.recompute_analytics()
 
     memberactivities_cursor = db_access.db_mongo_client[guildId][

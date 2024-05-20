@@ -22,7 +22,9 @@ def setup_db_guild(
       it then create the guildmembers collection in it
 
     `discordId_isbot` is representative if each user is bot or not
+    `community_id` can be passed in kwargs. default is `aabbccddeeff001122334455`
     """
+    community_id = kwargs.get("community_id", "aabbccddeeff001122334455")
     db_access.db_mongo_client["Core"]["platforms"].delete_one(
         {"_id": ObjectId(platform_id)}
     )
@@ -60,7 +62,7 @@ def setup_db_guild(
                 "action": action,
                 "period": datetime.now() - timedelta(days=days_ago_period),
             },
-            "community": ObjectId("aabbccddeeff001122334455"),
+            "community": ObjectId(community_id),
             "disconnectedAt": None,
             "connectedAt": (datetime.now() - timedelta(days=days_ago_period + 10)),
             "isInProgress": True,

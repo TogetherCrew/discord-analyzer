@@ -10,7 +10,7 @@ from discord_analyzer.analyzer.utils.guild import Guild
 class RnDaoAnalyzer(AnalyzerDBManager):
     """
     RnDaoAnalyzer
-    class that handles database connection and data analysis
+    class that handles database connections and data analysis
     """
 
     def __init__(self, guild_id: str, testing=False):
@@ -18,13 +18,13 @@ class RnDaoAnalyzer(AnalyzerDBManager):
         Class initiation function
         """
         """ Testing, prevents from data upload"""
+        logging.basicConfig()
+        logging.getLogger().setLevel(logging.INFO)
+
         self.testing = testing
         self.guild_object = Guild(guild_id)
         self.guild_id = guild_id
         self.community_id = self.guild_object.get_community_id()
-
-        logging.basicConfig()
-        logging.getLogger().setLevel(logging.INFO)
 
     def setup_neo4j_metrics(self) -> None:
         """

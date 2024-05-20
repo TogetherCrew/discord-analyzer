@@ -46,8 +46,8 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         self.db_access.db_mongo_client[self.guildId]["rawinfos"].insert_many(
             rawinfo_samples
         )
-        analyzer = setup_analyzer(self.guildId, platform_id)
-        analyzer.recompute_analytics(self.guildId)
+        analyzer = setup_analyzer(self.guildId)
+        analyzer.recompute_analytics()
         cursor = self.db_access.db_mongo_client[self.guildId]["memberactivities"].find(
             {}, {"_id": 0, "all_active": 1}
         )
@@ -96,8 +96,8 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         self.db_access.db_mongo_client[self.guildId]["rawinfos"].insert_many(
             rawinfo_samples
         )
-        analyzer = setup_analyzer(self.guildId, platform_id)
-        analyzer.recompute_analytics(self.guildId)
+        analyzer = setup_analyzer(self.guildId)
+        analyzer.recompute_analytics()
         cursor = self.db_access.db_mongo_client[self.guildId]["memberactivities"].find(
             {}, {"_id": 0, "all_active": 1}
         )
@@ -145,8 +145,8 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         self.db_access.db_mongo_client[self.guildId]["rawinfos"].insert_many(
             rawinfo_samples
         )
-        analyzer = setup_analyzer(self.guildId, platform_id)
-        analyzer.recompute_analytics(self.guildId)
+        analyzer = setup_analyzer(self.guildId)
+        analyzer.recompute_analytics()
         cursor = self.db_access.db_mongo_client[self.guildId]["memberactivities"].find(
             {}, {"_id": 0, "all_active": 1, "date": 1}
         )

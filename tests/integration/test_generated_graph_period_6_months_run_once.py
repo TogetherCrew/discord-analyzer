@@ -17,6 +17,7 @@ def test_networkgraph_six_months_period_run_once_available_analytics():
     """
     # first create the collections
     guildId = "1234"
+    community_id = "aabbccddeeff001122334455"
     platform_id = "515151515151515151515151"
 
     db_access = launch_db_access(guildId)
@@ -34,7 +35,12 @@ def test_networkgraph_six_months_period_run_once_available_analytics():
     ]
 
     setup_db_guild(
-        db_access, platform_id, guildId, discordId_list=acc_id, days_ago_period=180
+        db_access,
+        platform_id,
+        guildId,
+        discordId_list=acc_id,
+        days_ago_period=90,
+        community_id=community_id,
     )
 
     db_access.db_mongo_client[guildId].create_collection("heatmaps")
@@ -85,7 +91,7 @@ def test_networkgraph_six_months_period_run_once_available_analytics():
 
     db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer(guildId, platform_id)
+    analyzer = setup_analyzer(guildId)
     analyzer.run_once()
 
     results = neo4j_ops.gds.run_cypher(
@@ -115,9 +121,9 @@ def test_networkgraph_six_months_period_run_once_available_analytics():
         f"""
         MATCH
             (g:Guild {{guildId: '{guildId}'}})
-                -[r:IS_WITHIN]-> (c:Community {{id: '1234555'}})
+                -[r:IS_WITHIN]-> (c:Community {{id: '{community_id}'}})
         RETURN c.id as cid
         """
     )
     assert len(results.values) == 1
-    assert results["cid"].values == ["1234555"]
+    assert results["cid"].values == [community_id]
