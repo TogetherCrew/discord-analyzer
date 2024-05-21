@@ -10,7 +10,6 @@ from utils.transactions_ordering import sort_transactions
 
 
 def analyzer_recompute(sagaId: str):
-
     saga = get_saga_instance(sagaId=sagaId)
     if saga is None:
         logging.warn(
