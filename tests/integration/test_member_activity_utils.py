@@ -7,11 +7,14 @@ from .utils.remove_and_setup_guild import setup_db_guild
 
 
 def test_utils_get_members():
-    analyzer = setup_analyzer(guildId)
     platform_id = "515151515151515151515151"
     guildId = "1012430565959553145"
-    db_access = launch_db_access(guildId)
     users = ["973993299281076285"]
+    db_access = launch_db_access(guildId)
+    setup_db_guild(
+        db_access, platform_id, guildId, discordId_list=users, days_ago_period=7
+    )
+    analyzer = setup_analyzer(guildId)
 
     setup_db_guild(db_access, platform_id, guildId, discordId_list=users)
 
