@@ -1,6 +1,7 @@
 """
 start the project using rabbitMQ
 """
+
 import functools
 import logging
 from typing import Any
@@ -32,12 +33,8 @@ def analyzer():
     # 24 hours equal to 86400 seconds
     rq_queue = RQ_Queue(connection=redis, default_timeout=86400)
 
-    analyzer_recompute = functools.partial(
-        recompute_wrapper, redis_queue=rq_queue
-    )
-    analyzer_run_once = functools.partial(
-        run_once_wrapper, redis_queue=rq_queue
-    )
+    analyzer_recompute = functools.partial(recompute_wrapper, redis_queue=rq_queue)
+    analyzer_run_once = functools.partial(run_once_wrapper, redis_queue=rq_queue)
 
     rabbit_mq.connect(Queue.DISCORD_ANALYZER, heartbeat=60)
 
@@ -51,9 +48,7 @@ def analyzer():
         rabbit_mq.channel.start_consuming()
 
 
-def recompute_wrapper(
-    body: dict[str, Any], redis_queue: RQ_Queue
-):
+def recompute_wrapper(body: dict[str, Any], redis_queue: RQ_Queue):
     sagaId = body["content"]["uuid"]
     logging.info(f"SAGAID:{sagaId} recompute job Adding to queue")
 
@@ -64,9 +59,7 @@ def recompute_wrapper(
     )
 
 
-def run_once_wrapper(
-    body: dict[str, Any], redis_queue: RQ_Queue
-):
+def run_once_wrapper(body: dict[str, Any], redis_queue: RQ_Queue):
     sagaId = body["content"]["uuid"]
     logging.info(f"SAGAID:{sagaId} run_once job Adding to queue")
     redis_queue.enqueue(

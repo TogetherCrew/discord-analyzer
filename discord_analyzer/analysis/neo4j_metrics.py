@@ -206,10 +206,9 @@ if __name__ == "__main__":
     results_degreeCenterality["score_undirected"] = results_degreeCenterality["score"]
 
     # normalizing undirected scores
-    results_degreeCenterality[
-        "normalized_score_undirected"
-    ] = results_degreeCenterality["score"] / sum(
-        results_degreeCenterality["score"].values > 0
+    results_degreeCenterality["normalized_score_undirected"] = (
+        results_degreeCenterality["score"]
+        / sum(results_degreeCenterality["score"].values > 0)
     )
     # the normalization over positive score_out
     results_degreeCenterality["normalized_score_out"] = results_degreeCenterality[

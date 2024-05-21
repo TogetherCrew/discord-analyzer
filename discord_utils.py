@@ -41,6 +41,7 @@ def analyzer_recompute(sagaId: str):
 
     return sagaId
 
+
 def analyzer_run_once(sagaId: str):
     saga = get_saga_instance(sagaId=sagaId)
     if saga is None:

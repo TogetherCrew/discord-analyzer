@@ -1,6 +1,7 @@
 import sentry_sdk
 from utils.credentials import get_sentryio_service_creds
 
+
 def set_up_sentryio(sample_rate=1.0):
     sentry_creds = get_sentryio_service_creds()
     sentry_sdk.init(

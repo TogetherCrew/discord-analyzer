@@ -91,6 +91,7 @@ def test_redis_creds_values():
     assert redis_creds["port"] is not None
     assert redis_creds["host"] is not None
 
+
 def test_sentryio_creds():
     sentry_creds = get_sentryio_service_creds()
 
