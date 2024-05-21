@@ -1,10 +1,7 @@
 from typing import Any
 
 from discord_analyzer import RnDaoAnalyzer
-from utils.credentials import (
-    get_mongo_credentials,
-    get_neo4j_credentials,
-)
+from utils.credentials import get_mongo_credentials, get_neo4j_credentials
 
 
 class AnalyzerInit:

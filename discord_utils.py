@@ -1,5 +1,4 @@
 import logging
-from typing import Any
 
 from analyzer_init import AnalyzerInit
 from automation.automation_workflow import AutomationWorkflow

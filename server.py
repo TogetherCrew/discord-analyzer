@@ -9,11 +9,10 @@ from typing import Any
 import backoff
 from discord_utils import analyzer_recompute, analyzer_run_once, publish_on_success
 from pika.exceptions import AMQPConnectionError, ConnectionClosedByBroker
-from redis import Redis
 from rq import Queue as RQ_Queue
-from utils.rabbitmq import RabbitMQSingleton
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
+from utils.rabbitmq import RabbitMQSingleton
 from utils.redis import RedisSingleton
 from utils.sentryio_service import set_up_sentryio
 
