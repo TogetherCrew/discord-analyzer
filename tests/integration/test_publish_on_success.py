@@ -40,6 +40,26 @@ def test_publish_on_success_check_notification_choreographies():
     db_access.db_mongo_client[guild_id].drop_collection("guildmembers")
     db_access.db_mongo_client[at_db].drop_collection(at_collection)
 
+    act_param = {
+        "INT_THR": 1,
+        "UW_DEG_THR": 1,
+        "PAUSED_T_THR": 1,
+        "CON_T_THR": 4,
+        "CON_O_THR": 3,
+        "EDGE_STR_THR": 5,
+        "UW_THR_DEG_THR": 5,
+        "VITAL_T_THR": 4,
+        "VITAL_O_THR": 3,
+        "STILL_T_THR": 2,
+        "STILL_O_THR": 2,
+        "DROP_H_THR": 2,
+        "DROP_I_THR": 1,
+    }
+    window = {
+        "period_size": 7,
+        "step_size": 1,
+    }
+
     db_access.db_mongo_client["Core"]["platforms"].insert_one(
         {
             "_id": ObjectId(platform_id),
@@ -49,8 +69,8 @@ def test_publish_on_success_check_notification_choreographies():
                 "icon": "111111111111111111111111",
                 "name": "A guild",
                 "selectedChannels": ["4455178"],
-                "window": [7, 1],
-                "action": [1, 1, 1, 4, 3, 5, 5, 4, 3, 3, 2, 2, 1],
+                "window": window,
+                "action": act_param,
                 "period": datetime.now() - timedelta(days=10),
             },
             "community": ObjectId("aabbccddeeff001122334455"),

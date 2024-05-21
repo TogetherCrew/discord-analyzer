@@ -80,7 +80,7 @@ def store_mock_data_in_neo4j(graph_dict, guildId, community_id):
     neo4j_creds["password"] = os.getenv("NEO4J_PASSWORD")
     neo4j_creds["user"] = os.getenv("NEO4J_USER")
 
-    analyzer = RnDaoAnalyzer(community_id)
+    analyzer = RnDaoAnalyzer(guildId)
 
     analyzer.set_mongo_database_info(
         mongo_db_host=host,
@@ -93,16 +93,15 @@ def store_mock_data_in_neo4j(graph_dict, guildId, community_id):
 
     guilds_data = {}
 
-    guilds_data[guildId] = {
-        "heatmaps": None,
-        "memberactivities": (
-            None,
-            graph_dict,
-        ),
-    }
+    guilds_data["heatmaps"] = None
+    guilds_data["memberactivities"] = (
+        None,
+        graph_dict,
+    )
 
     analyzer.DB_connections.store_analytics_data(
         analytics_data=guilds_data,
+        guild_id=guildId,
         community_id=community_id,
         remove_heatmaps=False,
         remove_memberactivities=False,

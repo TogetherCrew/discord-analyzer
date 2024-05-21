@@ -5,9 +5,12 @@ from discord_analyzer.rn_analyzer import RnDaoAnalyzer
 from dotenv import load_dotenv
 
 
-def setup_analyzer() -> RnDaoAnalyzer:
+def setup_analyzer(
+    guild_id: str,
+) -> RnDaoAnalyzer:
     load_dotenv()
-    analyzer = RnDaoAnalyzer(community_id="1234555")
+
+    analyzer = RnDaoAnalyzer(guild_id)
 
     user = os.getenv("MONGODB_USER", "")
     password = os.getenv("MONGODB_PASS", "")

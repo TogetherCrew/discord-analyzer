@@ -2,27 +2,16 @@ from datetime import datetime, timedelta
 
 from analyzer_init import AnalyzerInit
 from bson.objectid import ObjectId
-from pymongo import MongoClient
-from utils.daolytics_uitls import get_mongo_credentials
+from utils.get_mongo_client import MongoSingleton
 
 
 def test_analyzer_init():
-    community_id = "aabbccddeeff001122334455"
-    analyzer = AnalyzerInit(community_id)
-
-    guildId = "1234"
     platform_id = "515151515151515151515151"
     days_ago_period = 30
-    mongo_creds = get_mongo_credentials()
-    user = mongo_creds["user"]
-    password = mongo_creds["password"]
-    host = mongo_creds["host"]
-    port = mongo_creds["port"]
+    community_id = "aabbccddeeff001122334455"
+    guildId = "1234"
 
-    url = f"mongodb://{user}:{password}@{host}:{port}"
-
-    mongo_client: MongoClient = MongoClient(url)
-
+    mongo_client = MongoSingleton.get_instance().get_client()
     mongo_client["Core"]["platforms"].delete_one({"metadata.id": guildId})
     mongo_client.drop_database(guildId)
 
@@ -68,6 +57,8 @@ def test_analyzer_init():
         }
     )
 
+    analyzer = AnalyzerInit(guildId)
+
     mongo_client[guildId]["guildmembers"].insert_one(
         {
             "discordId": "user1",
@@ -107,9 +98,9 @@ def test_analyzer_init():
 
     mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    tc_discord_analyzer, mongo_creds = analyzer.get_analyzer()
+    tc_discord_analyzer, _ = analyzer.get_analyzer()
 
-    tc_discord_analyzer.recompute_analytics(guildId)
+    tc_discord_analyzer.recompute_analytics()
 
     heatmaps_data = mongo_client[guildId]["heatmaps"].find_one({})
     assert heatmaps_data is not None

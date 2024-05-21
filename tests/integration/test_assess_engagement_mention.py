@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from discord_analyzer.analysis.utils.member_activity_utils import assess_engagement
 from discord_analyzer.analyzer.analyzer_heatmaps import Heatmaps
-from discord_analyzer.analyzer.base_analyzer import Base_analyzer
+from discord_analyzer.analyzer.utils.analyzer_db_manager import AnalyzerDBManager
 from tc_core_analyzer_lib.utils.activity import DiscordActivity
 from utils.daolytics_uitls import get_mongo_credentials, get_neo4j_credentials
 
@@ -18,7 +18,7 @@ class TestAssessEngagementMentions(TestCase):
         self.create_db_connections()
 
     def create_db_connections(self):
-        base_analyzer = Base_analyzer()
+        base_analyzer = AnalyzerDBManager()
         mongo_creds = get_mongo_credentials()
         base_analyzer.set_mongo_database_info(
             mongo_db_user=mongo_creds["user"],
@@ -38,14 +38,10 @@ class TestAssessEngagementMentions(TestCase):
         heatmaps = Heatmaps(DB_connections=self.db_connections, testing=False)
         heatmaps_data = heatmaps.analysis_heatmap(guildId=self.guildId, from_start=True)
         analytics_data = {}
-        analytics_data[f"{self.guildId}"] = {
-            "heatmaps": heatmaps_data,
-            "memberactivities": (
-                None,
-                None,
-            ),
-        }
+        analytics_data["heatmaps"] = heatmaps_data
+        analytics_data["memberactivities"] = (None, None)
         self.db_connections.store_analytics_data(
+            guild_id=self.guildId,
             analytics_data=analytics_data,
             community_id="123",
             remove_memberactivities=False,
@@ -72,8 +68,11 @@ class TestAssessEngagementMentions(TestCase):
             "DROP_H_THR": 2,
             "DROP_I_THR": 1,
         }
+        platform_id = "515151515151515151515151"
+
         setup_db_guild(
             self.db_access,
+            platform_id,
             self.guildId,
             discordId_list=users_id_list,
             days_ago_period=35,

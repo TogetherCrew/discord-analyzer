@@ -10,6 +10,7 @@ def test_excluding_bots_heatmaps():
     """
     test if we're excluding bots from analyzer pipeline
     """
+    platform_id = "515151515151515151515151"
     guildId = "1234567"
     db_access = launch_db_access(guildId)
 
@@ -28,6 +29,7 @@ def test_excluding_bots_heatmaps():
     connected_days_before = 35
     setup_db_guild(
         db_access,
+        platform_id,
         guildId,
         discordId_list=acc_id,
         discordId_isbot=acc_isbots,
@@ -65,8 +67,8 @@ def test_excluding_bots_heatmaps():
 
     db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer()
-    analyzer.run_once(guildId=guildId)
+    analyzer = setup_analyzer(guildId)
+    analyzer.run_once()
 
     db_access.db_mongo_client[guildId]
 

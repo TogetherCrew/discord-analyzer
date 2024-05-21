@@ -8,6 +8,7 @@ from discord_analyzer.DB_operations.mongodb_access import DB_access
 
 def setup_db_guild(
     db_access: DB_access,
+    platform_id: str,
     guildId: str = "1234",
     discordId_list: list[str] = ["973993299281076285"],
     discordId_isbot: list[bool] = [False],
@@ -21,9 +22,9 @@ def setup_db_guild(
       it then create the guildmembers collection in it
 
     `discordId_isbot` is representative if each user is bot or not
+    `community_id` can be passed in kwargs. default is `aabbccddeeff001122334455`
     """
-    platform_id = "515151515151515151515151"
-
+    community_id = kwargs.get("community_id", "aabbccddeeff001122334455")
     db_access.db_mongo_client["Core"]["platforms"].delete_one(
         {"_id": ObjectId(platform_id)}
     )
@@ -61,7 +62,7 @@ def setup_db_guild(
                 "action": action,
                 "period": datetime.now() - timedelta(days=days_ago_period),
             },
-            "community": ObjectId("aabbccddeeff001122334455"),
+            "community": ObjectId(community_id),
             "disconnectedAt": None,
             "connectedAt": (datetime.now() - timedelta(days=days_ago_period + 10)),
             "isInProgress": True,

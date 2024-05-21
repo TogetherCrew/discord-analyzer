@@ -188,38 +188,6 @@ class MongoDBOps:
             logging.info(f"{message}: Batch {loop_idx + 1}/{batch_count}")
             collection.insert_many(data[batch_idx : batch_idx + batch_size])
 
-    def check_heatmaps(self, guildId, selectedChannels, heatmap_model):
-        """
-        check whether all the channels are in heatmaps or not
-
-        Parameters:
-        -------------
-        guildId : str
-            the guildId to remove its collection data
-        selectedChannels : list
-            list of `channelId`s
-        heatmap_model : HeatMapModel
-            the heatmaps model to access it
-
-        Returns:
-        ---------
-        is_available : bool
-            is all the selectedChannels available in heatmap collection or not
-        """
-        heatmap_c = heatmap_model(self.mongo_db_access.db_mongo_client[guildId])
-        channels = heatmap_c.get_channels_disctinct()
-
-        if channels is not None:
-            # check if all the selected channels are available in heatmaps
-            is_available = all(element in selectedChannels for element in channels)
-        else:
-            log_msg = "MongoDB heatmaps table check raised an exception,"
-            log_msg += " the heatmaps analysis wouldn't be done!"
-            logging.info(log_msg)
-            is_available = True
-
-        return is_available
-
     def empty_collection(self, session, guildId, activity):
         """
         empty a specified collection
