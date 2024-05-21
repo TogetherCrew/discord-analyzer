@@ -21,7 +21,7 @@ class RabbitMQSingleton:
         if RabbitMQSingleton.__instance is None:
             try:
                 RabbitMQSingleton()
-                logging.info(f"RabbitMQ broker Connected Successfully! Ping returned: {info}")
+                logging.info("RabbitMQ broker Connected Successfully!")
             except Exception as exp:
                 logging.error(f"RabbitMQ broker not connected! exp: {exp}")
 
