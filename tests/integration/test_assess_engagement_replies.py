@@ -5,7 +5,7 @@ from discord_analyzer.analysis.utils.member_activity_utils import assess_engagem
 from discord_analyzer.analyzer.analyzer_heatmaps import Heatmaps
 from discord_analyzer.analyzer.utils.analyzer_db_manager import AnalyzerDBManager
 from tc_core_analyzer_lib.utils.activity import DiscordActivity
-from utils.daolytics_uitls import get_mongo_credentials, get_neo4j_credentials
+from utils.credentials import get_mongo_credentials, get_neo4j_credentials
 
 from .utils.analyzer_setup import launch_db_access
 from .utils.remove_and_setup_guild import setup_db_guild

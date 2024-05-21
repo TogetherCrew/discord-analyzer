@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from utils.get_mongo_client import MongoSingleton
+from utils.mongo import MongoSingleton
 
 
 def get_guild_community_ids(platform_id: str) -> str:

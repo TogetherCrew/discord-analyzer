@@ -2,8 +2,8 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import uuid1
 
-from utils.get_mongo_client import MongoSingleton
-from utils.get_rabbitmq import prepare_rabbit_mq
+from utils.mongo import MongoSingleton
+from utils.rabbitmq import RabbitMQSingleton
 
 
 class AutomationBase:
@@ -11,9 +11,8 @@ class AutomationBase:
         """
         utilities for automation workflow
         """
-        mongo_singleton = MongoSingleton.get_instance()
-        self.mongo_client = mongo_singleton.get_client()
-        self.rabbitmq = prepare_rabbit_mq()
+        self.mongo_client = MongoSingleton.get_instance().get_client()
+        self.rabbitmq = RabbitMQSingleton.get_instance().get_client()
 
     def _get_users_from_guildmembers(
         self, guild_id: str, user_ids: list[str], strategy: str = "ngu"

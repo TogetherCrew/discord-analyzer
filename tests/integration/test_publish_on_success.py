@@ -10,7 +10,7 @@ from automation.utils.interfaces import (
 from bson.objectid import ObjectId
 from discord_utils import publish_on_success
 from dotenv import load_dotenv
-from utils.daolytics_uitls import get_mongo_credentials
+from utils.credentials import get_mongo_credentials
 
 from .utils.analyzer_setup import launch_db_access
 

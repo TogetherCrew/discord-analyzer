@@ -92,20 +92,6 @@ def get_neo4j_credentials():
     return neo4j_creds
 
 
-def get_saga_db_location():
-    """
-    get the saga location in database
-    """
-    load_dotenv()
-
-    saga_db = {}
-
-    saga_db["db_name"] = os.getenv("SAGA_DB_NAME")
-    saga_db["collection_name"] = os.getenv("SAGA_DB_COLLECTION")
-
-    return saga_db
-
-
 def get_sentryio_service_creds():
     load_dotenv()
 
