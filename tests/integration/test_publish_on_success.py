@@ -331,9 +331,9 @@ def test_publish_on_success_check_notification_choreographies():
     sample_args_data = saga_id
     publish_on_success(None, None, sample_args_data)
 
-    notification_count = db_access.db_mongo_client["Saga"][
-        "sagas"
-    ].count_documents({"choreography.name": "DISCORD_NOTIFY_USERS"})
+    notification_count = db_access.db_mongo_client["Saga"]["sagas"].count_documents(
+        {"choreography.name": "DISCORD_NOTIFY_USERS"}
+    )
 
     assert notification_count == 4
 
