@@ -330,7 +330,7 @@ def test_publish_on_success_check_notification_choreographies():
         "collection_name": saga_collection,
     }
 
-    sample_args_data = ["sample", saga_id, mongo_creds]
+    sample_args_data = [saga_id]
     publish_on_success(None, None, sample_args_data)
 
     notification_count = db_access.db_mongo_client[saga_db][
