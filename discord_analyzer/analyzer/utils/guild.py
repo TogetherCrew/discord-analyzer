@@ -1,4 +1,4 @@
-from utils.get_mongo_client import MongoSingleton
+from utils.mongo import MongoSingleton
 
 
 class Guild:

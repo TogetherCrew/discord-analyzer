@@ -1,9 +1,8 @@
-from utils.daolytics_uitls import (
+from utils.credentials import (
     get_mongo_credentials,
     get_neo4j_credentials,
     get_rabbit_mq_credentials,
     get_redis_credentials,
-    get_saga_db_location,
     get_sentryio_service_creds,
 )
 
@@ -91,20 +90,6 @@ def test_redis_creds_values():
     assert redis_creds["pass"] is not None
     assert redis_creds["port"] is not None
     assert redis_creds["host"] is not None
-
-
-def test_saga_location():
-    saga_creds = get_saga_db_location()
-
-    assert "db_name" in saga_creds.keys()
-    assert "collection_name" in saga_creds.keys()
-
-
-def test_saga_location_values():
-    saga_creds = get_saga_db_location()
-
-    assert saga_creds["db_name"] is not None
-    assert saga_creds["collection_name"] is not None
 
 
 def test_sentryio_creds():

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from analyzer_init import AnalyzerInit
 from bson.objectid import ObjectId
-from utils.get_mongo_client import MongoSingleton
+from utils.mongo import MongoSingleton
 
 
 def test_analyzer_init():
@@ -98,7 +98,7 @@ def test_analyzer_init():
 
     mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
 
-    tc_discord_analyzer, _ = analyzer.get_analyzer()
+    tc_discord_analyzer = analyzer.get_analyzer()
 
     tc_discord_analyzer.recompute_analytics()
 
