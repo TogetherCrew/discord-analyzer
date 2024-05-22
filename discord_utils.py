@@ -81,8 +81,8 @@ def get_saga_instance(sagaId: str):
 
 def publish_on_success(connection, result, *args, **kwargs):
     try:
-        sagaId = args[0][0]
-        logging.info(f"SAGAID: {sagaId}: ON_SUCCESS callback! ")
+        sagaId = args[0]
+        logging.info(f"SAGAID: {sagaId}: ON_SUCCESS callback!")
 
         saga = get_saga_instance(sagaId=sagaId)
         rabbitmq = RabbitMQSingleton.get_instance().get_client()
