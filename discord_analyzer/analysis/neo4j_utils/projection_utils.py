@@ -1,11 +1,10 @@
 import logging
-
-from graphdatascience import GraphDataScience
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 class ProjectionUtils:
-    def __init__(self, gds: GraphDataScience, guildId: str) -> None:
-        self.gds = gds
+    def __init__(self, guildId: str) -> None:
+        self.gds = Neo4jOps.get_instance().gds
         self.guildId = guildId
 
     def project_temp_graph(
@@ -123,7 +122,7 @@ class ProjectionUtils:
 
         return computable_dates_set
 
-    def get_computed_dates(self, query: str) -> set[float]:
+    def get_computed_dates(self, query: str, **params) -> set[float]:
         """
         get the computed metric dates for that specific query
 
@@ -133,8 +132,10 @@ class ProjectionUtils:
             the query to get the computed dates of a metric
             must have one return results with label of computed_dates
             first one is date
+        params: Dict[str, Any]
+            parameters to the query
         """
-        dates = self.gds.run_cypher(query)
+        dates = self.gds.run_cypher(query, params)
         computed_dates = set(dates["computed_dates"].values)
 
         return computed_dates

@@ -4,7 +4,7 @@ from typing import Literal
 import pandas as pd
 from discord_analyzer.analysis.neo4j_metrics import Neo4JMetrics
 from discord_analyzer.analysis.neo4j_utils.projection_utils import ProjectionUtils
-from tc_neo4j_lib.neo4j_ops import Neo4jOps
+from tc_neo4j_lib.neo4j_ops import Neo4jOps, Query
 
 
 class Centerality:
@@ -143,13 +143,13 @@ class Centerality:
         guildId : str
             the guildId to get computations date
         """
-        query = f"""
-            MATCH (g:Guild {{guildId: '{guildId}'}})
+        query = """
+            MATCH (g:Guild {guildId: $guild_id})
                 -[r:HAVE_METRICS] -> (g)
             WHERE r.decentralizationScore IS NOT NULL
             RETURN r.date as computed_dates
             """
-        computed_dates = projection_utils.get_computed_dates(query)
+        computed_dates = projection_utils.get_computed_dates(query, guild_id=guildId)
 
         dates_to_compute = user_interaction_dates - computed_dates
 
@@ -348,18 +348,18 @@ class Centerality:
             the network decentrality scores over time
         """
         # preparing the queries
-        queries = []
+        queries: list[Query] = []
         for date in decentrality_score.keys():
-            query = f"""
-                MATCH (g: Guild {{guildId: '{guildId}'}})
-                MERGE (g) -[r:HAVE_METRICS {{
-                    date: {date}
-                }}]-> (g)
-                SET r.decentralizationScore = {decentrality_score[date]}
+            query_str = """
+                MATCH (g: Guild {guildId: $guild_id})
+                MERGE (g) -[r:HAVE_METRICS {date: $date}]-> (g)
+                SET r.decentralizationScore = $score
                 """
+            parameters = {"guild_id": guildId, "score": decentrality_score[date]}
+            query = Query(query=query_str, parameters=parameters)
             queries.append(query)
 
-        self.neo4j_ops.store_data_neo4j(
+        self.neo4j_ops.run_queries_in_batch(
             queries,
             message=f"GUILDID: {guildId}: Saving Network Decentrality:",
         )

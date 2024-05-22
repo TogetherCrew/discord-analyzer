@@ -123,13 +123,15 @@ class NodeStats:
         """
         get the computed dates of our guild
         """
-        query = f"""
+        query = """
             MATCH (:DiscordAccount)
-                -[r:INTERACTED_IN]->(g:Guild {{guildId: '{guildId}'}})
+                -[r:INTERACTED_IN]->(g:Guild {guildId: $guild_id})
             WHERE r.status IS NOT NULL
             RETURN r.date as computed_dates
             """
-        computed_dates = projection_utils.get_computed_dates(query=query)
+        computed_dates = projection_utils.get_computed_dates(
+            query=query, guild_id=guildId
+        )
 
         return computed_dates
 

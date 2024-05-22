@@ -30,7 +30,8 @@ class RnDaoAnalyzer(AnalyzerDBManager):
         """
         setup the neo4j analytics wrapper
         """
-        self.neo4j_analytics = Neo4JAnalytics(neo4j_ops=self.DB_connections.neo4j_ops)
+
+        self.neo4j_analytics = Neo4JAnalytics()
 
     def run_once(self):
         """Run analysis once (Wrapper)"""

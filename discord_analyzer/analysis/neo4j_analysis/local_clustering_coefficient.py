@@ -118,13 +118,13 @@ class LocalClusteringCoeff:
             the computation dates
         """
         # getting the dates computed before
-        query = f"""
+        query = """
             MATCH (:DiscordAccount)
-                -[r:INTERACTED_IN]->(g:Guild {{guildId: '{guildId}'}})
+                -[r:INTERACTED_IN]->(g:Guild {guildId: $guild_id})
             WHERE r.localClusteringCoefficient IS NOT NULL
             RETURN r.date as computed_dates
             """
-        computed_dates = projection_utils.get_computed_dates(query)
+        computed_dates = projection_utils.get_computed_dates(query, guild_id=guildId)
 
         return computed_dates
 

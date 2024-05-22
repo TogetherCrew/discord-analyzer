@@ -1,7 +1,7 @@
 # test out local clustering coefficient with all nodes connected
 from discord_analyzer.analysis.neo4j_analysis.analyzer_node_stats import NodeStats
 
-from .utils.neo4j_conn import neo4j_setup
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 def test_node_stats():
@@ -12,7 +12,7 @@ def test_node_stats():
     To see the graph for this test:
     https://miro.com/app/board/uXjVM7GdYqo=/?share_link_id=105382864070
     """
-    neo4j_ops = neo4j_setup()
+    neo4j_ops = Neo4jOps.get_instance()
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 

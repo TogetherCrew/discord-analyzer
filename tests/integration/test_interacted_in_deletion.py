@@ -1,6 +1,6 @@
 from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
 
-from .utils.neo4j_conn import neo4j_setup
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 def test_interacted_in_deletion():
@@ -8,7 +8,7 @@ def test_interacted_in_deletion():
     test whether we're deleting the INTERACTED_IN relations or not
     """
 
-    neo4j_ops = neo4j_setup()
+    neo4j_ops = Neo4jOps.get_instance()
     neo4j_analytics = Neo4JAnalytics(neo4j_ops)
 
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")

@@ -63,12 +63,3 @@ class AnalyzerDBManager:
             mongo_host=self.mongo_host,
             mongo_port=self.mongo_port,
         )
-
-        self.DB_connections.set_neo4j_utils(
-            db_name=self.neo4j_db_name,
-            host=self.neo4j_host,
-            port=self.neo4j_port,
-            protocol=self.neo4j_protocol,
-            user=self.neo4j_user,
-            password=self.neo4j_password,
-        )

@@ -3,13 +3,14 @@
 import datetime
 
 import networkx
+from tc_neo4j_lib import Query
 
 
 def make_neo4j_networkx_query_dict(
     networkx_graphs: dict[datetime.datetime, networkx.classes.graph.Graph],
     guildId: str,
     community_id: str,
-):
+) -> list[Query]:
     """
     make a list of queries to store networkx graphs into the neo4j
 
@@ -26,7 +27,7 @@ def make_neo4j_networkx_query_dict(
 
     Returns:
     -----------
-    queries_list : list
+    queries_list : list[Query]
         list of string queries to store data into neo4j
     """
     # extract the graphs and their corresponding interaction dates
@@ -53,7 +54,7 @@ def make_graph_list_query(
     guildId: str,
     community_id: str,
     toGuildRelation: str = "IS_MEMBER",
-):
+) -> list[Query]:
     """
     Make a list of queries for each graph to save their results
 
@@ -75,10 +76,10 @@ def make_graph_list_query(
 
     Returns:
     ---------
-    final_queries : list of str
+    final_queries : list[Query]
         list of strings, each is a query for an interaction graph to be created
     """
-    final_queries = []
+    final_queries: list[Query] = []
 
     for graph, date in zip(networkx_graphs, networkx_dates):
         nodes_dict = graph.nodes.data()
@@ -104,7 +105,7 @@ def create_community_node_query(
     community_id: str,
     guild_id: str,
     community_node: str = "Community",
-) -> str:
+) -> Query:
     """
     create the community node
 
@@ -114,19 +115,31 @@ def create_community_node_query(
         the community id to create its node
     guild_id : str
         the guild node to attach to community
+
+    Returns
+    ---------
+    query : Query
+        the query to run on neo4j to create community node
     """
     date_now_timestamp = get_timestamp()
 
-    query = f"""
-        MERGE (g:Guild {{guildId: '{guild_id}'}})
-        ON CREATE SET g.createdAt = {int(date_now_timestamp)}
+    query_str = f"""
+        MERGE (g:Guild {{guildId: $guild_id}})
+        ON CREATE SET g.createdAt = $date_now
         WITH g
-        MERGE (c:{community_node} {{id: '{community_id}'}})
-        ON CREATE SET c.createdAt = {int(date_now_timestamp)}
+        MERGE (c:{community_node} {{id: $community_id}})
+        ON CREATE SET c.createdAt = $date_now
         WITH g, c
         MERGE (g) -[r:IS_WITHIN]-> (c)
-        ON CREATE SET r.createdAt = {int(date_now_timestamp)}
+        ON CREATE SET r.createdAt = $date_now
     """
+
+    parameters = {
+        "guild_id": guild_id,
+        "date_now": int(date_now_timestamp),
+        "community_id": community_id,
+    }
+    query = Query(query_str, parameters)
 
     return query
 
@@ -139,7 +152,7 @@ def create_network_query(
     nodes_type: str = "DiscordAccount",
     rel_type: str = "INTERACTED_WITH",
     toGuildRelation: str = "IS_MEMBER",
-):
+) -> tuple[list[Query], list[Query]]:
     """
     make string query to save the accounts with their
      account_name and relationships with their relation from **a graph**.
@@ -164,9 +177,9 @@ def create_network_query(
 
     Returns:
     ----------
-    node_queries : list of str
+    node_queries : list[Query]
         the list of MERGE queries for creating all nodes
-    rel_queries : list of str
+    rel_queries : list[Query]
         the list of MERGE queries for creating all relationships
     """
     # getting the timestamp `date`
@@ -174,8 +187,8 @@ def create_network_query(
     date_now_timestamp = get_timestamp()
 
     # initializiation of queries
-    rel_queries = []
-    node_queries = []
+    rel_queries: list[Query] = []
+    node_queries: list[Query] = []
 
     for node in nodes_dict:
         node_str_query = ""
@@ -186,27 +199,33 @@ def create_network_query(
         node_acc_name = node[1]["acc_name"]
         # creating the query
         node_str_query += (
-            f"MERGE (a{node_num}:{nodes_type} {{userId: '{node_acc_name}'}})   "
+            f"MERGE (a{node_num}:{nodes_type} {{userId: $node_acc_name}})   "
         )
         node_str_query += f"""ON CREATE SET a{node_num}.createdAt =
-                                    {int(date_now_timestamp)}
+                                    $date_now_timestamp
                             """
 
         # relationship query between users and guilds
         if guildId is not None:
             # creating the guilds if they weren't created before
             node_str_query += f"""MERGE (g:Guild {{guildId: '{guildId}'}})
-                                ON CREATE SET g.createdAt = {int(date_now_timestamp)}
+                                ON CREATE SET g.createdAt = $date_now_timestamp
                             """
 
             node_str_query += f"""
                 MERGE (a{node_num})
                         -[rel_guild{node_num}:{toGuildRelation}]-> (g)
                     ON CREATE SET
-                        rel_guild{node_num}.createdAt = {int(date_now_timestamp)}
+                        rel_guild{node_num}.createdAt = $date_now_timestamp
             """
 
-        node_queries.append(node_str_query + ";")
+        parameters = {
+            "node_acc_name": node_acc_name,
+            date_now_timestamp: int(date_now_timestamp),
+        }
+        query_str = node_str_query + ";"
+
+        node_queries.append(Query(query_str, parameters))
 
     for idx, edge in enumerate(edge_dict):
         rel_str_query = ""
@@ -225,19 +244,27 @@ def create_network_query(
         interaction_count = edge[2]["weight"]
 
         rel_str_query += f"""MATCH (a{starting_acc_num}:{nodes_type}
-                            {{userId: \'{starting_node_acc_name}\'}})
+                            {{userId: $starting_node_acc_name}})
                                 MATCH (a{ending_acc_num}:{nodes_type}
-                                  {{userId: \'{ending_node_acc_name}\'}})
+                                  {{userId: $ending_node_acc_name}})
                                 MERGE
                                 (a{starting_acc_num}) -[rel{idx}:{rel_type}
                                     {{
-                                        date: {int(graph_date_timestamp)},
-                                        weight: {int(interaction_count)},
-                                        guildId: '{guildId}'
+                                        date: $date,
+                                        weight: $weight,
+                                        guildId: $guild_id
                                     }}
                                 ]-> (a{ending_acc_num})
                                     """
-        rel_queries.append(rel_str_query + ";")
+        query_str = rel_str_query + ";"
+        parameters = {
+            "starting_node_acc_name": starting_node_acc_name,
+            "ending_node_acc_name": ending_node_acc_name,
+            "date": int(graph_date_timestamp),
+            "weight": int(interaction_count),
+            "guild_id": guildId,
+        }
+        rel_queries.append(Query(query_str, parameters))
 
     return node_queries, rel_queries
 

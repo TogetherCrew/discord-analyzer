@@ -1,7 +1,6 @@
 import os
 
 from dotenv import load_dotenv
-from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 def neo4j_setup() -> Neo4jOps:

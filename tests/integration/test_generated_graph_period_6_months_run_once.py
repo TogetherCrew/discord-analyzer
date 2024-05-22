@@ -5,7 +5,8 @@ import numpy as np
 from .utils.analyzer_setup import launch_db_access, setup_analyzer
 from .utils.mock_heatmaps import create_empty_heatmaps_data
 from .utils.mock_memberactivities import create_empty_memberactivities_data
-from .utils.neo4j_conn import neo4j_setup
+
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 from .utils.remove_and_setup_guild import setup_db_guild
 
 
@@ -21,7 +22,7 @@ def test_networkgraph_six_months_period_run_once_available_analytics():
     platform_id = "515151515151515151515151"
 
     db_access = launch_db_access(guildId)
-    neo4j_ops = neo4j_setup()
+    neo4j_ops = Neo4jOps.get_instance()
 
     neo4j_ops.gds.run_cypher(
         """

@@ -3,7 +3,7 @@ from discord_analyzer.analysis.neo4j_analysis.local_clustering_coefficient impor
     LocalClusteringCoeff,
 )
 
-from .utils.neo4j_conn import neo4j_setup
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 def test_all_connected_coeffs():
@@ -16,7 +16,7 @@ def test_all_connected_coeffs():
     To see more info for this test:
     https://miro.com/app/board/uXjVM7GdYqo=/?share_link_id=105382864070
     """
-    neo4j_ops = neo4j_setup()
+    neo4j_ops = Neo4jOps.get_instance()
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 

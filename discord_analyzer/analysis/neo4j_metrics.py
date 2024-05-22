@@ -1,8 +1,7 @@
 import os
 
 from discord_analyzer.analysis.neo4j_utils.compute_metrics import Neo4JMetrics
-from dotenv import load_dotenv
-from tc_neo4j_lib.neo4j_ops import Neo4jOps
+from dotenv import load_dotenvfrom tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 def degree_centrality(
@@ -206,10 +205,9 @@ if __name__ == "__main__":
     results_degreeCenterality["score_undirected"] = results_degreeCenterality["score"]
 
     # normalizing undirected scores
-    results_degreeCenterality[
-        "normalized_score_undirected"
-    ] = results_degreeCenterality["score"] / sum(
-        results_degreeCenterality["score"].values > 0
+    results_degreeCenterality["normalized_score_undirected"] = (
+        results_degreeCenterality["score"]
+        / sum(results_degreeCenterality["score"].values > 0)
     )
     # the normalization over positive score_out
     results_degreeCenterality["normalized_score_out"] = results_degreeCenterality[
