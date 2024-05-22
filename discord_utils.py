@@ -82,8 +82,7 @@ def get_saga_instance(sagaId: str):
 def publish_on_success(connection, result, *args, **kwargs):
     try:
         sagaId = args[0][0]
-        msg = f"GUILDID: {guildId}: "
-        logging.info(f"{msg}SAGAID: {sagaId}: ON_SUCCESS callback! ")
+        logging.info(f"SAGAID: {sagaId}: ON_SUCCESS callback! ")
 
         saga = get_saga_instance(sagaId=sagaId)
         rabbitmq = RabbitMQSingleton.get_instance().get_client()
@@ -95,6 +94,7 @@ def publish_on_success(connection, result, *args, **kwargs):
         platform_id = saga.data["platformId"]
         guildId = get_guild_community_ids(platform_id)
 
+        msg = f"GUILDID: {guildId}: "
         if tx_not_started_count != 0:
             tx = transactions_ordered[0]
 
