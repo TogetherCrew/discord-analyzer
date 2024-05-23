@@ -1,13 +1,12 @@
 from discord_analyzer.analysis.neo4j_analysis.louvain import Louvain
-
-from .utils.neo4j_conn import neo4j_setup
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 def test_louvain_algorithm_available_data():
     """
     test the louvain algorithm with some nodes connected
     """
-    neo4j_ops = neo4j_setup()
+    neo4j_ops = Neo4jOps.get_instance()
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
@@ -35,7 +34,7 @@ def test_louvain_algorithm_available_data():
         SET r4.guildId = '{guild_id}'
         """
     )
-    louvain = Louvain(neo4j_ops)
+    louvain = Louvain()
 
     louvain.compute(guild_id=guild_id, from_start=False)
 
@@ -55,7 +54,7 @@ def test_louvain_algorithm_more_available_data():
     """
     test the louvain algorithm with some more data available
     """
-    neo4j_ops = neo4j_setup()
+    neo4j_ops = Neo4jOps.get_instance()
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
@@ -104,7 +103,7 @@ def test_louvain_algorithm_more_available_data():
         SET r12.guildId = '{guild_id}'
         """
     )
-    louvain = Louvain(neo4j_ops)
+    louvain = Louvain()
 
     louvain.compute(guild_id=guild_id, from_start=False)
 

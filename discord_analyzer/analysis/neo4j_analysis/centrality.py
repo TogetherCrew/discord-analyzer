@@ -2,17 +2,17 @@ import logging
 from typing import Literal
 
 import pandas as pd
-from discord_analyzer.analysis.neo4j_metrics import Neo4JMetrics
+from discord_analyzer.analysis.neo4j_utils.neo4j_metrics import Neo4JMetrics
 from discord_analyzer.analysis.neo4j_utils.projection_utils import ProjectionUtils
-from tc_neo4j_lib.neo4j_ops import Neo4jOps
+from tc_neo4j_lib.neo4j_ops import Neo4jOps, Query
 
 
 class Centerality:
-    def __init__(self, neo4j_ops: Neo4jOps) -> None:
+    def __init__(self) -> None:
         """
         centerality algorithms
         """
-        self.neo4j_ops = neo4j_ops
+        self.neo4j_ops = Neo4jOps.get_instance()
 
     def compute_degree_centerality(
         self,
@@ -31,8 +31,6 @@ class Centerality:
         ------------
         guildId : str
             the user nodes of guildId
-        gds : GraphDataScience
-            the gds instance to interact with DB
         direction : str
             the direction of relation
             could be `in_degree`, `out_degree`, `undirected`
@@ -98,18 +96,19 @@ class Centerality:
         results = self.neo4j_ops.gds.run_cypher(
             f"""
                 {query}
-                WHERE r.guildId = '{guildId}'
+                WHERE r.guildId = $guild_id
                 RETURN
                     a.userId as a_userId,
                     r.date as date,
                     r.weight as weight,
                     b.userId as b_userId
-            """
+            """,
+            params={"guild_id": guildId},
         )
 
         dates_to_compute = set(results["date"].value_counts().index)
         if not from_start:
-            projection_utils = ProjectionUtils(gds=self.neo4j_ops.gds, guildId=guildId)
+            projection_utils = ProjectionUtils(guildId=guildId)
 
             dates_to_compute = self._get_dates_to_compute(
                 projection_utils, dates_to_compute, guildId
@@ -143,13 +142,13 @@ class Centerality:
         guildId : str
             the guildId to get computations date
         """
-        query = f"""
-            MATCH (g:Guild {{guildId: '{guildId}'}})
+        query = """
+            MATCH (g:Guild {guildId: $guild_id})
                 -[r:HAVE_METRICS] -> (g)
             WHERE r.decentralizationScore IS NOT NULL
             RETURN r.date as computed_dates
             """
-        computed_dates = projection_utils.get_computed_dates(query)
+        computed_dates = projection_utils.get_computed_dates(query, guild_id=guildId)
 
         dates_to_compute = user_interaction_dates - computed_dates
 
@@ -317,7 +316,7 @@ class Centerality:
             from_start=from_start,
         )
 
-        neo4j_metrics = Neo4JMetrics(self.neo4j_ops.gds)
+        neo4j_metrics = Neo4JMetrics()
 
         # saving each date network decentrality
         network_decentrality: dict[float, float | Literal[-1]] = {}
@@ -348,18 +347,22 @@ class Centerality:
             the network decentrality scores over time
         """
         # preparing the queries
-        queries = []
+        queries: list[Query] = []
         for date in decentrality_score.keys():
-            query = f"""
-                MATCH (g: Guild {{guildId: '{guildId}'}})
-                MERGE (g) -[r:HAVE_METRICS {{
-                    date: {date}
-                }}]-> (g)
-                SET r.decentralizationScore = {decentrality_score[date]}
+            query_str = """
+                MATCH (g: Guild {guildId: $guild_id})
+                MERGE (g) -[r:HAVE_METRICS {date: $date}]-> (g)
+                SET r.decentralizationScore = $score
                 """
+            parameters = {
+                "guild_id": guildId,
+                "score": decentrality_score[date],
+                "date": date,
+            }
+            query = Query(query=query_str, parameters=parameters)
             queries.append(query)
 
-        self.neo4j_ops.store_data_neo4j(
+        self.neo4j_ops.run_queries_in_batch(
             queries,
             message=f"GUILDID: {guildId}: Saving Network Decentrality:",
         )

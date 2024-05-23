@@ -8,7 +8,7 @@ from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 class NodeStats:
-    def __init__(self, neo4j_ops: Neo4jOps, threshold: int = 2) -> None:
+    def __init__(self, threshold: int = 2) -> None:
         """
         initialize the Node status computations object
         the status could be either one of `Sender`, `Receiver`, `Balanced`
@@ -27,12 +27,13 @@ class NodeStats:
             - else it is balanced
 
         """
+        neo4j_ops = Neo4jOps.get_instance()
         self.gds = neo4j_ops.gds
         self.driver = neo4j_ops.neo4j_driver
         self.threshold = threshold
 
     def compute_stats(self, guildId: str, from_start: bool) -> None:
-        projection_utils = ProjectionUtils(gds=self.gds, guildId=guildId)
+        projection_utils = ProjectionUtils(guildId=guildId)
 
         # possible dates to do the computations
         possible_dates = projection_utils.get_dates(guildId=guildId)
@@ -80,41 +81,46 @@ class NodeStats:
             date=date,
         )
         natural_dc = self.gds.run_cypher(
-            f"""
+            """
             CALL gds.degree.stream(
-                '{graph_name}',
-                {{
+                $graph_name,
+                {
                     relationshipWeightProperty: 'weight'
-                }}
+                }
             )
             YIELD nodeId, score
             RETURN gds.util.asNode(nodeId).userId AS userId, score
-            """
+            """,
+            {
+                "graph_name": graph_name,
+            },
         )
 
         reverse_dc = self.gds.run_cypher(
-            f"""
+            """
             CALL gds.degree.stream(
-                '{graph_name}',
-                {{
+                $graph_name,
+                {
                     orientation: 'REVERSE',
                     relationshipWeightProperty: 'weight'
-                }}
+                }
             )
             YIELD nodeId, score
             RETURN gds.util.asNode(nodeId).userId AS userId, score
-            """
+            """,
+            {
+                "graph_name": graph_name,
+            },
         )
 
         df = self.get_date_stats(natural_dc, reverse_dc, threshold=self.threshold)
 
         self.save_properties_db(guildId, df, date)
         _ = self.gds.run_cypher(
-            f"""
-            CALL gds.graph.drop(
-                "{graph_name}"
-            )
-            """
+            "CALL gds.graph.drop($graph_name)",
+            {
+                "graph_name": graph_name,
+            },
         )
 
     def get_computed_dates(
@@ -123,13 +129,15 @@ class NodeStats:
         """
         get the computed dates of our guild
         """
-        query = f"""
+        query = """
             MATCH (:DiscordAccount)
-                -[r:INTERACTED_IN]->(g:Guild {{guildId: '{guildId}'}})
+                -[r:INTERACTED_IN]->(g:Guild {guildId: $guild_id})
             WHERE r.status IS NOT NULL
             RETURN r.date as computed_dates
             """
-        computed_dates = projection_utils.get_computed_dates(query=query)
+        computed_dates = projection_utils.get_computed_dates(
+            query=query, guild_id=guildId
+        )
 
         return computed_dates
 

@@ -1,13 +1,12 @@
 from discord_analyzer.analysis.neo4j_utils.projection_utils import ProjectionUtils
-
-from .utils.neo4j_conn import neo4j_setup
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 def test_neo4j_projection_utils_get_computed_dates():
     """
     testing the projection utils get_computed_dates
     """
-    neo4j_ops = neo4j_setup()
+    neo4j_ops = Neo4jOps.get_instance()
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
@@ -65,13 +64,14 @@ def test_neo4j_projection_utils_get_computed_dates():
         SET r12.guildId = '{guildId}'
         """
     )
-    projection_utils = ProjectionUtils(neo4j_ops.gds, guildId=guildId)
+    projection_utils = ProjectionUtils(guildId=guildId)
     computed_dates = projection_utils.get_computed_dates(
-        f"""
-        MATCH (:DiscordAccount)-[r:INTERACTED_IN]->(g:Guild {{guildId: '{guildId}'}})
+        """
+        MATCH (:DiscordAccount)-[r:INTERACTED_IN]->(g:Guild {guildId: $guild_id})
         WHERE r.localClusteringCoefficient is NOT NULL
         RETURN r.date as computed_dates
-        """
+        """,
+        guild_id=guildId,
     )
 
     print(computed_dates)

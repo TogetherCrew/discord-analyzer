@@ -2,7 +2,7 @@ import logging
 
 from discord_analyzer.DB_operations.mongodb_interaction import MongoDBOps
 from discord_analyzer.DB_operations.network_graph import make_neo4j_networkx_query_dict
-from tc_neo4j_lib.neo4j_ops import Neo4jOps
+from tc_neo4j_lib.neo4j_ops import Neo4jOps, Query
 
 
 class MongoNeo4jDB:
@@ -11,33 +11,9 @@ class MongoNeo4jDB:
         having both databases in one class
 
         """
-        self.neo4j_ops = None
+        self.neo4j_ops = Neo4jOps.get_instance()
         self.mongoOps = None
         self.testing = testing
-
-    def set_neo4j_utils(
-        self,
-        db_name: str,
-        host: str,
-        port: str,
-        protocol: str,
-        user: str,
-        password: str,
-    ):
-        """
-        store the neo4j utils instance
-        """
-        self.neo4j_ops = Neo4jOps()
-        self.neo4j_ops.set_neo4j_db_info(
-            neo4j_db_name=db_name,
-            neo4j_protocol=protocol,
-            neo4j_user=user,
-            neo4j_password=password,
-            neo4j_host=host,
-            neo4j_port=port,
-        )
-        self.neo4j_ops.neo4j_database_connect()
-        logging.info("Neo4j Connected Successfully!")
 
     def set_mongo_db_ops(
         self, mongo_user: str, mongo_pass: str, mongo_host: str, mongo_port: str
@@ -115,6 +91,7 @@ class MongoNeo4jDB:
                     guildId=guild_id,
                     community_id=community_id,
                 )
+                print(queries_list[0])
                 self.run_operations_transaction(
                     guildId=guild_id,
                     queries_list=queries_list,
@@ -124,8 +101,8 @@ class MongoNeo4jDB:
             logging.warning("Testing mode enabled! Not saving any data")
 
     def run_operations_transaction(
-        self, guildId, queries_list, remove_memberactivities
-    ):
+        self, guildId: str, queries_list: list[Query], remove_memberactivities: bool
+    ) -> None:
         """
         do the deletion and insertion operations inside a transaction
 
@@ -142,7 +119,7 @@ class MongoNeo4jDB:
         """
         self.guild_msg = f"GUILDID: {guildId}:"
 
-        transaction_queries = []
+        transaction_queries: list[Query] = []
         if remove_memberactivities:
             logging.info(
                 f"{self.guild_msg} Neo4J GuildId accounts relation will be removed!"
@@ -152,14 +129,13 @@ class MongoNeo4jDB:
             )
             transaction_queries.append(delete_relationship_query)
 
-        # logging.info(queries_list)
         transaction_queries.extend(queries_list)
 
-        self.neo4j_ops.store_data_neo4j(transaction_queries, message=self.guild_msg)
+        self.neo4j_ops.run_queries_in_batch(transaction_queries, message=self.guild_msg)
 
     def _create_guild_rel_deletion_query(
         self, guildId: str, relation_name: str = "INTERACTED_WITH"
-    ):
+    ) -> Query:
         """
         create a query to delete the relationships
         between DiscordAccount users in a specific guild
@@ -176,11 +152,19 @@ class MongoNeo4jDB:
         final_query : str
             the final query to remove the relationships
         """
-
-        delete_relationship_query = f"""
+        query_str = f"""
           MATCH
             (:DiscordAccount)
                 -[r:{relation_name} {{guildId: '{guildId}'}}]-(:DiscordAccount)
             DETACH DELETE r"""
 
-        return delete_relationship_query
+        parameters = {
+            "relation_name": relation_name,
+            "guild_id": guildId,
+        }
+
+        query = Query(
+            query=query_str,
+            parameters=parameters,
+        )
+        return query

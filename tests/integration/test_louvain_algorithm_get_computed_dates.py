@@ -1,14 +1,13 @@
 from discord_analyzer.analysis.neo4j_analysis.louvain import Louvain
 from discord_analyzer.analysis.neo4j_utils.projection_utils import ProjectionUtils
-
-from .utils.neo4j_conn import neo4j_setup
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 def test_louvain_get_computed_dates_empty_data():
     """
     test with empty data for getting the computed dates
     """
-    neo4j_ops = neo4j_setup()
+    neo4j_ops = Neo4jOps.get_instance()
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
@@ -36,10 +35,8 @@ def test_louvain_get_computed_dates_empty_data():
         SET r4.guildId = '{guild_id}'
         """
     )
-    louvain = Louvain(neo4j_ops)
-    projection_utils = ProjectionUtils(neo4j_ops.gds, guildId=guild_id)
-
-    projection_utils = ProjectionUtils(gds=neo4j_ops.gds, guildId=guild_id)
+    louvain = Louvain()
+    projection_utils = ProjectionUtils(guildId=guild_id)
 
     computed_dates = louvain.get_computed_dates(projection_utils, guildId=guild_id)
 
@@ -50,7 +47,7 @@ def test_louvain_get_computed_dates_empty_data_with_have_metrics_relation():
     """
     test with empty data for getting the computed dates
     """
-    neo4j_ops = neo4j_setup()
+    neo4j_ops = Neo4jOps.get_instance()
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
@@ -79,10 +76,8 @@ def test_louvain_get_computed_dates_empty_data_with_have_metrics_relation():
         SET r4.guildId = '{guild_id}'
         """
     )
-    louvain = Louvain(neo4j_ops)
-    projection_utils = ProjectionUtils(neo4j_ops.gds, guildId=guild_id)
-
-    projection_utils = ProjectionUtils(gds=neo4j_ops.gds, guildId=guild_id)
+    louvain = Louvain()
+    projection_utils = ProjectionUtils(guildId=guild_id)
 
     computed_dates = louvain.get_computed_dates(projection_utils, guildId=guild_id)
 
@@ -93,7 +88,7 @@ def test_louvain_get_computed_dates_one_data():
     """
     test with empty data for getting the computed dates
     """
-    neo4j_ops = neo4j_setup()
+    neo4j_ops = Neo4jOps.get_instance()
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
@@ -122,10 +117,8 @@ def test_louvain_get_computed_dates_one_data():
         SET r4.guildId = '{guild_id}'
         """
     )
-    louvain = Louvain(neo4j_ops)
-    projection_utils = ProjectionUtils(neo4j_ops.gds, guildId=guild_id)
-
-    projection_utils = ProjectionUtils(gds=neo4j_ops.gds, guildId=guild_id)
+    louvain = Louvain()
+    projection_utils = ProjectionUtils(guildId=guild_id)
 
     computed_dates = louvain.get_computed_dates(projection_utils, guildId=guild_id)
 
