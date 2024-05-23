@@ -10,7 +10,7 @@ def test_avg_clustering_exclude_past():
     """
     neo4j_ops = Neo4jOps.get_instance()
 
-    neo4j_analytics = Neo4JAnalytics(neo4j_ops)
+    neo4j_analytics = Neo4JAnalytics()
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 

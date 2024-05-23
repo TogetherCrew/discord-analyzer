@@ -14,7 +14,7 @@ def test_decentralization_score():
     guildId = "1234"
     neo4j_ops = Neo4jOps.get_instance()
 
-    centrality = Centerality(neo4j_ops)
+    centrality = Centerality()
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 

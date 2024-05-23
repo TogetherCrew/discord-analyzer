@@ -44,7 +44,7 @@ def test_all_connected_coeffs():
         SET r4.guildId = '{guildId}'
         """
     )
-    lcc = LocalClusteringCoeff(gds=neo4j_ops.gds)
+    lcc = LocalClusteringCoeff()
     lcc.compute(guildId=guildId, from_start=True)
 
     # getting the results

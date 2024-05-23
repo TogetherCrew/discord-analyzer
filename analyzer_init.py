@@ -1,7 +1,7 @@
 from typing import Any
 
 from discord_analyzer import RnDaoAnalyzer
-from utils.credentials import get_mongo_credentials, get_neo4j_credentials
+from utils.credentials import get_mongo_credentials
 
 
 class AnalyzerInit:
@@ -23,7 +23,6 @@ class AnalyzerInit:
 
         # credentials
         mongo_creds = get_mongo_credentials()
-        neo4j_creds = get_neo4j_credentials()
 
         analyzer.set_mongo_database_info(
             mongo_db_host=mongo_creds["host"],
@@ -31,9 +30,7 @@ class AnalyzerInit:
             mongo_db_port=mongo_creds["port"],
             mongo_db_user=mongo_creds["user"],
         )
-        analyzer.set_neo4j_database_info(neo4j_creds=neo4j_creds)
         analyzer.database_connect()
-        analyzer.setup_neo4j_metrics()
 
         return analyzer
 

@@ -2,12 +2,12 @@ import logging
 from uuid import uuid1
 
 from discord_analyzer.analysis.neo4j_utils.projection_utils import ProjectionUtils
-from graphdatascience import GraphDataScience
+from tc_neo4j_lib import Neo4jOps
 
 
 class LocalClusteringCoeff:
-    def __init__(self, gds: GraphDataScience) -> None:
-        self.gds = gds
+    def __init__(self) -> None:
+        self.gds = Neo4jOps.get_instance().gds
 
     def compute(self, guildId: str, from_start: bool = False) -> None:
         """
@@ -17,14 +17,8 @@ class LocalClusteringCoeff:
 
         Parameters:
         ------------
-        gds : GraphDataScience
-            the python GraphDataScience instance
-        neo4j_analytics : Neo4JMetrics object
-            our written Neo4JMetrics class instance
-        use_names : bool
-            whether to add user names to results
-            if True, the userId will be added alongside nodeId in output
-            default is False
+        guildId : str
+            the guild to compute the analytics for
         from_start : bool
             whether to compute the metric from the first day or not
             if True, then would compute from start
@@ -34,7 +28,7 @@ class LocalClusteringCoeff:
         ---------
         `None`
         """
-        projection_utils = ProjectionUtils(gds=self.gds, guildId=guildId)
+        projection_utils = ProjectionUtils(guildId=guildId)
 
         # Getting all possible dates
         computable_dates = projection_utils.get_dates(guildId=guildId)
@@ -93,9 +87,12 @@ class LocalClusteringCoeff:
 
         # dropping the computed date
         _ = self.gds.run_cypher(
-            f"""
-            CALL gds.graph.drop("{graph_projected_name}")
             """
+            CALL gds.graph.drop($graph_projected_name)
+            """,
+            {
+                "graph_projected_name": graph_projected_name,
+            },
         )
 
     def get_computed_dates(
@@ -145,17 +142,22 @@ class LocalClusteringCoeff:
         msg = f"GUILDID: {guildId}"
         try:
             _ = self.gds.run_cypher(
-                f"""
+                """
                     CALL gds.localClusteringCoefficient.stream(
-                        "{graph_name}"
+                        $graph_name
                     ) YIELD nodeId, localClusteringCoefficient
                     WITH
                         gds.util.asNode(nodeId) as userNode,
                         localClusteringCoefficient
-                    MATCH (g:Guild {{guildId: '{guildId}'}})
-                    MERGE (userNode) -[r:INTERACTED_IN  {{date: {date}}}]-> (g)
+                    MATCH (g:Guild {guildId: $guild_id})
+                    MERGE (userNode) -[r:INTERACTED_IN  {date: $date}]-> (g)
                     SET r.localClusteringCoefficient = localClusteringCoefficient
-                    """
+                    """,
+                {
+                    "graph_name": graph_name,
+                    "guild_id": guildId,
+                    "date": date,
+                },
             )
         except Exception as exp:
             logging.error(f"{msg} error in computing localClusteringCoefficient, {exp}")

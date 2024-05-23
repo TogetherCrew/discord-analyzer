@@ -221,7 +221,7 @@ def create_network_query(
 
         parameters = {
             "node_acc_name": node_acc_name,
-            date_now_timestamp: int(date_now_timestamp),
+            "date_now_timestamp": int(date_now_timestamp),
         }
         query_str = node_str_query + ";"
 

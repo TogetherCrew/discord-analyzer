@@ -35,7 +35,7 @@ def test_louvain_algorithm_available_data():
         SET r4.guildId = '{guild_id}'
         """
     )
-    louvain = Louvain(neo4j_ops)
+    louvain = Louvain()
 
     louvain.compute(guild_id=guild_id, from_start=False)
 
@@ -104,7 +104,7 @@ def test_louvain_algorithm_more_available_data():
         SET r12.guildId = '{guild_id}'
         """
     )
-    louvain = Louvain(neo4j_ops)
+    louvain = Louvain()
 
     louvain.compute(guild_id=guild_id, from_start=False)
 

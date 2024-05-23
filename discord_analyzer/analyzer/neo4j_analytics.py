@@ -61,7 +61,7 @@ class Neo4JAnalytics:
         try:
             # Local Clustering Coefficient
             logging.info(f"{msg} Computing LocalClusteringCoefficient")
-            lcc = LocalClusteringCoeff(gds=self.neo4j_ops.gds)
+            lcc = LocalClusteringCoeff()
             lcc.compute(guildId=guildId, from_start=from_start)
         except Exception as exp:
             logging.error(

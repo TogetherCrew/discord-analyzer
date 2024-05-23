@@ -2,11 +2,11 @@
 from typing import Literal
 
 import numpy as np
-from graphdatascience import GraphDataScience
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 class Neo4JMetrics:
-    def __init__(self, gds: GraphDataScience) -> None:
+    def __init__(self) -> None:
         """
         computation of Neo4J metrics
 
@@ -15,7 +15,7 @@ class Neo4JMetrics:
         gds : GraphDataScience
             the GraphDataScience instance to query the DB
         """
-        self.gds = gds
+        self.gds = Neo4jOps.get_instance().gds
 
     def compute_degreeCenterality(self, graphProjection, method, configuration=None):
         """

@@ -75,7 +75,7 @@ def test_multiple_guilds():
         SET r14.guildId = '{guildId2}'
         """
     )
-    centrality = Centerality(neo4j_ops)
+    centrality = Centerality()
     degree_centrality = centrality.compute_degree_centerality(
         guildId=guildId2,
         direction="undirected",

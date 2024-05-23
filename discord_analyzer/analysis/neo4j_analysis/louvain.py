@@ -80,9 +80,12 @@ class Louvain:
 
         # dropping the computed date
         _ = self.neo4j_ops.gds.run_cypher(
-            f"""
-            CALL gds.graph.drop("{graph_projected_name}")
             """
+            CALL gds.graph.drop($graph_projected_name)
+            """,
+            {
+                "graph_projected_name": graph_projected_name,
+            },
         )
 
     def get_computed_dates(
@@ -144,9 +147,11 @@ class Louvain:
                     }]-> (g)
                     SET r.louvainModularityScore = modularity
                     """,
-                graph_name=graph_name,
-                guild_id=guild_id,
-                date=date,
+                {
+                    "graph_name": graph_name,
+                    "guild_id": guild_id,
+                    "date": date,
+                },
             )
         except Exception as exp:
             logging.error(

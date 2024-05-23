@@ -62,7 +62,7 @@ def test_node_stats():
         """
     )
 
-    node_stats = NodeStats(neo4j_ops, threshold=2)
+    node_stats = NodeStats(threshold=2)
     node_stats.compute_stats(guildId="1234", from_start=True)
 
     # getting the results

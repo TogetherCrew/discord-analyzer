@@ -62,7 +62,7 @@ def test_neo4j_compute_metrics_from_start():
         """
     )
 
-    analytics = Neo4JAnalytics(neo4j_ops)
+    analytics = Neo4JAnalytics()
 
     analytics.compute_metrics(guildId=guildId, from_start=True)
 

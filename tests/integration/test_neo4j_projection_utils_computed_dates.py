@@ -1,6 +1,6 @@
 from discord_analyzer.analysis.neo4j_utils.projection_utils import ProjectionUtils
 
-# from tc_neo4j_lib.neo4j_ops import Neo4jOps
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 def test_neo4j_projection_utils_get_computed_dates():

@@ -5,7 +5,7 @@ from discord_analyzer.analysis.utils.member_activity_utils import assess_engagem
 from discord_analyzer.analyzer.analyzer_heatmaps import Heatmaps
 from discord_analyzer.analyzer.utils.analyzer_db_manager import AnalyzerDBManager
 from tc_core_analyzer_lib.utils.activity import DiscordActivity
-from utils.credentials import get_mongo_credentials, get_neo4j_credentials
+from utils.credentials import get_mongo_credentials
 
 from .utils.analyzer_setup import launch_db_access
 from .utils.remove_and_setup_guild import setup_db_guild
@@ -26,8 +26,6 @@ class TestAssessEngagementReactions(TestCase):
             mongo_db_host=mongo_creds["host"],
             mongo_db_port=mongo_creds["port"],
         )
-        neo4j_creds = get_neo4j_credentials()
-        base_analyzer.set_neo4j_database_info(neo4j_creds)
         base_analyzer.database_connect()
         self.db_connections = base_analyzer.DB_connections
 

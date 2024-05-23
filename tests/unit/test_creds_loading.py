@@ -1,6 +1,5 @@
 from utils.credentials import (
     get_mongo_credentials,
-    get_neo4j_credentials,
     get_rabbit_mq_credentials,
     get_redis_credentials,
     get_sentryio_service_creds,
@@ -48,30 +47,6 @@ def test_rabbit_creds_values():
     assert rabbit_creds["port"] is not None
     assert rabbit_creds["password"] is not None
     assert rabbit_creds["username"] is not None
-
-
-def test_no4j_creds_keys():
-    neo4j_creds = get_neo4j_credentials()
-
-    credential_keys = list(neo4j_creds.keys())
-
-    assert "user" in credential_keys
-    assert "password" in credential_keys
-    assert "db_name" in credential_keys
-    assert "protocol" in credential_keys
-    assert "port" in credential_keys
-    assert "host" in credential_keys
-
-
-def test_neo4j_creds_values():
-    neo4j_creds = get_neo4j_credentials()
-
-    assert neo4j_creds["user"] is not None
-    assert neo4j_creds["password"] is not None
-    assert neo4j_creds["protocol"] is not None
-    assert neo4j_creds["port"] is not None
-    assert neo4j_creds["db_name"] is not None
-    assert neo4j_creds["host"] is not None
 
 
 def test_redis_creds_keys():

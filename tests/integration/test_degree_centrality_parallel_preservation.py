@@ -63,7 +63,7 @@ def test_partially_connected_coeffs():
         SET r12.guildId = '{guildId}'
         """
     )
-    centrality = Centerality(neo4j_ops)
+    centrality = Centerality()
     degree_centrality = centrality.compute_degree_centerality(
         guildId=guildId,
         direction="undirected",

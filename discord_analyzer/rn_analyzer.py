@@ -22,16 +22,10 @@ class RnDaoAnalyzer(AnalyzerDBManager):
         logging.getLogger().setLevel(logging.INFO)
 
         self.testing = testing
+        self.neo4j_analytics = Neo4JAnalytics()
         self.guild_object = Guild(guild_id)
         self.guild_id = guild_id
         self.community_id = self.guild_object.get_community_id()
-
-    def setup_neo4j_metrics(self) -> None:
-        """
-        setup the neo4j analytics wrapper
-        """
-
-        self.neo4j_analytics = Neo4JAnalytics()
 
     def run_once(self):
         """Run analysis once (Wrapper)"""

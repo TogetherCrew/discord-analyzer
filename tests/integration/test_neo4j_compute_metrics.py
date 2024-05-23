@@ -62,7 +62,7 @@ def test_guild_results_available():
         """
     )
 
-    analytics = Neo4JAnalytics(neo4j_ops)
+    analytics = Neo4JAnalytics()
 
     analytics.compute_metrics(guildId=guildId, from_start=False)
 

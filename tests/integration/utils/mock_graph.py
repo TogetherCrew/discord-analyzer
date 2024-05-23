@@ -72,14 +72,6 @@ def store_mock_data_in_neo4j(graph_dict, guildId, community_id):
     host = os.getenv("MONGODB_HOST")
     port = os.getenv("MONGODB_PORT")
 
-    neo4j_creds = {}
-    neo4j_creds["db_name"] = os.getenv("NEO4J_DB")
-    neo4j_creds["protocol"] = os.getenv("NEO4J_PROTOCOL")
-    neo4j_creds["host"] = os.getenv("NEO4J_HOST")
-    neo4j_creds["port"] = os.getenv("NEO4J_PORT")
-    neo4j_creds["password"] = os.getenv("NEO4J_PASSWORD")
-    neo4j_creds["user"] = os.getenv("NEO4J_USER")
-
     analyzer = RnDaoAnalyzer(guildId)
 
     analyzer.set_mongo_database_info(
@@ -88,7 +80,6 @@ def store_mock_data_in_neo4j(graph_dict, guildId, community_id):
         mongo_db_user=user,
         mongo_db_port=port,
     )
-    analyzer.set_neo4j_database_info(neo4j_creds=neo4j_creds)
     analyzer.database_connect()
 
     guilds_data = {}

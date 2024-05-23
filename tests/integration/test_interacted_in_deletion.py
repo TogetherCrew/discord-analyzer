@@ -9,7 +9,7 @@ def test_interacted_in_deletion():
     """
 
     neo4j_ops = Neo4jOps.get_instance()
-    neo4j_analytics = Neo4JAnalytics(neo4j_ops)
+    neo4j_analytics = Neo4JAnalytics()
 
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
