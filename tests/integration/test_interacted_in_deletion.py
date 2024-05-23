@@ -1,5 +1,4 @@
 from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
-
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 

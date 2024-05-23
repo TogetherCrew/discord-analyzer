@@ -1,5 +1,4 @@
 from discord_analyzer.analysis.neo4j_utils.projection_utils import ProjectionUtils
-
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 

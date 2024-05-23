@@ -4,9 +4,9 @@ from datetime import datetime, timedelta
 import networkx as nx
 import numpy as np
 from discord_analyzer.analysis.utils.activity import Activity
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 from .utils.mock_graph import generate_mock_graph, store_mock_data_in_neo4j
-from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 def test_network_graph_create():
