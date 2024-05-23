@@ -35,5 +35,5 @@ class RedisSingleton:
             host=redis_creds["host"],
             port=int(redis_creds["port"]),
             password=redis_creds["pass"],
-            decode_responses=True,
+            # decode_responses=True,
         )
