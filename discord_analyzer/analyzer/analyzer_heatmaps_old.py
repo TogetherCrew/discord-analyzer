@@ -3,7 +3,7 @@ from collections import Counter
 from datetime import datetime, timedelta
 
 from discord_analyzer.analysis.activity_hourly import activity_hourly
-from discord_analyzer.analyzer.heatmaps_utils import (
+from discord_analyzer.analyzer.heatmaps.heatmaps_utils import (
     get_bot_id,
     get_userids,
     getNumberOfActions,
@@ -42,7 +42,7 @@ class Heatmaps:
               or no raw info data was available
         """
         # activity_hourly()
-        guild_msg = f"GUILDID: {guildId}:"
+        guild_msg = f"PLATFORMID: {guildId}:"
 
         client = self.DB_connections.mongoOps.mongo_db_access.db_mongo_client
 

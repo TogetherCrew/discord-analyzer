@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from discord_analyzer.analysis.activity_hourly import activity_hourly
-from discord_analyzer.analyzer.analyzer_heatmaps import Heatmaps
+from discord_analyzer.analyzer.analyzer_heatmaps_old import Heatmaps
 
 
 def test_reacted_messages():

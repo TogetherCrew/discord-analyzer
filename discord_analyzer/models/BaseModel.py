@@ -13,6 +13,7 @@ class BaseModel:
     def __init__(self, collection_name: str, database: Database):
         self.collection_name = collection_name
         self.database = database
+        self.collection = database[collection_name]
         self.exists = False
 
     def collection_exists(self):
@@ -37,7 +38,6 @@ class BaseModel:
             msg += "Collection does not exist"
             logging.info(msg)
             return
-        self.collection = self.database[self.collection_name]
         logging.info(
             f"Inserting guild object into the {self.collection_name} collection."
         )

@@ -9,5 +9,5 @@ class AccountCounts:
         self.counts = counts  # number of interactions
 
     # convert as dict
-    def asdict(self):
+    def todict(self):
         return ({"account": self.account, "count": self.counts},)
