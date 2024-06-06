@@ -2,37 +2,6 @@ import itertools
 from datetime import datetime
 from warnings import warn
 
-from numpy import zeros
-
-
-def sum_interactions_features(cursor_list, dict_keys):
-    """
-    sum the interactions per hour
-    Parameters:
-    ------------
-    cursor_list : list
-       the db cursor returned and converted as list
-    dict_keys : list
-       the list of dictionary keys, representing the features in database
-
-    Returns:
-    ----------
-    summed_counts_per_hour : dictionary
-       the dictionary of each feature having summed
-        the counts per hour, the dictionary of features is returned
-    """
-
-    summed_counts_per_hour = {}
-    for key in dict_keys:
-        summed_counts_per_hour[key] = zeros(24)
-
-    for key in dict_keys:
-        # the array of hours 0:23
-        for data in cursor_list:
-            summed_counts_per_hour[key] += data[key]
-
-    return summed_counts_per_hour
-
 
 def per_account_interactions(
     cursor_list,
