@@ -1,7 +1,7 @@
 import logging
 from uuid import uuid1
 
-from discord_analyzer.analysis.neo4j_utils.projection_utils import ProjectionUtils
+from discord_analyzer.analysis.neo4j_analysis.utils import ProjectionUtils
 from tc_neo4j_lib import Neo4jOps
 
 
