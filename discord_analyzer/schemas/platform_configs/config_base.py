@@ -1,31 +1,23 @@
-from datetime import datetime
-from .hourly_analytics import HourlyAnalytics
-from .raw_analytics import RawAnalytics
+from discord_analyzer.schemas import HourlyAnalytics, RawAnalytics
 
 
-class HeatmapsConfig:
+class PlatformConfigBase:
     def __init__(
         self,
         platform: str,
-        date: datetime.date,
-        channel_id: str,
-        user_id: str,
+        resource_identifier: str,
         hourly_analytics: list[HourlyAnalytics],
         raw_analytics: list[RawAnalytics],
     ):
         self.platform = platform
-        self.date = date
-        self.channel_id = channel_id
-        self.user_id = user_id
+        self.resource_identifier = resource_identifier
         self.hourly_analytics = hourly_analytics
         self.raw_analytics = raw_analytics
 
     def to_dict(self):
         return {
             "platform": self.platform,
-            "date": self.date,
-            "channel_id": self.channel_id,
-            "user_id": self.user_id,
+            "resource_identifier": self.resource_identifier,
             "hourly_analytics": [ha.to_dict() for ha in self.hourly_analytics],
             "raw_analytics": [ra.to_dict() for ra in self.raw_analytics],
         }
@@ -38,9 +30,7 @@ class HeatmapsConfig:
         raw_analytics = [RawAnalytics.from_dict(ra) for ra in data["raw_analytics"]]
         return cls(
             platform=data["platform"],
-            date=data["date"],
-            channel_id=data["channel_id"],
-            user_id=data["user_id"],
+            resource_identifier=data["resource_identifier"],
             hourly_analytics=hourly_analytics,
             raw_analytics=raw_analytics,
         )

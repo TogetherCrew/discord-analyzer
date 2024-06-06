@@ -2,9 +2,9 @@ from . import ActivityType
 
 
 class RawAnalytics:
-    def __init__(self, name: str, type: ActivityType, member_activities_used: bool):
+    def __init__(self, name: str, type: ActivityType | str, member_activities_used: bool):
         self.name = name
-        self.type = type
+        self.type = type if isinstance(type, ActivityType) else ActivityType(type)
         self.member_activities_used = member_activities_used
 
     def to_dict(self):
