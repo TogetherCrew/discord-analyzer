@@ -4,12 +4,71 @@ import numpy as np
 from utils.mongo import MongoSingleton
 
 
-class AnalyticsBase:
+class AnalyticsHourly:
     def __init__(self, platform_id: str) -> None:
         client = MongoSingleton.get_instance().get_client()
         # `rawmemberactivities` is the collection we would use for analytics
         self.collection = client[platform_id]["rawmemberactivities"]
         self.msg_prefix = f"PLATFORMID: {platform_id}:"
+
+    
+    def analyze(
+        self,
+        day: datetime.date,
+        activity: str,
+        activity_name: str,
+        activity_type: str,
+        author_id: int,
+        **kwargs,
+    ) -> list[int]:
+        """
+        analyze the `reply` to messages
+
+        Parameters
+        ------------
+        day : datetime.date
+            analyze for a specific day
+        activity : str
+            the activity to be `actions` or `interactions`
+        activity_name : str
+            the activity name to be used from `rawmemberactivities` data
+            could be `reply`, `mention`, `message`, `commit` or any other
+            thing that is available on `rawmemberactivities` data
+        author_id : str
+            the author to filter data for
+        activity_type : str
+            should be always either `emitter` or `receiver`
+        **kwargs : 
+            additional_filters : dict[str, str]
+                the additional filtering for `rawmemberactivities` data of each platform
+                the keys could be `metadata.channel_id` with a specific value
+        """
+        additional_filters: dict[str, str] = kwargs.get("additional_filters", {})
+
+        if activity_type not in ["emitter", "receiver"]:
+            raise ValueError(
+                "Wrong activity_type given, "
+                "should be either `emitter` or `receiver`!"
+            )
+
+        if activity not in ["interactions", "actions"]:
+            raise ValueError(
+                "Wrong `activity` given, "
+                "should be either `interactions` or `actions`"
+            )
+        
+        activity_vector = self.get_hourly_analytics(
+            day=day,
+            activity=activity,
+            author_id=author_id,
+            filters={
+                f"{activity}.name": activity_name,
+                f"{activity}.type": activity_type,
+                **additional_filters,
+            },
+        )
+
+        return activity_vector
 
     def get_hourly_analytics(
         self,

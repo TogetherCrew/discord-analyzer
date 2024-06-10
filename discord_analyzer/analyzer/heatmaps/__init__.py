@@ -1,2 +1,2 @@
-from .analytics_reply import AnalyticsReply
+from .analytics_hourly import AnalyticsHourly
 from .heatmaps import Heatmaps

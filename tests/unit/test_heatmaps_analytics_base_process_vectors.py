@@ -1,12 +1,12 @@
 from unittest import TestCase
 
-from discord_analyzer.analyzer.heatmaps.analytics_base import AnalyticsBase
+from discord_analyzer.analyzer.heatmaps.analytics_hourly import AnalyticsHourly
 
 
 class TestRawMemberActivitiesProcessVectors(TestCase):
     def setUp(self) -> None:
         self.platform_id = "3456789"
-        self.raw_data_model = AnalyticsBase(self.platform_id)
+        self.raw_data_model = AnalyticsHourly(self.platform_id)
 
     def test_no_input(self):
         input_data = []

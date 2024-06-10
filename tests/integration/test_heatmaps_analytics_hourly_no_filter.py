@@ -1,14 +1,14 @@
 from unittest import TestCase
 
 from datetime import datetime
-from discord_analyzer.analyzer.heatmaps.analytics_base import AnalyticsBase
+from discord_analyzer.analyzer.heatmaps.analytics_hourly import AnalyticsHourly
 from utils.mongo import MongoSingleton
 
 
 class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
     def setUp(self) -> None:
         self.platform_id = "3456789"
-        self.raw_data_model = AnalyticsBase(self.platform_id)
+        self.raw_data_model = AnalyticsHourly(self.platform_id)
         self.mongo_client = MongoSingleton.get_instance().get_client()
         self.mongo_client[self.platform_id].drop_collection("rawmemberactivities")
 
