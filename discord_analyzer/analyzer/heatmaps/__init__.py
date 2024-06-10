@@ -1,1 +1,2 @@
-from .analytics_replier import AnalyticsReplier
+from .analytics_reply import AnalyticsReply
+from .heatmaps import Heatmaps

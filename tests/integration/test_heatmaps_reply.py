@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from datetime import datetime
-from discord_analyzer.analyzer.heatmaps import AnalyticsReplier
+from discord_analyzer.analyzer.heatmaps import AnalyticsReply
 from utils.mongo import MongoSingleton
 
 
@@ -13,7 +13,7 @@ class TestAnalyticsReplier(TestCase):
         database.drop_collection("rawmemberactivities")
         self.database = database
 
-        self.analytics_replier = AnalyticsReplier(platform_id)
+        self.analytics_replier = AnalyticsReply(platform_id)
 
     def test_empty_data(self):
         day = datetime(2023, 1, 1)

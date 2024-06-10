@@ -3,7 +3,7 @@ from datetime import datetime
 from discord_analyzer.analyzer.heatmaps.analytics_base import AnalyticsBase
 
 
-class AnalyticsReplier(AnalyticsBase):
+class AnalyticsReply(AnalyticsBase):
     def __init__(self, platform_id: str) -> None:
         super().__init__(platform_id)
 
