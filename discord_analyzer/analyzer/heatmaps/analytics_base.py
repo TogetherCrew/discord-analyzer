@@ -15,6 +15,7 @@ class AnalyticsBase:
         self,
         day: datetime.date,
         activity: str,
+        author_id: str,
         filters: dict[str, dict[str] | str] | None = None,
     ) -> list[int]:
         """
@@ -45,7 +46,12 @@ class AnalyticsBase:
 
         pipeline = [
             # the day for analytics
-            {"$match": {"date": {"$gte": start_day, "$lt": end_day}}},
+            {
+                "$match": {
+                    "date": {"$gte": start_day, "$lt": end_day},
+                    "author_id": author_id,
+                }
+            },
             # Unwind the activity array
             {"$unwind": f"${activity}"},
         ]

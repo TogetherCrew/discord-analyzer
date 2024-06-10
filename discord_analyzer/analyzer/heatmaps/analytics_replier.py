@@ -10,6 +10,9 @@ class AnalyticsReplier(AnalyticsBase):
     def analyze(
         self,
         day: datetime.date,
+        author_id: int,
+        type: str,
+        additional_filters: dict[str, str],
     ) -> list[int]:
         """
         analyze the `replier` meaning who replied to a message
@@ -18,16 +21,26 @@ class AnalyticsReplier(AnalyticsBase):
         ------------
         day : datetime.date
             analyze for a specific day
-        msg : str
-            additional information to be logged
-            for default is empty string meaning no additional string to log
+        author_id : str
+            the author to filter data for
+        additional_filters : dict[str, str]
+            the additional filtering for rawmemberactivities data of each platform
+            the keys could be `metadata.channel_id` with a specific value
+        type : str
+            should be always either `emitter` or `receiver`
         """
+        if type not in ["emitter", "receiver"]:
+            raise ValueError(
+                "Wrong type given, should be either `emitter` or `receiver`!"
+            )
         replier = self.get_hourly_analytics(
             day=day,
             activity="interactions",
+            author_id=author_id,
             filters={
                 "interactions.name": "reply",
-                "interactions.type": "emitter",
+                "interactions.type": type,
+                **additional_filters,
             },
         )
 

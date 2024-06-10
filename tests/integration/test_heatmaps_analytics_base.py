@@ -36,6 +36,7 @@ class TestHeatmapsAnalyticsBaseWithFilter(TestCase):
             day=datetime(2023, 1, 1).date(),
             activity="interactions",
             filters={"interactions.name": "mention"},
+            author_id=9000,
         )
 
         expected_analytics = [
@@ -68,7 +69,7 @@ class TestHeatmapsAnalyticsBaseWithFilter(TestCase):
         self.assertEqual(len(hourly_analytics), 24)
         self.assertEqual(hourly_analytics, expected_analytics)
 
-    def test_get_hourly_analytics_single_date_wrong_filter(self):
+    def test_get_hourly_analytics_single_date_irrelevant_filter(self):
         """
         test the hourly analytics with a filter that all data will be skipped
         """
@@ -95,6 +96,7 @@ class TestHeatmapsAnalyticsBaseWithFilter(TestCase):
             day=datetime(2023, 1, 1).date(),
             activity="interactions",
             filters={"interactions.name": "reply"},
+            author_id=9000,
         )
 
         expected_analytics = [

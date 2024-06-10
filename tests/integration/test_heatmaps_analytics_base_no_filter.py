@@ -33,7 +33,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
             sample_raw_data
         )
         hourly_analytics = self.raw_data_model.get_hourly_analytics(
-            day=datetime(2023, 1, 1).date(), activity="interactions"
+            day=datetime(2023, 1, 1).date(), activity="interactions", author_id=9000,
         )
 
         expected_analytics = [
@@ -101,11 +101,11 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
             sample_raw_data
         )
         hourly_analytics = self.raw_data_model.get_hourly_analytics(
-            day=datetime(2023, 1, 1).date(), activity="interactions"
+            day=datetime(2023, 1, 1).date(), activity="interactions", author_id=9000,
         )
 
         expected_analytics = [
-            2,
+            1,
             0,
             0,
             0,
@@ -151,7 +151,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
                 ],
             },
             {
-                "author_id": 9001,
+                "author_id": 9000,
                 "date": datetime(2023, 1, 1),
                 "source_id": "10000",
                 "metadata": {"threadId": 7000, "channelId": 2000},
@@ -183,7 +183,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
             sample_raw_data
         )
         hourly_analytics = self.raw_data_model.get_hourly_analytics(
-            day=datetime(2023, 1, 1).date(), activity="interactions"
+            day=datetime(2023, 1, 1).date(), activity="interactions", author_id=9000,
         )
 
         expected_analytics = [
@@ -265,7 +265,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
             sample_raw_data
         )
         hourly_analytics = self.raw_data_model.get_hourly_analytics(
-            day=datetime(2023, 1, 2).date(), activity="interactions"
+            day=datetime(2023, 1, 2).date(), activity="interactions", author_id=9001,
         )
 
         expected_analytics = [
