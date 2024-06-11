@@ -186,7 +186,8 @@ class Heatmaps:
 
                 if activity_name is None:
                     raise ValueError(
-                        "For custom analytics the `activity_name` shouldn't be None"
+                        "For custom analytics the `activity_name` "
+                        "in analyzer config shouldn't be None"
                     )
 
                 analytics_vector = analytics_hourly.analyze(
