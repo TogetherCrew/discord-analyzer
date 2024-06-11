@@ -17,7 +17,7 @@ class AnalyticsHourly:
         day: datetime.date,
         activity: str,
         activity_name: str,
-        activity_type: str,
+        activity_direction: str,
         author_id: int,
         **kwargs,
     ) -> list[int]:
@@ -36,7 +36,7 @@ class AnalyticsHourly:
             thing that is available on `rawmemberactivities` data
         author_id : str
             the author to filter data for
-        activity_type : str
+        activity_direction : str
             should be always either `emitter` or `receiver`
         **kwargs : 
             additional_filters : dict[str, str]
@@ -45,9 +45,9 @@ class AnalyticsHourly:
         """
         additional_filters: dict[str, str] = kwargs.get("additional_filters", {})
 
-        if activity_type not in ["emitter", "receiver"]:
+        if activity_direction not in ["emitter", "receiver"]:
             raise ValueError(
-                "Wrong activity_type given, "
+                "Wrong activity_direction given, "
                 "should be either `emitter` or `receiver`!"
             )
 
@@ -63,7 +63,7 @@ class AnalyticsHourly:
             author_id=author_id,
             filters={
                 f"{activity}.name": activity_name,
-                f"{activity}.type": activity_type,
+                f"{activity}.type": activity_direction,
                 **additional_filters,
             },
         )

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from discord_analyzer.schemas import ActivityType, HourlyAnalytics
+from discord_analyzer.schemas import ActivityDirection, ActivityType, HourlyAnalytics
 
 
 class TestHourlyAnalytics(TestCase):
@@ -10,37 +10,43 @@ class TestHourlyAnalytics(TestCase):
             name="analytics1",
             type=ActivityType.ACTION,
             member_activities_used=True,
-            metadata_condition={"key": "value"},
+            rawmemberactivities_condition={"key": "value"},
+            direction=ActivityDirection.EMITTER,
         )
         self.assertEqual(analytics.name, "analytics1")
         self.assertEqual(analytics.type, ActivityType.ACTION)
         self.assertTrue(analytics.member_activities_used)
-        self.assertEqual(analytics.metadata_condition, {"key": "value"})
+        self.assertEqual(analytics.rawmemberactivities_condition, {"key": "value"})
+        self.assertEqual(analytics.direction, ActivityDirection.EMITTER)
 
     def test_initialization_without_metadata(self):
         analytics = HourlyAnalytics(
             name="analytics1",
             type=ActivityType.INTERACTION,
             member_activities_used=True,
-            metadata_condition=None,
+            rawmemberactivities_condition=None,
+            direction=ActivityDirection.RECEIVER,
         )
         self.assertEqual(analytics.name, "analytics1")
         self.assertEqual(analytics.type, ActivityType.INTERACTION)
+        self.assertEqual(analytics.direction, ActivityDirection.RECEIVER)
         self.assertTrue(analytics.member_activities_used)
-        self.assertIsNone(analytics.metadata_condition)
+        self.assertIsNone(analytics.rawmemberactivities_condition)
 
     def test_to_dict_with_metadata(self):
         analytics = HourlyAnalytics(
             name="analytics1",
             type=ActivityType.ACTION,
             member_activities_used=True,
-            metadata_condition={"key": "value"},
+            rawmemberactivities_condition={"key": "value"},
+            direction=ActivityDirection.EMITTER,
         )
         expected_dict = {
             "name": "analytics1",
             "type": "action",
             "member_activities_used": True,
-            "metadata_condition": {"key": "value"},
+            "rawmemberactivities_condition": {"key": "value"},
+            "direction": "emitter",
         }
         self.assertEqual(analytics.to_dict(), expected_dict)
 
@@ -49,11 +55,13 @@ class TestHourlyAnalytics(TestCase):
             name="analytics1",
             type=ActivityType.INTERACTION,
             member_activities_used=True,
+            direction=ActivityDirection.RECEIVER,
         )
         expected_dict = {
             "name": "analytics1",
             "type": "interaction",
             "member_activities_used": True,
+            "direction": "receiver",
         }
         self.assertEqual(analytics.to_dict(), expected_dict)
 
@@ -62,22 +70,26 @@ class TestHourlyAnalytics(TestCase):
             "name": "analytics1",
             "type": "action",
             "member_activities_used": True,
-            "metadata_condition": {"key": "value"},
+            "rawmemberactivities_condition": {"key": "value"},
+            "direction": "emitter",
         }
         analytics = HourlyAnalytics.from_dict(data)
         self.assertEqual(analytics.name, "analytics1")
         self.assertEqual(analytics.type, ActivityType.ACTION)
+        self.assertEqual(analytics.direction, ActivityDirection.EMITTER)
         self.assertTrue(analytics.member_activities_used)
-        self.assertEqual(analytics.metadata_condition, {"key": "value"})
+        self.assertEqual(analytics.rawmemberactivities_condition, {"key": "value"})
 
     def test_from_dict_without_metadata(self):
         data = {
             "name": "analytics1",
             "type": "interaction",
             "member_activities_used": True,
+            "direction": "receiver",
         }
         analytics = HourlyAnalytics.from_dict(data)
         self.assertEqual(analytics.name, "analytics1")
         self.assertEqual(analytics.type, ActivityType.INTERACTION)
+        self.assertEqual(analytics.direction, ActivityDirection.RECEIVER)
         self.assertTrue(analytics.member_activities_used)
-        self.assertIsNone(analytics.metadata_condition)
+        self.assertIsNone(analytics.rawmemberactivities_condition)

@@ -25,7 +25,7 @@ class TestHeatmapsRawAnalyticsVectorsInteractions(TestCase):
             activity="interactions",
             activity_name="reply",
             author_id=9000,
-            activity_type="emitter",
+            activity_direction="emitter",
             additional_filters={"metadata.channel_id": 123},
         )
 
@@ -75,7 +75,7 @@ class TestHeatmapsRawAnalyticsVectorsInteractions(TestCase):
             activity="interactions",
             activity_name="reply",
             author_id=9000,
-            activity_type="emitter",
+            activity_direction="emitter",
             additional_filters={"metadata.channel_id": 2000},
         )
 
@@ -155,7 +155,7 @@ class TestHeatmapsRawAnalyticsVectorsInteractions(TestCase):
             activity="interactions",
             activity_name="reply",
             author_id=9000,
-            activity_type="receiver",
+            activity_direction="receiver",
             additional_filters={"metadata.channel_id": 2000},
         )
 
@@ -233,7 +233,7 @@ class TestHeatmapsRawAnalyticsVectorsInteractions(TestCase):
             activity="interactions",
             activity_name="reply",
             author_id=9000,
-            activity_type="emitter",
+            activity_direction="emitter",
             additional_filters={
                 "metadata.channel_id": 2000,
             },
@@ -314,7 +314,7 @@ class TestHeatmapsRawAnalyticsVectorsInteractions(TestCase):
             author_id=9001,
             activity="interactions",
             activity_name="reply",
-            activity_type="emitter",
+            activity_direction="emitter",
             additional_filters={"metadata.channel_id": 2000},
         )
 
@@ -359,7 +359,7 @@ class TestHeatmapsRawAnalyticsVectorsInteractions(TestCase):
             activity_name="reply",
                 day=day,
                 author_id=9000,
-                activity_type="wrong_type",
+                activity_direction="wrong_type",
             )
 
     def test_replier_wrong_activity(self):
@@ -371,5 +371,5 @@ class TestHeatmapsRawAnalyticsVectorsInteractions(TestCase):
             activity_name="reply",
                 day=day,
                 author_id=9000,
-                activity_type="emitter",
+                activity_direction="emitter",
             )

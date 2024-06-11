@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
-from discord_analyzer.schemas import ActivityType
+from discord_analyzer.schemas import ActivityDirection, ActivityType
 
 
 class TestDiscordAnalyzerConfig(TestCase):
@@ -22,36 +22,44 @@ class TestDiscordAnalyzerConfig(TestCase):
         for anlaytics in hourly_analytics:
             if anlaytics.name == "thr_messages":
                 self.assertEqual(anlaytics.type, ActivityType.ACTION)
+                self.assertEqual(anlaytics.direction, ActivityDirection.EMITTER)
                 self.assertEqual(anlaytics.member_activities_used, True)
-                self.assertEqual(anlaytics.metadata_condition, {"threadId": {"$ne": None}})
+                self.assertEqual(anlaytics.rawmemberactivities_condition, {"metadata.thread_id": {"$ne": None}})
             elif anlaytics.name == "lone_messages":
                 self.assertEqual(anlaytics.type, ActivityType.ACTION)
+                self.assertEqual(anlaytics.direction, ActivityDirection.EMITTER)
                 self.assertEqual(anlaytics.member_activities_used, True)
-                self.assertEqual(anlaytics.metadata_condition, {"threadId": None})
+                self.assertEqual(anlaytics.rawmemberactivities_condition, {"metadata.thread_id": None})
             elif anlaytics.name == "replier":
                 self.assertEqual(anlaytics.type, ActivityType.INTERACTION)
+                self.assertEqual(anlaytics.direction, ActivityDirection.RECEIVER)
                 self.assertEqual(anlaytics.member_activities_used, False)
-                self.assertIsNone(anlaytics.metadata_condition)
+                self.assertIsNone(anlaytics.rawmemberactivities_condition)
             elif anlaytics.name == "replied":
                 self.assertEqual(anlaytics.type, ActivityType.INTERACTION)
+                self.assertEqual(anlaytics.direction, ActivityDirection.EMITTER)
                 self.assertEqual(anlaytics.member_activities_used, False)
-                self.assertIsNone(anlaytics.metadata_condition)
+                self.assertIsNone(anlaytics.rawmemberactivities_condition)
             elif anlaytics.name == "mentioner":
                 self.assertEqual(anlaytics.type, ActivityType.INTERACTION)
+                self.assertEqual(anlaytics.direction, ActivityDirection.RECEIVER)
                 self.assertEqual(anlaytics.member_activities_used, False)
-                self.assertIsNone(anlaytics.metadata_condition)
+                self.assertIsNone(anlaytics.rawmemberactivities_condition)
             elif anlaytics.name == "mentioned":
                 self.assertEqual(anlaytics.type, ActivityType.INTERACTION)
+                self.assertEqual(anlaytics.direction, ActivityDirection.EMITTER)
                 self.assertEqual(anlaytics.member_activities_used, False)
-                self.assertIsNone(anlaytics.metadata_condition)
+                self.assertIsNone(anlaytics.rawmemberactivities_condition)
             elif anlaytics.name == "reacter":
                 self.assertEqual(anlaytics.type, ActivityType.INTERACTION)
+                self.assertEqual(anlaytics.direction, ActivityDirection.RECEIVER)
                 self.assertEqual(anlaytics.member_activities_used, False)
-                self.assertIsNone(anlaytics.metadata_condition)
+                self.assertIsNone(anlaytics.rawmemberactivities_condition)
             elif anlaytics.name == "reacted":
                 self.assertEqual(anlaytics.type, ActivityType.INTERACTION)
+                self.assertEqual(anlaytics.direction, ActivityDirection.EMITTER)
                 self.assertEqual(anlaytics.member_activities_used, False)
-                self.assertIsNone(anlaytics.metadata_condition)
+                self.assertIsNone(anlaytics.rawmemberactivities_condition)
             else:
                 raise ValueError(
                     "No more hourly analytics for discord be available!"
@@ -63,9 +71,11 @@ class TestDiscordAnalyzerConfig(TestCase):
             if analytics.name == "replied_per_acc":
                 self.assertTrue(analytics.member_activities_used)
                 self.assertEqual(analytics.type, ActivityType.INTERACTION)
+                self.assertEqual(analytics.direction, ActivityDirection.EMITTER)
             elif analytics.name == "mentioner_per_acc":
                 self.assertTrue(analytics.member_activities_used)
                 self.assertEqual(analytics.type, ActivityType.INTERACTION)
+                self.assertEqual(analytics.direction, ActivityDirection.RECEIVER)
             elif analytics.name == "reacted_per_acc":
                 self.assertTrue(analytics.member_activities_used)
                 self.assertEqual(analytics.type, ActivityType.INTERACTION)
