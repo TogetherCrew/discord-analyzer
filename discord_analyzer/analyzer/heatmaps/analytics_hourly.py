@@ -22,7 +22,7 @@ class AnalyticsHourly:
         **kwargs,
     ) -> list[int]:
         """
-        analyze the `reply` to messages
+        analyze the hourly the messages
 
         Parameters
         ------------

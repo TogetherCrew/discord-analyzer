@@ -6,11 +6,11 @@ from discord_analyzer.analyzer.heatmaps.analytics_hourly import AnalyticsHourly
 class TestRawMemberActivitiesProcessVectors(TestCase):
     def setUp(self) -> None:
         self.platform_id = "3456789"
-        self.raw_data_model = AnalyticsHourly(self.platform_id)
+        self.analytics_hourly = AnalyticsHourly(self.platform_id)
 
     def test_no_input(self):
         input_data = []
-        hourly_analytics = self.raw_data_model._process_vectors(input_data)
+        hourly_analytics = self.analytics_hourly._process_vectors(input_data)
         self.assertIsInstance(hourly_analytics, list)
 
         # zeros vector with length 24
@@ -46,7 +46,7 @@ class TestRawMemberActivitiesProcessVectors(TestCase):
     def test_single_input(self):
         # hour 0 of the day had an activity of 2
         input_data = [{"_id": 0, "count": 2}]
-        hourly_analytics = self.raw_data_model._process_vectors(input_data)
+        hourly_analytics = self.analytics_hourly._process_vectors(input_data)
         self.assertIsInstance(hourly_analytics, list)
 
         expected_analytics = [
@@ -85,7 +85,7 @@ class TestRawMemberActivitiesProcessVectors(TestCase):
             {"_id": 3, "count": 4},
             {"_id": 19, "count": 7},
         ]
-        hourly_analytics = self.raw_data_model._process_vectors(input_data)
+        hourly_analytics = self.analytics_hourly._process_vectors(input_data)
         self.assertIsInstance(hourly_analytics, list)
 
         expected_analytics = [
