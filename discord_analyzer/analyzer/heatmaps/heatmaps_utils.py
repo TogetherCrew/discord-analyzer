@@ -1,3 +1,5 @@
+from pymongo.cursor import Cursor
+
 from discord_analyzer.schemas.accounts import AccountCounts
 from utils.mongo import MongoSingleton
 
@@ -5,9 +7,10 @@ from utils.mongo import MongoSingleton
 class HeatmapsUtils:
     def __init__(self, platform_id: str) -> None:
         self.platform_id = platform_id
-        self.client = MongoSingleton.get_instance().get_client()
+        client = MongoSingleton.get_instance().get_client()
+        self.database = client[platform_id]
 
-    def get_users(self, is_bot: bool = False) -> list[str]:
+    def get_users(self, is_bot: bool = False) -> Cursor:
         """
         get the users of a platform
 
@@ -19,19 +22,35 @@ class HeatmapsUtils:
 
         Returns:
         ---------
-        bots : list[str]
-            the list of bot ids
+        bots : pymongo.cursor.Cursor
+            MongoDB cursor for users
+            in case of large amount of data we should loop over this
+            the cursor data format would be as `{'id': xxxx}`
         """
-        cursor = self.client[self.platform_id]["rawmembers"].find(
+        cursor = self.database["rawmembers"].find(
             {"is_bot": is_bot}, {"_id": 0, "id": 1}
         )
-        bots = list(cursor)
+        return cursor
+    
+    def get_users_count(self, is_bot: bool = False) -> int:
+        """
+        get the count of users
 
-        bot_ids = []
-        if bots != []:
-            bot_ids = list(map(lambda x: x["id"], bots))
+        Parameters
+        -----------
+        is_bot : bool
+            if we want to fetch the bots
+            for default is False meaning the real users will be returned
 
-        return bot_ids
+        Returns
+        ---------
+        users_count : int
+            the count of users
+        """
+        users_count = self.database["rawmembers"].count_documents(
+            {"is_bot": is_bot},
+        )
+        return users_count
 
     def store_counts_dict(self, counts_dict):
         # make empty result array
@@ -43,21 +62,3 @@ class HeatmapsUtils:
             obj_array.append(AccountCounts(acc, counts_dict[acc]).todict())
 
         return obj_array
-
-    def getNumberOfActions(self, heatmap):
-        """get number of actions"""
-        sum_ac = 0
-        fields = [
-            "thr_messages",
-            "lone_messages",
-            "replier",
-            "replied",
-            "mentioned",
-            "mentioner",
-            "reacter",
-            "reacted",
-        ]
-        for field in fields:
-            for i in range(24):
-                sum_ac += heatmap[field][i]
-        return sum_ac

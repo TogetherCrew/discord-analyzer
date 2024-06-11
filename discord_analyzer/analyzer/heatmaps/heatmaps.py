@@ -1,23 +1,22 @@
 import logging
-from collections import Counter
 from datetime import datetime, timedelta
 
-from discord_analyzer.analysis.activity_hourly import activity_hourly
 from discord_analyzer.analyzer.heatmaps.heatmaps_utils import HeatmapsUtils
-from discord_analyzer.analyzer.heatmaps import AnalyticsReplier
+from discord_analyzer.analyzer.heatmaps import AnalyticsHourly
 from utils.mongo import MongoSingleton
-from discord_analyzer.models.GuildsRnDaoModel import GuildsRnDaoModel
 from discord_analyzer.models.HeatMapModel import HeatMapModel
-from discord_analyzer.models.RawInfoModel import RawInfoModel
+from discord_analyzer.schemas import RawAnalytics, HourlyAnalytics
+from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
 
 
 class Heatmaps:
     def __init__(
-            self,
-            platform_id: str,
-            period: datetime,
-            heatmaps_config: dict
-        ) -> None:
+        self,
+        platform_id: str,
+        period: datetime,
+        resources: list[str],
+        analyzer_config: PlatformConfigBase,
+    ) -> None:
         """
         Heatmaps analytics wrapper
 
@@ -25,14 +24,21 @@ class Heatmaps:
         ------------
         platform_id : str
             the platform that we want heatmaps analytics for
-        heatmaps_config : dict
-            the dictionary representing what analytics for heatmaps would be computed
+        period : datetime
+            the date that analytics could be started
+        resources : list[str]
+            a list of resources id
+            i.e. a list of `channel_id` for discord or `chat_id` for telegram
+        analyzer_config : PlatformConfigBase
+            the configuration for analytics job
+            should be a class inheriting from `PlatformConfigBase` and with predefined values
         """
         self.platform_id = platform_id
-        self.heatmaps_config = heatmaps_config
+        self.resources = resources
         self.client = MongoSingleton.get_instance().get_client()
         self.period = period
 
+        self.analyzer_config = analyzer_config
         self.utils = HeatmapsUtils(platform_id)
 
     def start(self, from_start: bool = False):
@@ -46,7 +52,6 @@ class Heatmaps:
             if True, if wouldn't pay attention to the existing data in heatmaps
             and will do the analysis from the first date
 
-
         Returns:
         ---------
         heatmaps_results : list of dictionary
@@ -54,103 +59,167 @@ class Heatmaps:
             also the return could be None if no database for guild
               or no raw info data was available
         """
-        # activity_hourly()
-        guild_msg = f"PLATFORMID: {self.platform_id}:"
+        log_prefix = f"PLATFORMID: {self.platform_id}:"
 
-        # Collections involved in analysis
-        # guild parameter is the name of the database
-        rawinfo_c = RawInfoModel(self.client[self.platform_id])
         heatmap_c = HeatMapModel(self.client[self.platform_id])
-
-        # Testing if there are entries in the rawinfo collection
-        if rawinfo_c.count() == 0:
-            msg = f"{guild_msg} No entries in the collection"
-            msg += "'rawinfos' in {guildId} databse"
-            logging.warning(msg)
-            return None
-
         last_date = heatmap_c.get_last_date()
 
+        analytics_date: datetime
         if last_date is None or from_start:
-            last_date = self.period
+            analytics_date = self.period
         else:
-            last_date = last_date + timedelta(days=1)
+            analytics_date = last_date + timedelta(days=1)
 
-        analyzer_replier = AnalyticsReplier(self.platform_id)
+        # analyzer_replier = AnalyticsHourly(self.platform_id)
 
         # initialize the data array
         heatmaps_results = []
 
-        bot_ids = self.utils.get_users(is_bot=True)
+        # using mongodb cursor for efficient data retrieval
+        user_ids_cursor = self.utils.get_users()
+        users_count = self.utils.get_users_count()
 
-        while last_date.date() < datetime.now().date():
-            entries = rawinfo_c.get_day_entries(last_date, "ANALYZER HEATMAPS: ")
-            if len(entries) == 0:
-                # analyze next day
-                last_date = last_date + timedelta(days=1)
-                continue
+        iteration_count = self._compute_iteration_counts(
+            analytics_date=analytics_date,
+            resources_count=len(self.resources),
+            authors_count=users_count,
+        )
 
-            prepared_list = []
-            
-            # Too aggresive
-            # TODO: filter for the day users on raw data
-            users = self.utils.get_users(is_bot=False)
-            analyzer_replier.analyze
+        index = 0
+        while analytics_date.date() < datetime.now().date():
 
+            for resource_id in self.resources:
 
-            # TODO: update
-            results = []
-            heatmaps_results.extend(results)
+                for author in user_ids_cursor:
+
+                    logging.info(
+                        f"{log_prefix} ANALYZING HEATMAPS {index}/{iteration_count}"
+                    )
+                    index += 1
+
+                    author_id = author["id"]
+                    document = {
+                        self.analyzer_config.resource_identifier: resource_id,
+                        "date": analytics_date,
+                        "user": author_id,
+                    }
+                    hourly_analytics = self._process_hourly_analytics(
+                        day=analytics_date,
+                        resource=resource_id,
+                        author_id=author_id,
+                        hourly_analytics_config=self.analyzer_config.hourly_analytics,
+                    )
+
+                    document["hourly_analytics"] = hourly_analytics
+
+                    raw_analytics = self._process_raw_analytics(
+                        day=analytics_date,
+                        resource=resource_id,
+                        author_id=author_id,
+                        raw_analytics_config=self.analyzer_config.raw_analytics,
+                    )
+                    document["raw_analytics"] = raw_analytics
+
+                    heatmaps_results.append(document)
 
             # analyze next day
-            last_date = last_date + timedelta(days=1)
+            analytics_date += timedelta(days=1)
 
         return heatmaps_results
-    
+
     def _process_hourly_analytics(
-            self, day: datetime.date, hourly_analytics_config: dict
-        ) -> dict[str, list]:
+        self,
+        day: datetime.date,
+        resource: str,
+        author_id: str,
+    ) -> dict[str, list]:
         """
         start processing hourly analytics for a day based on given config
+
+        Parameters
+        ------------
+        day : datetime.date
+            analyze for a specific day
+        resurce : str
+            the resource we want to apply the filtering on
+        author_id : str
+            the author to filter data for
         """
-        
-        pass
+        analytics_hourly = AnalyticsHourly(self.platform_id)
+        analytics: dict[str, list[int]] = {}
+        for config in self.analyzer_config.hourly_analytics:
+
+            # if it was a predefined analytics
+            if config.name in [
+                "replied",
+                "replier",
+                "mentioner",
+                "mentioned",
+                "reacter",
+                "reacted",
+            ]:
+                activity_name: str
+                if config.name in ["replied", "replier"]:
+                    activity_name = "reply"
+                elif config.name in ["mentioner", "mentioned"]:
+                    activity_name = "mention"
+                else:
+                    activity_name = "reaction"
+
+                analytics_vector = analytics_hourly.analyze(
+                    day=day,
+                    activity="interactions",
+                    activity_name=activity_name,
+                    activity_direction=config.direction.value,
+                    author_id=author_id,
+                    additional_filters={
+                        f"metadata.{self.analyzer_config.resource_identifier}": resource,
+                    },
+                )
+                analytics[config.name] = analytics_vector
+
+            # if it was a custom analytics that we didn't write code
+            # the mongodb condition is given in their configuration
+            else:
+                conditions = config.rawmemberactivities_condition
+                activity_name = config.activity_name
+
+                if activity_name is None:
+                    raise ValueError(
+                        "For custom analytics the `activity_name` shouldn't be None"
+                    )
+
+                analytics_vector = analytics_hourly.analyze(
+                    day=day,
+                    activity="actions",
+                    activity_name=activity_name,
+                    activity_direction=config.direction.value,
+                    author_id=author_id,
+                    additional_filters={
+                        f"metadata.{self.analyzer_config.resource_identifier}": resource,
+                        **conditions,
+                    },
+                )
+                analytics[config.name] = analytics_vector
+
+        return analytics
 
     def _process_raw_analytics(
-            self, day: datetime.date, raw_analytics_config: dict
-        ) -> dict[str, list]:
-        
-        pass
-        
+        self,
+        day: datetime.date,
+        resource: str,
+        author_id: str,
+    ) -> dict[str, list]:
+        raise NotImplementedError
 
-    def _post_process_data(self, heatmap_data, accounts_len):
-        results = []
-        for heatmap in heatmap_data:
-            for i in range(accounts_len):
-                heatmap_dict = {}
-                heatmap_dict["date"] = heatmap["date"][0]
-                heatmap_dict["channelId"] = heatmap["channel"][0]
-                heatmap_dict["thr_messages"] = heatmap["thr_messages"][i]
-                heatmap_dict["lone_messages"] = heatmap["lone_messages"][i]
-                heatmap_dict["replier"] = heatmap["replier"][i]
-                heatmap_dict["replied"] = heatmap["replied"][i]
-                heatmap_dict["mentioner"] = heatmap["mentioner"][i]
-                heatmap_dict["mentioned"] = heatmap["mentioned"][i]
-                heatmap_dict["reacter"] = heatmap["reacter"][i]
-                heatmap_dict["reacted"] = heatmap["reacted"][i]
-                heatmap_dict["reacted_per_acc"] = store_counts_dict(
-                    dict(Counter(heatmap["reacted_per_acc"][i]))
-                )
-                heatmap_dict["mentioner_per_acc"] = store_counts_dict(
-                    dict(Counter(heatmap["mentioner_per_acc"][i]))
-                )
-                heatmap_dict["replied_per_acc"] = store_counts_dict(
-                    dict(Counter(heatmap["replied_per_acc"][i]))
-                )
-                heatmap_dict["account_name"] = heatmap["acc_names"][i]
-                sum_ac = getNumberOfActions(heatmap_dict)
+    def _compute_iteration_counts(
+        self,
+        analytics_date: datetime,
+        resources_count: int,
+        authors_count: int,
+    ) -> int:
+        iteration_count = (
+            (datetime.now() - analytics_date).days * resources_count * authors_count
+        )
 
-                if not self.testing and sum_ac > 0:
-                    results.append(heatmap_dict)
-
-        return results
+        return iteration_count
