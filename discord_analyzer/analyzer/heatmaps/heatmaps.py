@@ -2,10 +2,10 @@ import logging
 from datetime import datetime, timedelta
 
 from discord_analyzer.analyzer.heatmaps.heatmaps_utils import HeatmapsUtils
-from discord_analyzer.analyzer.heatmaps import AnalyticsHourly
+from discord_analyzer.analyzer.heatmaps import AnalyticsHourly, AnalyticsRaw
 from utils.mongo import MongoSingleton
 from discord_analyzer.models.HeatMapModel import HeatMapModel
-from discord_analyzer.schemas import RawAnalytics, HourlyAnalytics
+from discord_analyzer.schemas import RawAnalytics, HourlyAnalytics, RawAnalyticsItem
 from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
 
 
@@ -69,8 +69,6 @@ class Heatmaps:
             analytics_date = self.period
         else:
             analytics_date = last_date + timedelta(days=1)
-
-        # analyzer_replier = AnalyticsHourly(self.platform_id)
 
         # initialize the data array
         heatmaps_results = []
@@ -210,7 +208,7 @@ class Heatmaps:
         day: datetime.date,
         resource: str,
         author_id: str,
-    ) -> dict[str, list]:
+    ) -> dict[str, list[RawAnalyticsItem]]:
         raise NotImplementedError
 
     def _compute_iteration_counts(
