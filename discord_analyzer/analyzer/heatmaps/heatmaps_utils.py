@@ -1,6 +1,6 @@
 from pymongo.cursor import Cursor
 
-from discord_analyzer.schemas.accounts import AccountCounts
+from discord_analyzer.schemas.raw_analytics_item import RawAnalyticsItem
 from utils.mongo import MongoSingleton
 
 
@@ -59,6 +59,6 @@ class HeatmapsUtils:
         # for each account
         for acc in counts_dict.keys():
             # make dict and store in array
-            obj_array.append(AccountCounts(acc, counts_dict[acc]).todict())
+            obj_array.append(RawAnalyticsItem(acc, counts_dict[acc]).to_dict())
 
         return obj_array
