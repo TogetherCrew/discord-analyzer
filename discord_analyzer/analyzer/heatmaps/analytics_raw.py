@@ -20,7 +20,7 @@ class AnalyticsRaw:
         activity_direction: str,
         author_id: int,
         **kwargs,
-    ) -> RawAnalyticsItem | None:
+    ) -> list[RawAnalyticsItem]:
         """
         analyze the count of messages
 
@@ -67,11 +67,9 @@ class AnalyticsRaw:
             day=day,
             activity=activity,
             author_id=author_id,
-            filters={
-                f"{activity}.name": activity_name,
-                f"{activity}.type": activity_direction,
-                **additional_filters,
-            },
+            activity_name=activity_name,
+            activity_direction=activity_direction,
+            filters=additional_filters,
         )
 
         return activity_count
@@ -80,9 +78,11 @@ class AnalyticsRaw:
         self,
         day: datetime.date,
         activity: str,
+        activity_name: str,
         author_id: str,
-        filters: dict[str, dict[str] | str] | None = None,
-    ) -> RawAnalyticsItem | None:
+        activity_direction: str,
+        **kwargs,
+    ) -> RawAnalyticsItem:
         """
         Gets the list of documents for the stated day
 
@@ -92,20 +92,27 @@ class AnalyticsRaw:
             a specific day date
         activity : str
             to be `interactions` or `actions`
-        filter : dict[str, dict[str] | str] | None
-            the filtering that we need to apply
-            for default it is an None meaning
-            no filtering would be applied
-        msg : str
-            additional information to be logged
-            for default is empty string meaning no additional string to log
+        activity_name : str
+            the activity name to do filtering
+            could be `reply`, `reaction`, `mention, or ...
+        author_id : str
+            the author to do analytics on its data
+        activity_direction : str
+            the direction of activity
+            could be `emitter` or `receiver`
+        **kwargs : dict
+            filters : dict[str, dict[str] | str]
+                the filtering that we need to apply
+                for default it is an None meaning
+                no filtering would be applied
 
         Returns
         ---------
-        activity_count : RawAnalyticsItem
+        activity_count : list[RawAnalyticsItem]
             raw analytics item which holds the user and
             the count of interaction in that day
         """
+        filters: dict[str, dict[str] | str] | None = kwargs.get("filters")
         start_day = datetime.combine(day, time(0, 0, 0))
         end_day = start_day + timedelta(days=1)
 
@@ -120,62 +127,55 @@ class AnalyticsRaw:
             }
 
         pipeline = [
-            # the day for analytics
             {
                 "$match": {
                     **match_filters,
                 }
             },
-            # Unwind the activity array
             {"$unwind": f"${activity}"},
-            # Add a field for the hour of the day from the date field
-            {"$addFields": {"date": "$date"}},
-            # Group by the hour and count the number of activity
             {
-                "$group": {
-                    "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$date"}},
-                    "count": {"$sum": 1},
-                }
+                "$match": {
+                    f"{activity}.name": activity_name,
+                    f"{activity}.type": activity_direction,
+                },
             },
-            # Project the results into the desired format
-            {"$sort": {"_id": 1}},  # sorted by hour
+            {"$unwind": f"${activity}.users_engaged_id"},
+            {"$group": {"_id": f"${activity}.users_engaged_id", "count": {"$sum": 1}}},
         ]
 
         cursor = self.collection.aggregate(pipeline)
         db_result = list(cursor)
-        if db_result != []:
-            activity_count = self._prepare_raw_analytics_item(db_result[0], author_id)
-        else:
-            activity_count = None
+        activity_count = self._prepare_raw_analytics_item(db_result)
 
         return activity_count
 
     def _prepare_raw_analytics_item(
         self,
-        activity_data: dict[str, str | int],
-        author_id: str,
-    ) -> RawAnalyticsItem:
+        activities_data: list[dict[str, str | int]],
+    ) -> list[RawAnalyticsItem]:
         """
         post process the database results
 
-        this will take the format `[{'_id': '2023-01-01', 'count': 4}]` and output a RawAnalyticsItem
+        this will take the format `[{'_id': 9000, 'count': 4}]` and output a RawAnalyticsItem
 
         Parameters
         ------------
-        activity_data : dict[str, str | int]
+        activities_data : dict[str, str | int]
             the user interaction count.
-            the data will be as an example `[{'_id': '2023-01-01', 'count': 4}]`
-        author_id : str
-            the author that had the count of activity
+            the data will be as an example `[{'_id': 9000, 'count': 4}]`
+            _id would be the users interacting with
 
         Returns
         --------
-        raw_analytics_item : RawAnalyticsItem
-            the data in format of raw analytics item we've already made
+        raw_analytics : list[RawAnalyticsItem]
+            the data in format of raw analytics item
         """
-        raw_analytics_item = RawAnalyticsItem(
-            account=author_id,
-            count=activity_data["count"],
-        )
+        analytics: list[RawAnalyticsItem] = []
+        for data in activities_data:
+            raw_analytics = RawAnalyticsItem(
+                account=data["_id"],
+                count=data["count"],
+            )
+            analytics.append(raw_analytics)
 
-        return raw_analytics_item
+        return analytics

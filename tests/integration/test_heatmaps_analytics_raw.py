@@ -51,9 +51,11 @@ class TestHeatmapsRawAnalytics(TestCase):
             author_id=9000,
         )
 
-        self.assertIsInstance(analytics_result, RawAnalyticsItem)
-        self.assertEqual(analytics_result.account, 9000)
-        self.assertEqual(analytics_result.count, 1)
+        self.assertIsInstance(analytics_result, list)
+        self.assertEqual(len(analytics_result), 1)
+        self.assertIsInstance(analytics_result[0], RawAnalyticsItem)
+        self.assertEqual(analytics_result[0].account, 9003)
+        self.assertEqual(analytics_result[0].count, 1)
 
     def test_raw_analytics_wrong_user(self):
         """
@@ -97,7 +99,7 @@ class TestHeatmapsRawAnalytics(TestCase):
             author_id=9003,
         )
 
-        self.assertIsNone(analytics_result)
+        self.assertEqual(analytics_result, [])
 
     def test_raw_analytics_wrong_activity_direction(self):
         """
@@ -141,7 +143,7 @@ class TestHeatmapsRawAnalytics(TestCase):
             author_id=9000,
         )
 
-        self.assertIsNone(analytics_result)
+        self.assertEqual(analytics_result, [])
 
     def test_raw_analytics_wrong_day(self):
         """
@@ -184,7 +186,7 @@ class TestHeatmapsRawAnalytics(TestCase):
             activity_direction=ActivityDirection.RECEIVER.value,
             author_id=9000,
         )
-        self.assertIsNone(analytics_result)
+        self.assertEqual(analytics_result, [])
 
     def test_raw_analytics_wrong_activity(self):
         """
@@ -228,7 +230,7 @@ class TestHeatmapsRawAnalytics(TestCase):
             author_id=9000,
         )
 
-        self.assertIsNone(analytics_result)
+        self.assertEqual(analytics_result, [])
 
     def test_raw_analytics_multiple_users(self):
         """
@@ -247,7 +249,7 @@ class TestHeatmapsRawAnalytics(TestCase):
                     {
                         "name": "reply",
                         "users_engaged_id": [
-                            9003,
+                            9005,
                         ],
                         "type": "receiver",
                     }
@@ -314,7 +316,19 @@ class TestHeatmapsRawAnalytics(TestCase):
             author_id=9000,
         )
 
-        self.assertIsInstance(analytics_result, RawAnalyticsItem)
+        self.assertIsInstance(analytics_result, list)
+        self.assertEqual(len(analytics_result), 2)
 
-        self.assertEqual(analytics_result.account, 9000)
-        self.assertEqual(analytics_result.count, 2)
+        for analytics in analytics_result:
+            self.assertIsInstance(analytics, RawAnalyticsItem)
+            if analytics.account == 9006:
+                self.assertEqual(analytics.count, 1)
+            elif analytics.account == 9005:
+                self.assertEqual(analytics.count, 2)
+            else:
+                # raising with values for debug purposes
+                ValueError(
+                    "Never reaches here! "
+                    f"analytics.account: {analytics.account} "
+                    f"| analytics.count: {analytics.count}"
+                )
