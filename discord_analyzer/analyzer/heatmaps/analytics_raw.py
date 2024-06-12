@@ -12,7 +12,6 @@ class AnalyticsRaw:
         self.collection = client[platform_id]["rawmemberactivities"]
         self.msg_prefix = f"PLATFORMID: {platform_id}:"
 
-    
     def analyze(
         self,
         day: datetime.date,
@@ -39,7 +38,7 @@ class AnalyticsRaw:
             the author to filter data for
         activity_direction : str
             should be always either `emitter` or `receiver`
-        **kwargs : 
+        **kwargs :
             additional_filters : dict[str, str]
                 the additional filtering for `rawmemberactivities` data of each platform
                 the keys could be `metadata.channel_id` with a specific value
@@ -63,7 +62,7 @@ class AnalyticsRaw:
                 "Wrong `activity` given, "
                 "should be either `interactions` or `actions`"
             )
-        
+
         activity_count = self.get_analytics_count(
             day=day,
             activity=activity,
@@ -107,26 +106,76 @@ class AnalyticsRaw:
             raw analytics item which holds the user and
             the count of interaction in that day
         """
-        # TODO
-        # start_day = datetime.combine(day, time(0, 0, 0))
-        # end_day = start_day + timedelta(days=1)
+        start_day = datetime.combine(day, time(0, 0, 0))
+        end_day = start_day + timedelta(days=1)
 
-        # pipeline = [
-        #     # the day for analytics
-        #     {
-        #         "$match": {
-        #             "date": {"$gte": start_day, "$lt": end_day},
-        #             "author_id": author_id,
-        #         }
-        #     },
-        #     # Unwind the activity array
-        #     {"$unwind": f"${activity}"},
-        # ]
+        match_filters = {
+            "date": {"$gte": start_day, "$lt": end_day},
+            "author_id": author_id,
+        }
+        if filters is not None:
+            match_filters = {
+                **match_filters,
+                **filters,
+            }
 
-        # if filters is not None:
-        #     pipeline.append(
-        #         {"$match": filters},
-        #     )
+        pipeline = [
+            # the day for analytics
+            {
+                "$match": {
+                    **match_filters,
+                }
+            },
+            # Unwind the activity array
+            {"$unwind": f"${activity}"},
+            # Add a field for the hour of the day from the date field
+            {"$addFields": {"date": "$date"}},
+            # Group by the hour and count the number of activity
+            {
+                "$group": {
+                    "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$date"}},
+                    "count": {"$sum": 1},
+                }
+            },
+            # Project the results into the desired format
+            {"$sort": {"_id": 1}},  # sorted by hour
+        ]
 
-        
+        cursor = self.collection.aggregate(pipeline)
+        db_result = list(cursor)
+        if db_result != []:
+            activity_count = self._prepare_raw_analytics_item(db_result[0], author_id)
+        else:
+            activity_count = None
+
         return activity_count
+
+    def _prepare_raw_analytics_item(
+        self,
+        activity_data: dict[str, str | int],
+        author_id: str,
+    ) -> RawAnalyticsItem:
+        """
+        post process the database results
+
+        this will take the format `[{'_id': '2023-01-01', 'count': 4}]` and output a RawAnalyticsItem
+
+        Parameters
+        ------------
+        activity_data : dict[str, str | int]
+            the user interaction count.
+            the data will be as an example `[{'_id': '2023-01-01', 'count': 4}]`
+        author_id : str
+            the author that had the count of activity
+
+        Returns
+        --------
+        raw_analytics_item : RawAnalyticsItem
+            the data in format of raw analytics item we've already made
+        """
+        raw_analytics_item = RawAnalyticsItem(
+            account=author_id,
+            count=activity_data["count"],
+        )
+
+        return raw_analytics_item

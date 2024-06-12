@@ -11,6 +11,7 @@ class TestHeatmapsRawAnalytics(TestCase):
         self.platform_id = "3456789"
         self.analytics_raw = AnalyticsRaw(self.platform_id)
         self.mongo_client = MongoSingleton.get_instance().get_client()
+        self.mongo_client[self.platform_id].drop_collection("rawmemberactivities")
 
     def test_raw_analytics_single_user(self):
         day = datetime(2023, 1, 1).date()
@@ -35,10 +36,12 @@ class TestHeatmapsRawAnalytics(TestCase):
                         "name": "message",
                         "type": "emitter",
                     }
-                ]
+                ],
             },
         ]
-        self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(sample_raw_data)
+        self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
+            sample_raw_data
+        )
 
         analytics_result = self.analytics_raw.analyze(
             day=day,
@@ -48,9 +51,9 @@ class TestHeatmapsRawAnalytics(TestCase):
             author_id=9000,
         )
 
-        self.assertEqual(
-            analytics_result, RawAnalyticsItem(account=9000, count=1)
-        )
+        self.assertIsInstance(analytics_result, RawAnalyticsItem)
+        self.assertEqual(analytics_result.account, 9000)
+        self.assertEqual(analytics_result.count, 1)
 
     def test_raw_analytics_wrong_user(self):
         """
@@ -79,10 +82,12 @@ class TestHeatmapsRawAnalytics(TestCase):
                         "name": "message",
                         "type": "emitter",
                     }
-                ]
+                ],
             },
         ]
-        self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(sample_raw_data)
+        self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
+            sample_raw_data
+        )
 
         analytics_result = self.analytics_raw.analyze(
             day=day,
@@ -121,10 +126,12 @@ class TestHeatmapsRawAnalytics(TestCase):
                         "name": "message",
                         "type": "emitter",
                     }
-                ]
+                ],
             },
         ]
-        self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(sample_raw_data)
+        self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
+            sample_raw_data
+        )
 
         analytics_result = self.analytics_raw.analyze(
             day=day,
@@ -163,10 +170,12 @@ class TestHeatmapsRawAnalytics(TestCase):
                         "name": "message",
                         "type": "emitter",
                     }
-                ]
+                ],
             },
         ]
-        self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(sample_raw_data)
+        self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
+            sample_raw_data
+        )
 
         analytics_result = self.analytics_raw.analyze(
             day=day + timedelta(days=1),
@@ -175,7 +184,6 @@ class TestHeatmapsRawAnalytics(TestCase):
             activity_direction=ActivityDirection.RECEIVER.value,
             author_id=9000,
         )
-
         self.assertIsNone(analytics_result)
 
     def test_raw_analytics_wrong_activity(self):
@@ -205,10 +213,12 @@ class TestHeatmapsRawAnalytics(TestCase):
                         "name": "message",
                         "type": "emitter",
                     }
-                ]
+                ],
             },
         ]
-        self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(sample_raw_data)
+        self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
+            sample_raw_data
+        )
 
         analytics_result = self.analytics_raw.analyze(
             day=day,
@@ -247,7 +257,7 @@ class TestHeatmapsRawAnalytics(TestCase):
                         "name": "message",
                         "type": "emitter",
                     }
-                ]
+                ],
             },
             {
                 "author_id": 9000,
@@ -258,9 +268,7 @@ class TestHeatmapsRawAnalytics(TestCase):
                 "interactions": [
                     {
                         "name": "reply",
-                        "users_engaged_id": [
-                            9006, 9005
-                        ],
+                        "users_engaged_id": [9006, 9005],
                         "type": "receiver",
                     }
                 ],
@@ -269,7 +277,7 @@ class TestHeatmapsRawAnalytics(TestCase):
                         "name": "message",
                         "type": "emitter",
                     }
-                ]
+                ],
             },
             {
                 "author_id": 9000,
@@ -291,10 +299,12 @@ class TestHeatmapsRawAnalytics(TestCase):
                         "name": "message",
                         "type": "emitter",
                     }
-                ]
+                ],
             },
         ]
-        self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(sample_raw_data)
+        self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
+            sample_raw_data
+        )
 
         analytics_result = self.analytics_raw.analyze(
             day=day,
@@ -304,6 +314,7 @@ class TestHeatmapsRawAnalytics(TestCase):
             author_id=9000,
         )
 
-        self.assertEqual(
-            analytics_result, RawAnalyticsItem(account=9000, count=2)
-        )
+        self.assertIsInstance(analytics_result, RawAnalyticsItem)
+
+        self.assertEqual(analytics_result.account, 9000)
+        self.assertEqual(analytics_result.count, 2)
