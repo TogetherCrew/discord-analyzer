@@ -3,7 +3,6 @@ from unittest import TestCase
 from datetime import datetime
 from utils.mongo import MongoSingleton
 from discord_analyzer.analyzer.heatmaps import Heatmaps
-from discord_analyzer.schemas import RawAnalyticsItem
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
 
 
@@ -133,7 +132,7 @@ class TestHeatmapsProcessRawAnalyticsSingleDay(TestCase):
         self.assertEqual(len(analytics["mentioner_per_acc"]), 2)
         self.assertIn(analytics["mentioner_per_acc"][0].account, [9002, 9003])
         self.assertEqual(analytics["mentioner_per_acc"][0].count, 1)
-        self.assertEqual(analytics["mentioner_per_acc"][1].account, [9002, 9003])
+        self.assertIn(analytics["mentioner_per_acc"][1].account, [9002, 9003])
         self.assertEqual(analytics["mentioner_per_acc"][1].count, 1)
 
         self.assertEqual(analytics["reacted_per_acc"], [])
@@ -155,7 +154,7 @@ class TestHeatmapsProcessRawAnalyticsSingleDay(TestCase):
                         "users_engaged_id": [
                             9003,
                         ],
-                        "type": "emitter",
+                        "type": "receiver",
                     }
                 ],
             },
@@ -168,9 +167,14 @@ class TestHeatmapsProcessRawAnalyticsSingleDay(TestCase):
                 "interactions": [
                     {
                         "name": "mention",
-                        "users_engaged_id": [9003, 9002],
+                        "users_engaged_id": [9003, 9005],
                         "type": "receiver",
-                    }
+                    },
+                    {
+                        "name": "reaction",
+                        "users_engaged_id": [9003, 9008],
+                        "type": "emitter",
+                    },
                 ],
             },
             {
@@ -226,11 +230,11 @@ class TestHeatmapsProcessRawAnalyticsSingleDay(TestCase):
         self.assertEqual(len(analytics["mentioner_per_acc"]), 2)
         self.assertIn(analytics["mentioner_per_acc"][0].account, [9003, 9005])
         self.assertEqual(analytics["mentioner_per_acc"][0].count, 1)
-        self.assertEqual(analytics["mentioner_per_acc"][1].account, [9003, 9005])
+        self.assertIn(analytics["mentioner_per_acc"][1].account, [9003, 9005])
         self.assertEqual(analytics["mentioner_per_acc"][1].count, 1)
 
         self.assertEqual(len(analytics["reacted_per_acc"]), 2)
         self.assertIn(analytics["reacted_per_acc"][0].account, [9003, 9008])
         self.assertEqual(analytics["reacted_per_acc"][0].count, 1)
-        self.assertEqual(analytics["reacted_per_acc"][1].account, [9003, 9008])
+        self.assertIn(analytics["reacted_per_acc"][1].account, [9003, 9008])
         self.assertEqual(analytics["reacted_per_acc"][1].count, 1)

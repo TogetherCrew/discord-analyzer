@@ -2,8 +2,9 @@ from enum import Enum
 
 
 class ActivityType(Enum):
-    ACTION = "action"
-    INTERACTION = "interaction"
+    ACTION = "actions"
+    INTERACTION = "interactions"
+
 
 class ActivityDirection(Enum):
     RECEIVER = "receiver"

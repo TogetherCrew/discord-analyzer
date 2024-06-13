@@ -1,5 +1,4 @@
 from datetime import datetime, time, timedelta
-import numpy as np
 
 from utils.mongo import MongoSingleton
 from discord_analyzer.schemas import RawAnalyticsItem
@@ -60,7 +59,8 @@ class AnalyticsRaw:
         if activity not in ["interactions", "actions"]:
             raise ValueError(
                 "Wrong `activity` given, "
-                "should be either `interactions` or `actions`"
+                "should be either `interactions` or `actions`!"
+                f" The provided one is {activity}"
             )
 
         activity_count = self.get_analytics_count(

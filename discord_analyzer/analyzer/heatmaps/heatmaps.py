@@ -5,7 +5,7 @@ from discord_analyzer.analyzer.heatmaps.heatmaps_utils import HeatmapsUtils
 from discord_analyzer.analyzer.heatmaps import AnalyticsHourly, AnalyticsRaw
 from utils.mongo import MongoSingleton
 from discord_analyzer.models.HeatMapModel import HeatMapModel
-from discord_analyzer.schemas import RawAnalytics, HourlyAnalytics, RawAnalyticsItem
+from discord_analyzer.schemas import RawAnalyticsItem
 from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
 
 
@@ -166,7 +166,7 @@ class Heatmaps:
 
                 analytics_vector = analytics_hourly.analyze(
                     day=day,
-                    activity="interactions",
+                    activity=config.type.value,
                     activity_name=activity_name,
                     activity_direction=config.direction.value,
                     author_id=author_id,
@@ -190,7 +190,7 @@ class Heatmaps:
 
                 analytics_vector = analytics_hourly.analyze(
                     day=day,
-                    activity="actions",
+                    activity=config.type.value,
                     activity_name=activity_name,
                     activity_direction=config.direction.value,
                     author_id=author_id,
@@ -209,7 +209,49 @@ class Heatmaps:
         resource: str,
         author_id: str,
     ) -> dict[str, list[RawAnalyticsItem]]:
-        raise NotImplementedError
+        analytics_raw = AnalyticsRaw(self.platform_id)
+        analytics: dict[str, list[RawAnalyticsItem]] = {}
+
+        for config in self.analyzer_config.raw_analytics:
+
+            # default analytics that we always can have
+            activity_name: str
+            if config.name == "reacted_per_acc":
+                activity_name = "reaction"
+            elif config.name == "mentioner_per_acc":
+                activity_name = "mention"
+            elif config.name == "replied_per_acc":
+                activity_name = "reply"
+            else:
+                # custom analytics
+                if config.activity_name is None:
+                    raise ValueError(
+                        "`activity_name` for custom analytics should be provided"
+                    )
+                activity_name = config.activity_name
+
+            additional_filters: dict[str, str] = {
+                f"metadata.{self.analyzer_config.resource_identifier}": resource,
+            }
+            # preparing for custom analytics (if available in config)
+            if config.rawmemberactivities_condition is not None:
+                additional_filters = {
+                    **additional_filters,
+                    **config.rawmemberactivities_condition,
+                }
+
+            analytics_items = analytics_raw.analyze(
+                day=day,
+                activity=config.type.value,
+                activity_name=activity_name,
+                activity_direction=config.direction.value,
+                author_id=author_id,
+                additional_filters=additional_filters,
+            )
+
+            analytics[config.name] = analytics_items
+
+        return analytics
 
     def _compute_iteration_counts(
         self,
