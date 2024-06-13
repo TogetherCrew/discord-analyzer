@@ -104,15 +104,13 @@ class Heatmaps:
                         resource=resource_id,
                         author_id=author_id,
                     )
-                    print(analytics_date, resource_id, author_id)
-                    document["hourly_analytics"] = hourly_analytics
 
                     raw_analytics = self._process_raw_analytics(
                         day=analytics_date,
                         resource=resource_id,
                         author_id=author_id,
                     )
-                    document["raw_analytics"] = raw_analytics
+                    document = {**document, **hourly_analytics, **raw_analytics}
 
                     heatmaps_results.append(document)
 

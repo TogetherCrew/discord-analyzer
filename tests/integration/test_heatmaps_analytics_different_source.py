@@ -137,18 +137,18 @@ class TestHeatmapsAnalyticsSingleDay(TestCase):
         self.assertEqual(len(analytics), 3)
 
         for i in range(3):
-            self.assertEqual(sum(analytics[i]["hourly_analytics"]["thr_messages"]), 0)
-            self.assertEqual(sum(analytics[i]["hourly_analytics"]["lone_messages"]), 0)
-            self.assertEqual(sum(analytics[i]["hourly_analytics"]["replier"]), 0)
-            self.assertEqual(sum(analytics[i]["hourly_analytics"]["replied"]), 0)
-            self.assertEqual(sum(analytics[i]["hourly_analytics"]["mentioner"]), 0)
-            self.assertEqual(sum(analytics[i]["hourly_analytics"]["mentioned"]), 0)
-            self.assertEqual(sum(analytics[i]["hourly_analytics"]["reacter"]), 0)
-            self.assertEqual(sum(analytics[i]["hourly_analytics"]["reacted"]), 0)
+            self.assertEqual(sum(analytics[i]["thr_messages"]), 0)
+            self.assertEqual(sum(analytics[i]["lone_messages"]), 0)
+            self.assertEqual(sum(analytics[i]["replier"]), 0)
+            self.assertEqual(sum(analytics[i]["replied"]), 0)
+            self.assertEqual(sum(analytics[i]["mentioner"]), 0)
+            self.assertEqual(sum(analytics[i]["mentioned"]), 0)
+            self.assertEqual(sum(analytics[i]["reacter"]), 0)
+            self.assertEqual(sum(analytics[i]["reacted"]), 0)
 
-            self.assertEqual(analytics[i]["raw_analytics"]["mentioner_per_acc"], [])
-            self.assertEqual(analytics[i]["raw_analytics"]["mentioner_per_acc"], [])
-            self.assertEqual(analytics[i]["raw_analytics"]["reacted_per_acc"], [])
+            self.assertEqual(analytics[i]["mentioner_per_acc"], [])
+            self.assertEqual(analytics[i]["mentioner_per_acc"], [])
+            self.assertEqual(analytics[i]["reacted_per_acc"], [])
 
     def test_heatmaps_analytics_pre_filled(self):
         platform_id = self.heatmaps.platform_id
@@ -161,8 +161,17 @@ class TestHeatmapsAnalyticsSingleDay(TestCase):
                 "user": 9000,
                 "channel_id": "124",
                 "date": day,
-                "hourly_analytics": [],
-                "raw_analytics": [],
+                "thr_messages": [0] * 24,
+                "lone_messages": [0] * 24,
+                "replier": [0] * 24,
+                "replied": [0] * 24,
+                "mentioner": [0] * 24,
+                "mentioned": [0] * 24,
+                "reacter": [0] * 24,
+                "reacted": [0] * 24,
+                "mentioner_per_acc": [],
+                "mentioner_per_acc": [],
+                "reacted_per_acc": [],
             }
         )
 

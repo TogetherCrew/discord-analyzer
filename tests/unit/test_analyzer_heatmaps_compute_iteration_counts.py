@@ -1,4 +1,4 @@
-from unittest import TestCase, mock
+from unittest import TestCase
 from datetime import datetime
 
 from discord_analyzer.analyzer.heatmaps import Heatmaps

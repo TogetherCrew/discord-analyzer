@@ -137,26 +137,19 @@ class TestHeatmapsAnalytics(TestCase):
         self.assertEqual(len(analytics), 3)
 
         for i in range(3):
-
-            self.assertIn("hourly_analytics", analytics[i])
-            self.assertIn("raw_analytics", analytics[i])
             # the second resource "124"
             if i == 1:
-                self.assertEqual(
-                    sum(analytics[i]["hourly_analytics"]["thr_messages"]), 3
-                )
-                self.assertEqual(
-                    sum(analytics[i]["hourly_analytics"]["lone_messages"]), 1
-                )
-                self.assertEqual(sum(analytics[i]["hourly_analytics"]["replier"]), 1)
-                self.assertEqual(sum(analytics[i]["hourly_analytics"]["replied"]), 1)
-                self.assertEqual(sum(analytics[i]["hourly_analytics"]["mentioner"]), 1)
-                self.assertEqual(sum(analytics[i]["hourly_analytics"]["mentioned"]), 2)
-                self.assertEqual(sum(analytics[i]["hourly_analytics"]["reacter"]), 0)
-                self.assertEqual(sum(analytics[i]["hourly_analytics"]["reacted"]), 1)
+                self.assertEqual(sum(analytics[i]["thr_messages"]), 3)
+                self.assertEqual(sum(analytics[i]["lone_messages"]), 1)
+                self.assertEqual(sum(analytics[i]["replier"]), 1)
+                self.assertEqual(sum(analytics[i]["replied"]), 1)
+                self.assertEqual(sum(analytics[i]["mentioner"]), 1)
+                self.assertEqual(sum(analytics[i]["mentioned"]), 2)
+                self.assertEqual(sum(analytics[i]["reacter"]), 0)
+                self.assertEqual(sum(analytics[i]["reacted"]), 1)
 
                 self.assertEqual(
-                    analytics[i]["raw_analytics"]["replied_per_acc"],
+                    analytics[i]["replied_per_acc"],
                     [
                         {
                             "account": 9003,
@@ -166,15 +159,15 @@ class TestHeatmapsAnalytics(TestCase):
                 )
                 self.assertIn(
                     {"account": 9003, "count": 1},
-                    analytics[i]["raw_analytics"]["mentioner_per_acc"],
+                    analytics[i]["mentioner_per_acc"],
                 )
                 self.assertIn(
                     {"account": 9002, "count": 1},
-                    analytics[i]["raw_analytics"]["mentioner_per_acc"],
+                    analytics[i]["mentioner_per_acc"],
                 )
 
                 self.assertEqual(
-                    analytics[i]["raw_analytics"]["reacted_per_acc"],
+                    analytics[i]["reacted_per_acc"],
                     [
                         {
                             "account": 9009,
@@ -183,19 +176,15 @@ class TestHeatmapsAnalytics(TestCase):
                     ],
                 )
             else:
-                self.assertEqual(
-                    sum(analytics[i]["hourly_analytics"]["thr_messages"]), 0
-                )
-                self.assertEqual(
-                    sum(analytics[i]["hourly_analytics"]["lone_messages"]), 0
-                )
-                self.assertEqual(sum(analytics[i]["hourly_analytics"]["replier"]), 0)
-                self.assertEqual(sum(analytics[i]["hourly_analytics"]["replied"]), 0)
-                self.assertEqual(sum(analytics[i]["hourly_analytics"]["mentioner"]), 0)
-                self.assertEqual(sum(analytics[i]["hourly_analytics"]["mentioned"]), 0)
-                self.assertEqual(sum(analytics[i]["hourly_analytics"]["reacter"]), 0)
-                self.assertEqual(sum(analytics[i]["hourly_analytics"]["reacted"]), 0)
+                self.assertEqual(sum(analytics[i]["thr_messages"]), 0)
+                self.assertEqual(sum(analytics[i]["lone_messages"]), 0)
+                self.assertEqual(sum(analytics[i]["replier"]), 0)
+                self.assertEqual(sum(analytics[i]["replied"]), 0)
+                self.assertEqual(sum(analytics[i]["mentioner"]), 0)
+                self.assertEqual(sum(analytics[i]["mentioned"]), 0)
+                self.assertEqual(sum(analytics[i]["reacter"]), 0)
+                self.assertEqual(sum(analytics[i]["reacted"]), 0)
 
-                self.assertEqual(analytics[i]["raw_analytics"]["mentioner_per_acc"], [])
-                self.assertEqual(analytics[i]["raw_analytics"]["mentioner_per_acc"], [])
-                self.assertEqual(analytics[i]["raw_analytics"]["reacted_per_acc"], [])
+                self.assertEqual(analytics[i]["mentioner_per_acc"], [])
+                self.assertEqual(analytics[i]["mentioner_per_acc"], [])
+                self.assertEqual(analytics[i]["reacted_per_acc"], [])
