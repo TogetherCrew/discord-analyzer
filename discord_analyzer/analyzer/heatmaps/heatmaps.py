@@ -4,8 +4,6 @@ from datetime import datetime, timedelta
 from discord_analyzer.analyzer.heatmaps.heatmaps_utils import HeatmapsUtils
 from discord_analyzer.analyzer.heatmaps import AnalyticsHourly, AnalyticsRaw
 from utils.mongo import MongoSingleton
-from discord_analyzer.models.HeatMapModel import HeatMapModel
-from discord_analyzer.schemas import RawAnalyticsItem
 from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
 
 
@@ -41,7 +39,7 @@ class Heatmaps:
         self.analyzer_config = analyzer_config
         self.utils = HeatmapsUtils(platform_id)
 
-    def start(self, from_start: bool = False):
+    def start(self, from_start: bool = False) -> list[dict]:
         """
         Based on the rawdata creates and stores the heatmap data
 
@@ -61,8 +59,7 @@ class Heatmaps:
         """
         log_prefix = f"PLATFORMID: {self.platform_id}:"
 
-        heatmap_c = HeatMapModel(self.client[self.platform_id])
-        last_date = heatmap_c.get_last_date()
+        last_date = self.utils.get_last_date()
 
         analytics_date: datetime
         if last_date is None or from_start:
@@ -73,8 +70,6 @@ class Heatmaps:
         # initialize the data array
         heatmaps_results = []
 
-        # using mongodb cursor for efficient data retrieval
-        user_ids_cursor = self.utils.get_users()
         users_count = self.utils.get_users_count()
 
         iteration_count = self._compute_iteration_counts(
@@ -87,6 +82,9 @@ class Heatmaps:
         while analytics_date.date() < datetime.now().date():
 
             for resource_id in self.resources:
+                # for more efficient retrieval
+                # we're always using the cursor and re-querying the db
+                user_ids_cursor = self.utils.get_users()
 
                 for author in user_ids_cursor:
 
@@ -105,16 +103,14 @@ class Heatmaps:
                         day=analytics_date,
                         resource=resource_id,
                         author_id=author_id,
-                        hourly_analytics_config=self.analyzer_config.hourly_analytics,
                     )
-
+                    print(analytics_date, resource_id, author_id)
                     document["hourly_analytics"] = hourly_analytics
 
                     raw_analytics = self._process_raw_analytics(
                         day=analytics_date,
                         resource=resource_id,
                         author_id=author_id,
-                        raw_analytics_config=self.analyzer_config.raw_analytics,
                     )
                     document["raw_analytics"] = raw_analytics
 
@@ -208,9 +204,9 @@ class Heatmaps:
         day: datetime.date,
         resource: str,
         author_id: str,
-    ) -> dict[str, list[RawAnalyticsItem]]:
+    ) -> dict[str, list[dict]]:
         analytics_raw = AnalyticsRaw(self.platform_id)
-        analytics: dict[str, list[RawAnalyticsItem]] = {}
+        analytics: dict[str, list[dict]] = {}
 
         for config in self.analyzer_config.raw_analytics:
 
@@ -249,7 +245,9 @@ class Heatmaps:
                 additional_filters=additional_filters,
             )
 
-            analytics[config.name] = analytics_items
+            # converting to dict data
+            # so we could later save easily in db
+            analytics[config.name] = [item.to_dict() for item in analytics_items]
 
         return analytics
 

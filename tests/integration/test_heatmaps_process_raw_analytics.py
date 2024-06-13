@@ -126,14 +126,14 @@ class TestHeatmapsProcessRawAnalyticsSingleDay(TestCase):
         self.assertIsInstance(analytics["reacted_per_acc"], list),
 
         self.assertEqual(len(analytics["replied_per_acc"]), 1)
-        self.assertEqual(analytics["replied_per_acc"][0].account, 9003)
-        self.assertEqual(analytics["replied_per_acc"][0].count, 1)
+        self.assertEqual(analytics["replied_per_acc"][0]["account"], 9003)
+        self.assertEqual(analytics["replied_per_acc"][0]["count"], 1)
 
         self.assertEqual(len(analytics["mentioner_per_acc"]), 2)
-        self.assertIn(analytics["mentioner_per_acc"][0].account, [9002, 9003])
-        self.assertEqual(analytics["mentioner_per_acc"][0].count, 1)
-        self.assertIn(analytics["mentioner_per_acc"][1].account, [9002, 9003])
-        self.assertEqual(analytics["mentioner_per_acc"][1].count, 1)
+        self.assertIn(analytics["mentioner_per_acc"][0]["account"], [9002, 9003])
+        self.assertEqual(analytics["mentioner_per_acc"][0]["count"], 1)
+        self.assertIn(analytics["mentioner_per_acc"][1]["account"], [9002, 9003])
+        self.assertEqual(analytics["mentioner_per_acc"][1]["count"], 1)
 
         self.assertEqual(analytics["reacted_per_acc"], [])
 
@@ -228,13 +228,13 @@ class TestHeatmapsProcessRawAnalyticsSingleDay(TestCase):
         self.assertEqual(analytics["replied_per_acc"], [])
 
         self.assertEqual(len(analytics["mentioner_per_acc"]), 2)
-        self.assertIn(analytics["mentioner_per_acc"][0].account, [9003, 9005])
-        self.assertEqual(analytics["mentioner_per_acc"][0].count, 1)
-        self.assertIn(analytics["mentioner_per_acc"][1].account, [9003, 9005])
-        self.assertEqual(analytics["mentioner_per_acc"][1].count, 1)
+        self.assertIn(analytics["mentioner_per_acc"][0]["account"], [9003, 9005])
+        self.assertEqual(analytics["mentioner_per_acc"][0]["count"], 1)
+        self.assertIn(analytics["mentioner_per_acc"][1]["account"], [9003, 9005])
+        self.assertEqual(analytics["mentioner_per_acc"][1]["count"], 1)
 
         self.assertEqual(len(analytics["reacted_per_acc"]), 2)
-        self.assertIn(analytics["reacted_per_acc"][0].account, [9003, 9008])
-        self.assertEqual(analytics["reacted_per_acc"][0].count, 1)
-        self.assertIn(analytics["reacted_per_acc"][1].account, [9003, 9008])
-        self.assertEqual(analytics["reacted_per_acc"][1].count, 1)
+        self.assertIn(analytics["reacted_per_acc"][0]["account"], [9003, 9008])
+        self.assertEqual(analytics["reacted_per_acc"][0]["count"], 1)
+        self.assertIn(analytics["reacted_per_acc"][1]["account"], [9003, 9008])
+        self.assertEqual(analytics["reacted_per_acc"][1]["count"], 1)

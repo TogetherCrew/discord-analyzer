@@ -7,4 +7,4 @@ class RawAnalyticsItem:
         self.count = count
 
     def to_dict(self):
-        return ({"account": self.account, "count": self.count},)
+        return {"account": self.account, "count": self.count}
