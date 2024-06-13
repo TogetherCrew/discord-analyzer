@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from bson.objectid import ObjectId
 from utils.get_guild_utils import get_guild_platform_id
-from utils.get_mongo_client import MongoSingleton
+from utils.mongo import MongoSingleton
 
 
 class TestGetGuildId(TestCase):

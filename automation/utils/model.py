@@ -1,5 +1,5 @@
 from utils.get_automation_env import get_automations_env
-from utils.get_mongo_client import MongoSingleton
+from utils.mongo import MongoSingleton
 
 from .interfaces import Automation
 

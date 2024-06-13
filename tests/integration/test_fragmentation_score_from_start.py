@@ -1,17 +1,16 @@
 from datetime import datetime, timedelta
 
 from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
-
-from .utils.neo4j_conn import neo4j_setup
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 def test_avg_clustering_coeff_from_start():
     """
     test scaling of the avgClusteringCoefficient (a.k.a fragmentation score)
     """
-    neo4j_ops = neo4j_setup()
+    neo4j_ops = Neo4jOps.get_instance()
 
-    neo4j_analytics = Neo4JAnalytics(neo4j_ops)
+    neo4j_analytics = Neo4JAnalytics()
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 

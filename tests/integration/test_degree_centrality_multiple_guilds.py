@@ -1,8 +1,7 @@
 # we have nodes of a community is connected to another one
 # meaning we have nodes available in more than one community
 from discord_analyzer.analysis.neo4j_analysis.centrality import Centerality
-
-from .utils.neo4j_conn import neo4j_setup
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 def test_multiple_guilds():
@@ -16,7 +15,7 @@ def test_multiple_guilds():
     https://miro.com/app/board/uXjVM7GdYqo=/?share_link_id=105382864070
     """
     guildId = "1234"
-    neo4j_ops = neo4j_setup()
+    neo4j_ops = Neo4jOps.get_instance()
 
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
@@ -76,7 +75,7 @@ def test_multiple_guilds():
         SET r14.guildId = '{guildId2}'
         """
     )
-    centrality = Centerality(neo4j_ops)
+    centrality = Centerality()
     degree_centrality = centrality.compute_degree_centerality(
         guildId=guildId2,
         direction="undirected",

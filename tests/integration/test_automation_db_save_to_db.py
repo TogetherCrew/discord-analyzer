@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from automation.utils.interfaces import Automation
 from automation.utils.model import AutomationDB
 from dotenv import load_dotenv
-from utils.get_mongo_client import MongoSingleton
+from utils.mongo import MongoSingleton
 
 
 class TestAutomationDBSaveToDB(unittest.TestCase):

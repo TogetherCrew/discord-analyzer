@@ -2,7 +2,7 @@ import logging
 
 from discord_analyzer.DB_operations.mongodb_interaction import MongoDBOps
 from discord_analyzer.DB_operations.network_graph import make_neo4j_networkx_query_dict
-from tc_neo4j_lib.neo4j_ops import Neo4jOps
+from tc_neo4j_lib.neo4j_ops import Neo4jOps, Query
 
 
 class MongoNeo4jDB:
@@ -11,33 +11,9 @@ class MongoNeo4jDB:
         having both databases in one class
 
         """
-        self.neo4j_ops = None
+        self.neo4j_ops = Neo4jOps.get_instance()
         self.mongoOps = None
         self.testing = testing
-
-    def set_neo4j_utils(
-        self,
-        db_name: str,
-        host: str,
-        port: str,
-        protocol: str,
-        user: str,
-        password: str,
-    ):
-        """
-        store the neo4j utils instance
-        """
-        self.neo4j_ops = Neo4jOps()
-        self.neo4j_ops.set_neo4j_db_info(
-            neo4j_db_name=db_name,
-            neo4j_protocol=protocol,
-            neo4j_user=user,
-            neo4j_password=password,
-            neo4j_host=host,
-            neo4j_port=port,
-        )
-        self.neo4j_ops.neo4j_database_connect()
-        logging.info("Neo4j Connected Successfully!")
 
     def set_mongo_db_ops(
         self, mongo_user: str, mongo_pass: str, mongo_host: str, mongo_port: str
@@ -59,6 +35,7 @@ class MongoNeo4jDB:
     def store_analytics_data(
         self,
         analytics_data: dict,
+        guild_id: str,
         community_id: str,
         remove_memberactivities: bool = False,
         remove_heatmaps: bool = False,
@@ -69,12 +46,13 @@ class MongoNeo4jDB:
 
         Parameters:
         -------------
-        analytics_data : dictionary
-            a nested dictinoary with keys as guildId
-            and values as heatmaps and memberactivities data
-            heatmaps is also a list of dictinoaries
+        analytics_data : dict
+            a nested dictinoary with keys as `heatmaps`, and `memberactivities`
+            values of the heatmaps is a list of dictinoaries
             and memberactivities is a tuple of memberactivities dictionary list
-             and memebractivities networkx object dictionary list
+            and memebractivities networkx object dictionary list
+        guild_id: str
+            what the data is related to
         community_id : str
             the community id to save the data for
         remove_memberactivities : bool
@@ -88,43 +66,43 @@ class MongoNeo4jDB:
         ----------
         `None`
         """
-        for guildId in analytics_data.keys():
-            heatmaps_data = analytics_data[guildId]["heatmaps"]
-            (memberactivities_data, memberactivities_networkx_data) = analytics_data[
-                guildId
-            ]["memberactivities"]
+        heatmaps_data = analytics_data["heatmaps"]
+        (memberactivities_data, memberactivities_networkx_data) = analytics_data[
+            "memberactivities"
+        ]
 
-            if not self.testing:
-                # mongodb transactions
-                self.mongoOps._do_analytics_write_transaction(
-                    guildId=guildId,
-                    delete_heatmaps=remove_heatmaps,
-                    delete_member_acitivities=remove_memberactivities,
-                    acitivties_list=memberactivities_data,
-                    heatmaps_list=heatmaps_data,
+        if not self.testing:
+            # mongodb transactions
+            self.mongoOps._do_analytics_write_transaction(
+                guildId=guild_id,
+                delete_heatmaps=remove_heatmaps,
+                delete_member_acitivities=remove_memberactivities,
+                acitivties_list=memberactivities_data,
+                heatmaps_list=heatmaps_data,
+            )
+
+            # neo4j transactions
+            if (
+                memberactivities_networkx_data is not None
+                and memberactivities_networkx_data != []
+            ):
+                queries_list = make_neo4j_networkx_query_dict(
+                    networkx_graphs=memberactivities_networkx_data,
+                    guildId=guild_id,
+                    community_id=community_id,
                 )
-
-                # neo4j transactions
-                if (
-                    memberactivities_networkx_data is not None
-                    and memberactivities_networkx_data != []
-                ):
-                    queries_list = make_neo4j_networkx_query_dict(
-                        networkx_graphs=memberactivities_networkx_data,
-                        guildId=guildId,
-                        community_id=community_id,
-                    )
-                    self.run_operations_transaction(
-                        guildId=guildId,
-                        queries_list=queries_list,
-                        remove_memberactivities=remove_memberactivities,
-                    )
-            else:
-                logging.warning("Testing mode enabled! Not saving any data")
+                print(queries_list[0])
+                self.run_operations_transaction(
+                    guildId=guild_id,
+                    queries_list=queries_list,
+                    remove_memberactivities=remove_memberactivities,
+                )
+        else:
+            logging.warning("Testing mode enabled! Not saving any data")
 
     def run_operations_transaction(
-        self, guildId, queries_list, remove_memberactivities
-    ):
+        self, guildId: str, queries_list: list[Query], remove_memberactivities: bool
+    ) -> None:
         """
         do the deletion and insertion operations inside a transaction
 
@@ -141,7 +119,7 @@ class MongoNeo4jDB:
         """
         self.guild_msg = f"GUILDID: {guildId}:"
 
-        transaction_queries = []
+        transaction_queries: list[Query] = []
         if remove_memberactivities:
             logging.info(
                 f"{self.guild_msg} Neo4J GuildId accounts relation will be removed!"
@@ -151,14 +129,13 @@ class MongoNeo4jDB:
             )
             transaction_queries.append(delete_relationship_query)
 
-        # logging.info(queries_list)
         transaction_queries.extend(queries_list)
 
-        self.neo4j_ops.store_data_neo4j(transaction_queries, message=self.guild_msg)
+        self.neo4j_ops.run_queries_in_batch(transaction_queries, message=self.guild_msg)
 
     def _create_guild_rel_deletion_query(
         self, guildId: str, relation_name: str = "INTERACTED_WITH"
-    ):
+    ) -> Query:
         """
         create a query to delete the relationships
         between DiscordAccount users in a specific guild
@@ -175,11 +152,19 @@ class MongoNeo4jDB:
         final_query : str
             the final query to remove the relationships
         """
-
-        delete_relationship_query = f"""
+        query_str = f"""
           MATCH
             (:DiscordAccount)
                 -[r:{relation_name} {{guildId: '{guildId}'}}]-(:DiscordAccount)
             DETACH DELETE r"""
 
-        return delete_relationship_query
+        parameters = {
+            "relation_name": relation_name,
+            "guild_id": guildId,
+        }
+
+        query = Query(
+            query=query_str,
+            parameters=parameters,
+        )
+        return query

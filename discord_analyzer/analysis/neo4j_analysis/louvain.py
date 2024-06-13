@@ -6,11 +6,11 @@ from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 class Louvain:
-    def __init__(self, neo4j_ops: Neo4jOps) -> None:
+    def __init__(self) -> None:
         """
         louvain algorithm wrapper to compute
         """
-        self.neo4j_ops = neo4j_ops
+        self.neo4j_ops = Neo4jOps.get_instance()
 
     def compute(self, guild_id: str, from_start: bool = False) -> None:
         """
@@ -25,7 +25,7 @@ class Louvain:
             if True, then would compute from start
             default is False
         """
-        projection_utils = ProjectionUtils(gds=self.neo4j_ops.gds, guildId=guild_id)
+        projection_utils = ProjectionUtils(guildId=guild_id)
 
         computable_dates = projection_utils.get_dates(guildId=guild_id)
 
@@ -80,9 +80,12 @@ class Louvain:
 
         # dropping the computed date
         _ = self.neo4j_ops.gds.run_cypher(
-            f"""
-            CALL gds.graph.drop("{graph_projected_name}")
             """
+            CALL gds.graph.drop($graph_projected_name)
+            """,
+            {
+                "graph_projected_name": graph_projected_name,
+            },
         )
 
     def get_computed_dates(
@@ -105,13 +108,13 @@ class Louvain:
             the computation dates
         """
         # getting the dates computed before
-        query = f"""
-            MATCH (g:Guild {{guildId: '{guildId}'}})
+        query = """
+            MATCH (g:Guild {guildId: $guild_id})
                 -[r:HAVE_METRICS]->(g)
             WHERE r.louvainModularityScore IS NOT NULL
             RETURN r.date as computed_dates
             """
-        computed_dates = projection_utils.get_computed_dates(query)
+        computed_dates = projection_utils.get_computed_dates(query, guild_id=guildId)
 
         return computed_dates
 
@@ -134,16 +137,21 @@ class Louvain:
         msg = f"GUILDID: {guild_id}"
         try:
             _ = self.neo4j_ops.gds.run_cypher(
-                f"""
-                    CALL gds.louvain.stats("{graph_name}")
+                """
+                    CALL gds.louvain.stats($graph_name)
                     YIELD modularity
                     WITH modularity
-                    MATCH (g:Guild {{guildId: '{guild_id}'}})
-                    MERGE (g) -[r:HAVE_METRICS {{
-                        date: {date}
-                    }}]-> (g)
+                    MATCH (g:Guild {guildId: $guild_id})
+                    MERGE (g) -[r:HAVE_METRICS {
+                        date: $date
+                    }]-> (g)
                     SET r.louvainModularityScore = modularity
-                    """
+                    """,
+                {
+                    "graph_name": graph_name,
+                    "guild_id": guild_id,
+                    "date": date,
+                },
             )
         except Exception as exp:
             logging.error(

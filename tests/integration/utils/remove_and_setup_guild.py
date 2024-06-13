@@ -8,11 +8,13 @@ from discord_analyzer.DB_operations.mongodb_access import DB_access
 
 def setup_db_guild(
     db_access: DB_access,
+    platform_id: str,
     guildId: str = "1234",
     discordId_list: list[str] = ["973993299281076285"],
     discordId_isbot: list[bool] = [False],
     dates: Optional[list[datetime]] = None,
     days_ago_period: int = 30,
+    **kwargs,
 ):
     """
     Remove the guild from Core databse and then insert it there
@@ -20,29 +22,33 @@ def setup_db_guild(
       it then create the guildmembers collection in it
 
     `discordId_isbot` is representative if each user is bot or not
+    `community_id` can be passed in kwargs. default is `aabbccddeeff001122334455`
     """
-    platform_id = "515151515151515151515151"
-
+    community_id = kwargs.get("community_id", "aabbccddeeff001122334455")
     db_access.db_mongo_client["Core"]["platforms"].delete_one(
         {"_id": ObjectId(platform_id)}
     )
     db_access.db_mongo_client.drop_database(guildId)
 
-    action = {
-        "INT_THR": 1,
-        "UW_DEG_THR": 1,
-        "PAUSED_T_THR": 1,
-        "CON_T_THR": 4,
-        "CON_O_THR": 3,
-        "EDGE_STR_THR": 5,
-        "UW_THR_DEG_THR": 5,
-        "VITAL_T_THR": 4,
-        "VITAL_O_THR": 3,
-        "STILL_T_THR": 2,
-        "STILL_O_THR": 2,
-        "DROP_H_THR": 2,
-        "DROP_I_THR": 1,
-    }
+    action = kwargs.get(
+        "action",
+        {
+            "INT_THR": 1,
+            "UW_DEG_THR": 1,
+            "PAUSED_T_THR": 1,
+            "CON_T_THR": 4,
+            "CON_O_THR": 3,
+            "EDGE_STR_THR": 5,
+            "UW_THR_DEG_THR": 5,
+            "VITAL_T_THR": 4,
+            "VITAL_O_THR": 3,
+            "STILL_T_THR": 2,
+            "STILL_O_THR": 2,
+            "DROP_H_THR": 2,
+            "DROP_I_THR": 1,
+        },
+    )
+
     db_access.db_mongo_client["Core"]["platforms"].insert_one(
         {
             "_id": ObjectId(platform_id),
@@ -56,7 +62,7 @@ def setup_db_guild(
                 "action": action,
                 "period": datetime.now() - timedelta(days=days_ago_period),
             },
-            "community": ObjectId("aabbccddeeff001122334455"),
+            "community": ObjectId(community_id),
             "disconnectedAt": None,
             "connectedAt": (datetime.now() - timedelta(days=days_ago_period + 10)),
             "isInProgress": True,

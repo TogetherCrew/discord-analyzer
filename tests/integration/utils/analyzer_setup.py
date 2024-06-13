@@ -5,22 +5,17 @@ from discord_analyzer.rn_analyzer import RnDaoAnalyzer
 from dotenv import load_dotenv
 
 
-def setup_analyzer() -> RnDaoAnalyzer:
+def setup_analyzer(
+    guild_id: str,
+) -> RnDaoAnalyzer:
     load_dotenv()
-    analyzer = RnDaoAnalyzer(community_id="1234555")
+
+    analyzer = RnDaoAnalyzer(guild_id)
 
     user = os.getenv("MONGODB_USER", "")
     password = os.getenv("MONGODB_PASS", "")
     host = os.getenv("MONGODB_HOST", "")
     port = os.getenv("MONGODB_PORT", "")
-
-    neo4j_creds = {}
-    neo4j_creds["db_name"] = os.getenv("NEO4J_DB", "")
-    neo4j_creds["protocol"] = os.getenv("NEO4J_PROTOCOL", "")
-    neo4j_creds["host"] = os.getenv("NEO4J_HOST", "")
-    neo4j_creds["port"] = os.getenv("NEO4J_PORT", "")
-    neo4j_creds["password"] = os.getenv("NEO4J_PASSWORD", "")
-    neo4j_creds["user"] = os.getenv("NEO4J_USER", "")
 
     analyzer.set_mongo_database_info(
         mongo_db_host=host,
@@ -29,9 +24,7 @@ def setup_analyzer() -> RnDaoAnalyzer:
         mongo_db_port=port,
     )
 
-    analyzer.set_neo4j_database_info(neo4j_creds=neo4j_creds)
     analyzer.database_connect()
-    analyzer.setup_neo4j_metrics()
 
     return analyzer
 

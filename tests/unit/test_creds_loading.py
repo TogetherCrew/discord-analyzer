@@ -1,9 +1,7 @@
-from utils.daolytics_uitls import (
+from utils.credentials import (
     get_mongo_credentials,
-    get_neo4j_credentials,
     get_rabbit_mq_credentials,
     get_redis_credentials,
-    get_saga_db_location,
     get_sentryio_service_creds,
 )
 
@@ -51,30 +49,6 @@ def test_rabbit_creds_values():
     assert rabbit_creds["username"] is not None
 
 
-def test_no4j_creds_keys():
-    neo4j_creds = get_neo4j_credentials()
-
-    credential_keys = list(neo4j_creds.keys())
-
-    assert "user" in credential_keys
-    assert "password" in credential_keys
-    assert "db_name" in credential_keys
-    assert "protocol" in credential_keys
-    assert "port" in credential_keys
-    assert "host" in credential_keys
-
-
-def test_neo4j_creds_values():
-    neo4j_creds = get_neo4j_credentials()
-
-    assert neo4j_creds["user"] is not None
-    assert neo4j_creds["password"] is not None
-    assert neo4j_creds["protocol"] is not None
-    assert neo4j_creds["port"] is not None
-    assert neo4j_creds["db_name"] is not None
-    assert neo4j_creds["host"] is not None
-
-
 def test_redis_creds_keys():
     redis_creds = get_redis_credentials()
 
@@ -91,20 +65,6 @@ def test_redis_creds_values():
     assert redis_creds["pass"] is not None
     assert redis_creds["port"] is not None
     assert redis_creds["host"] is not None
-
-
-def test_saga_location():
-    saga_creds = get_saga_db_location()
-
-    assert "db_name" in saga_creds.keys()
-    assert "collection_name" in saga_creds.keys()
-
-
-def test_saga_location_values():
-    saga_creds = get_saga_db_location()
-
-    assert saga_creds["db_name"] is not None
-    assert saga_creds["collection_name"] is not None
 
 
 def test_sentryio_creds():

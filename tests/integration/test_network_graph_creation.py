@@ -4,14 +4,14 @@ from datetime import datetime, timedelta
 import networkx as nx
 import numpy as np
 from discord_analyzer.analysis.utils.activity import Activity
+from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 from .utils.mock_graph import generate_mock_graph, store_mock_data_in_neo4j
-from .utils.neo4j_conn import neo4j_setup
 
 
 def test_network_graph_create():
     community_id = "4321"
-    neo4j_ops = neo4j_setup()
+    neo4j_ops = Neo4jOps.get_instance()
     # deleting all data
     neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 

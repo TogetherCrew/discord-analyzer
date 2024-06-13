@@ -11,12 +11,12 @@ from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 class Neo4JAnalytics:
-    def __init__(self, neo4j_ops: Neo4jOps) -> None:
+    def __init__(self) -> None:
         """
         neo4j metrics to be compute
         input variables are all the neo4j credentials
         """
-        self.neo4j_ops = neo4j_ops
+        self.neo4j_ops = Neo4jOps.get_instance()
 
     def compute_metrics(self, guildId: str, from_start: bool) -> None:
         """
@@ -61,7 +61,7 @@ class Neo4JAnalytics:
         try:
             # Local Clustering Coefficient
             logging.info(f"{msg} Computing LocalClusteringCoefficient")
-            lcc = LocalClusteringCoeff(gds=self.neo4j_ops.gds)
+            lcc = LocalClusteringCoeff()
             lcc.compute(guildId=guildId, from_start=from_start)
         except Exception as exp:
             logging.error(
@@ -116,7 +116,7 @@ class Neo4JAnalytics:
         """
         msg = f"GUILDID: {guildId}:"
         try:
-            centrality = Centerality(self.neo4j_ops)
+            centrality = Centerality()
             # degree decentrality
             _ = centrality.compute_network_decentrality(
                 guildId=guildId, from_start=from_start
@@ -137,7 +137,7 @@ class Neo4JAnalytics:
         msg = f"GUILDID: {guildId}:"
         try:
             logging.info(f"{msg}: computing node stats")
-            node_stats = NodeStats(self.neo4j_ops, threshold=2)
+            node_stats = NodeStats(threshold=2)
             node_stats.compute_stats(guildId, from_start)
         except Exception as exp:
             logging.error(f"{msg} Exception occured in node stats computation, {exp}")
@@ -170,6 +170,6 @@ class Neo4JAnalytics:
         from_start : bool
             compute from the start of the data available or continue the previous
         """
-        louvain = Louvain(self.neo4j_ops)
+        louvain = Louvain()
 
         louvain.compute(guild_id, from_start)

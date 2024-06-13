@@ -1,41 +1,32 @@
 import logging
-from typing import Any
 
 from analyzer_init import AnalyzerInit
 from automation.automation_workflow import AutomationWorkflow
 from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
-from utils.daolytics_uitls import get_mongo_credentials, get_saga_db_location
+from utils.credentials import get_mongo_credentials
 from utils.get_guild_utils import get_guild_community_ids
-from utils.get_rabbitmq import prepare_rabbit_mq
+from utils.rabbitmq import RabbitMQSingleton
 from utils.transactions_ordering import sort_transactions
 
 
-def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, Any]):
-    mongo_creds = get_mongo_credentials()
-    saga_mongo_location = get_saga_db_location()
-
-    saga = get_saga_instance(
-        sagaId=sagaId,
-        connection=mongo_creds["connection_str"],
-        saga_db=saga_mongo_location["db_name"],
-        saga_collection=saga_mongo_location["collection_name"],
-    )
+def analyzer_recompute(sagaId: str):
+    saga = get_saga_instance(sagaId=sagaId)
     if saga is None:
         logging.warn(
             f"Warn: Saga not found!, stopping the recompute for sagaId: {sagaId}"
         )
     else:
         platform_id = saga.data["platformId"]
-        guildId, commnity_id = get_guild_community_ids(platform_id)
+        guildId = get_guild_community_ids(platform_id)
 
         logging.info("Initializing the analyzer")
-        analyzer_init = AnalyzerInit(commnity_id)
-        analyzer, mongo_creds = analyzer_init.get_analyzer()
+        analyzer_init = AnalyzerInit(guildId)
+        analyzer = analyzer_init.get_analyzer()
         logging.info("Analyzer initialized")
 
         def recompute_wrapper(**kwargs):
             logging.info("recompute wrapper")
-            analyzer.recompute_analytics(guildId=guildId)
+            analyzer.recompute_analytics()
 
         def publish_wrapper(**kwargs):
             pass
@@ -44,33 +35,24 @@ def analyzer_recompute(sagaId: str, rabbit_creds: dict[str, Any]):
         saga.next(
             publish_method=publish_wrapper,
             call_function=recompute_wrapper,
-            mongo_creds=mongo_creds,
         )
 
-    return rabbit_creds, sagaId, mongo_creds
+    return sagaId
 
 
-def analyzer_run_once(sagaId: str, rabbit_creds: dict[str, Any]):
-    mongo_creds = get_mongo_credentials()
-    saga_mongo_location = get_saga_db_location()
-
-    saga = get_saga_instance(
-        sagaId=sagaId,
-        connection=mongo_creds["connection_str"],
-        saga_db=saga_mongo_location["db_name"],
-        saga_collection=saga_mongo_location["collection_name"],
-    )
+def analyzer_run_once(sagaId: str):
+    saga = get_saga_instance(sagaId=sagaId)
     if saga is None:
         logging.warn(f"Saga not found!, stopping the run_once for sagaId: {sagaId}")
     else:
         platform_id = saga.data["platformId"]
-        guildId, commnity_id = get_guild_community_ids(platform_id)
+        guildId = get_guild_community_ids(platform_id)
 
-        analyzer_init = AnalyzerInit(commnity_id)
-        analyzer, mongo_creds = analyzer_init.get_analyzer()
+        analyzer_init = AnalyzerInit(guildId)
+        analyzer = analyzer_init.get_analyzer()
 
         def run_once_wrapper(**kwargs):
-            analyzer.run_once(guildId=guildId)
+            analyzer.run_once()
 
         def publish_wrapper(**kwargs):
             pass
@@ -78,45 +60,39 @@ def analyzer_run_once(sagaId: str, rabbit_creds: dict[str, Any]):
         saga.next(
             publish_method=publish_wrapper,
             call_function=run_once_wrapper,
-            mongo_creds=mongo_creds,
         )
-    return rabbit_creds, sagaId, mongo_creds
+    return sagaId
 
 
-def get_saga_instance(sagaId: str, connection: str, saga_db: str, saga_collection: str):
+def get_saga_instance(sagaId: str):
+    mongo_creds = get_mongo_credentials()
+
     saga = get_saga(
         sagaId=sagaId,
-        connection_url=connection,
-        db_name=saga_db,
-        collection=saga_collection,
+        connection_url=mongo_creds["connection_str"],
+        db_name="Saga",
+        collection="sagas",
     )
+    if saga is None:
+        raise ValueError(f"Saga with sagaId: {sagaId} not found!")
+
     return saga
 
 
 def publish_on_success(connection, result, *args, **kwargs):
-    # we must get these three things
     try:
-        # rabbitmq creds
-        # TODO: remove sending it in future
-        _ = args[0][0]
-        sagaId = args[0][1]
-        mongo_creds = args[0][2]
-        logging.info(f"SAGAID: {sagaId}: ON_SUCCESS callback! ")
+        sagaId = args[0]
+        logging.info(f"SAGAID: {sagaId}: ON_SUCCESS callback!")
 
-        saga = get_saga_instance(
-            sagaId=sagaId,
-            connection=mongo_creds["connection_str"],
-            saga_db=mongo_creds["db_name"],
-            saga_collection=mongo_creds["collection_name"],
-        )
-        rabbitmq = prepare_rabbit_mq()
+        saga = get_saga_instance(sagaId=sagaId)
+        rabbitmq = RabbitMQSingleton.get_instance().get_client()
 
         transactions = saga.choreography.transactions
 
         (transactions_ordered, tx_not_started_count) = sort_transactions(transactions)
 
         platform_id = saga.data["platformId"]
-        guildId, _ = get_guild_community_ids(platform_id)
+        guildId = get_guild_community_ids(platform_id)
 
         msg = f"GUILDID: {guildId}: "
         if tx_not_started_count != 0:

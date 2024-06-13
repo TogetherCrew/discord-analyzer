@@ -1,7 +1,7 @@
 import unittest
 
 from pymongo import MongoClient
-from utils.get_mongo_client import MongoSingleton
+from utils.mongo import MongoSingleton
 
 
 class TestMongoSingleton(unittest.TestCase):

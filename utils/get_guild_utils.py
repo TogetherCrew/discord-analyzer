@@ -1,8 +1,8 @@
 from bson.objectid import ObjectId
-from utils.get_mongo_client import MongoSingleton
+from utils.mongo import MongoSingleton
 
 
-def get_guild_community_ids(platform_id: str) -> tuple[str, str]:
+def get_guild_community_ids(platform_id: str) -> str:
     """
     get both the guild id and community from the platform id
 
@@ -15,21 +15,19 @@ def get_guild_community_ids(platform_id: str) -> tuple[str, str]:
     --------
     guild_id : str
         the discord guild id for that specific platform
-    community_id : str
-        the community id that the guild is related
     """
     mongo_client = MongoSingleton.get_instance().client
 
     obj_platform_id = ObjectId(platform_id)
     platform = mongo_client["Core"]["platforms"].find_one(
-        {"name": "discord", "_id": obj_platform_id}
+        {"name": "discord", "_id": obj_platform_id},
+        {"metadata.id": 1},
     )
     if platform is None:
         raise AttributeError(f"PLATFORM_ID: {platform_id}, No guild found!")
 
     guild_id = platform["metadata"]["id"]
-    community_id = str(platform["community"])
-    return guild_id, community_id
+    return guild_id
 
 
 def get_guild_platform_id(guild_id: str) -> str:

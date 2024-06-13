@@ -72,15 +72,7 @@ def store_mock_data_in_neo4j(graph_dict, guildId, community_id):
     host = os.getenv("MONGODB_HOST")
     port = os.getenv("MONGODB_PORT")
 
-    neo4j_creds = {}
-    neo4j_creds["db_name"] = os.getenv("NEO4J_DB")
-    neo4j_creds["protocol"] = os.getenv("NEO4J_PROTOCOL")
-    neo4j_creds["host"] = os.getenv("NEO4J_HOST")
-    neo4j_creds["port"] = os.getenv("NEO4J_PORT")
-    neo4j_creds["password"] = os.getenv("NEO4J_PASSWORD")
-    neo4j_creds["user"] = os.getenv("NEO4J_USER")
-
-    analyzer = RnDaoAnalyzer(community_id)
+    analyzer = RnDaoAnalyzer(guildId)
 
     analyzer.set_mongo_database_info(
         mongo_db_host=host,
@@ -88,21 +80,19 @@ def store_mock_data_in_neo4j(graph_dict, guildId, community_id):
         mongo_db_user=user,
         mongo_db_port=port,
     )
-    analyzer.set_neo4j_database_info(neo4j_creds=neo4j_creds)
     analyzer.database_connect()
 
     guilds_data = {}
 
-    guilds_data[guildId] = {
-        "heatmaps": None,
-        "memberactivities": (
-            None,
-            graph_dict,
-        ),
-    }
+    guilds_data["heatmaps"] = None
+    guilds_data["memberactivities"] = (
+        None,
+        graph_dict,
+    )
 
     analyzer.DB_connections.store_analytics_data(
         analytics_data=guilds_data,
+        guild_id=guildId,
         community_id=community_id,
         remove_heatmaps=False,
         remove_memberactivities=False,

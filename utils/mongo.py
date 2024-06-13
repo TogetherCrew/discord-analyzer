@@ -2,7 +2,7 @@ import logging
 from typing import Any
 
 from pymongo import MongoClient
-from utils.daolytics_uitls import get_mongo_credentials
+from utils.credentials import get_mongo_credentials
 
 
 class MongoSingleton:

@@ -10,7 +10,7 @@ from automation.utils.interfaces import (
 from bson.objectid import ObjectId
 from discord_utils import publish_on_success
 from dotenv import load_dotenv
-from utils.daolytics_uitls import get_mongo_credentials
+from utils.credentials import get_mongo_credentials
 
 from .utils.analyzer_setup import launch_db_access
 
@@ -26,8 +26,6 @@ def test_publish_on_success_check_notification_choreographies():
     saga_id = "000000011111113333377777ie0w"
     expected_owner_id = "334461287892"
     db_access = launch_db_access(guild_id)
-    saga_db = os.getenv("SAGA_DB_NAME")
-    saga_collection = os.getenv("SAGA_DB_COLLECTION")
     at_db = os.getenv("AUTOMATION_DB_NAME")
     at_collection = os.getenv("AUTOMATION_DB_COLLECTION")
 
@@ -36,9 +34,29 @@ def test_publish_on_success_check_notification_choreographies():
     )
 
     db_access.db_mongo_client[guild_id].drop_collection("memberactivities")
-    db_access.db_mongo_client[saga_db].drop_collection(saga_collection)
+    db_access.db_mongo_client["Saga"].drop_collection("sagas")
     db_access.db_mongo_client[guild_id].drop_collection("guildmembers")
     db_access.db_mongo_client[at_db].drop_collection(at_collection)
+
+    act_param = {
+        "INT_THR": 1,
+        "UW_DEG_THR": 1,
+        "PAUSED_T_THR": 1,
+        "CON_T_THR": 4,
+        "CON_O_THR": 3,
+        "EDGE_STR_THR": 5,
+        "UW_THR_DEG_THR": 5,
+        "VITAL_T_THR": 4,
+        "VITAL_O_THR": 3,
+        "STILL_T_THR": 2,
+        "STILL_O_THR": 2,
+        "DROP_H_THR": 2,
+        "DROP_I_THR": 1,
+    }
+    window = {
+        "period_size": 7,
+        "step_size": 1,
+    }
 
     db_access.db_mongo_client["Core"]["platforms"].insert_one(
         {
@@ -49,8 +67,8 @@ def test_publish_on_success_check_notification_choreographies():
                 "icon": "111111111111111111111111",
                 "name": "A guild",
                 "selectedChannels": ["4455178"],
-                "window": [7, 1],
-                "action": [1, 1, 1, 4, 3, 5, 5, 4, 3, 3, 2, 2, 1],
+                "window": window,
+                "action": act_param,
                 "period": datetime.now() - timedelta(days=10),
             },
             "community": ObjectId("aabbccddeeff001122334455"),
@@ -75,7 +93,7 @@ def test_publish_on_success_check_notification_choreographies():
         .strftime("%Y-%m-%dT%H:%M:%S")
     )
 
-    db_access.db_mongo_client[saga_db][saga_collection].insert_one(
+    db_access.db_mongo_client["Saga"]["sagas"].insert_one(
         {
             "choreography": {
                 "name": "DISCORD_UPDATE_CHANNELS",
@@ -306,37 +324,37 @@ def test_publish_on_success_check_notification_choreographies():
     connection_uri = f"mongodb://{user}:{password}@{host}:{port}"
     mongo_creds = {
         "connection_str": connection_uri,
-        "db_name": saga_db,
-        "collection_name": saga_collection,
+        "db_name": "Saga",
+        "collection_name": "sagas",
     }
 
-    sample_args_data = ["sample", saga_id, mongo_creds]
+    sample_args_data = saga_id
     publish_on_success(None, None, sample_args_data)
 
-    notification_count = db_access.db_mongo_client[saga_db][
-        saga_collection
-    ].count_documents({"choreography.name": "DISCORD_NOTIFY_USERS"})
+    notification_count = db_access.db_mongo_client["Saga"]["sagas"].count_documents(
+        {"choreography.name": "DISCORD_NOTIFY_USERS"}
+    )
 
     assert notification_count == 4
 
-    user1_doc = db_access.db_mongo_client[saga_db][saga_collection].find_one(
+    user1_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
         {"data.discordId": "1111"}
     )
     assert user1_doc["data"]["message"] == ("hey User1NickName! please get back to us!")
 
-    user2_doc = db_access.db_mongo_client[saga_db][saga_collection].find_one(
+    user2_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
         {"data.discordId": "1112"}
     )
     assert user2_doc["data"]["message"] == (
         "hey User2GlobalName! please get back to us!"
     )
 
-    user3_doc = db_access.db_mongo_client[saga_db][saga_collection].find_one(
+    user3_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
         {"data.discordId": "1113"}
     )
     assert user3_doc["data"]["message"] == ("hey user3! please get back to us!")
 
-    user_cm_doc = db_access.db_mongo_client[saga_db][saga_collection].find_one(
+    user_cm_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
         {"data.discordId": "999"}
     )
     expected_msg = "hey body! This users were messaged:\n"

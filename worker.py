@@ -1,8 +1,7 @@
 import logging
 
-import redis
 from rq import Worker
-from utils.daolytics_uitls import get_redis_credentials
+from utils.redis import RedisSingleton
 
 
 def worker_exception_handler(job, exc_type, exc_value, traceback):
@@ -14,19 +13,14 @@ def worker_exception_handler(job, exc_type, exc_value, traceback):
 
 
 if __name__ == "__main__":
-    redis_creds = get_redis_credentials()
-
     logging.basicConfig()
     logging.getLogger().setLevel(logging.INFO)
 
-    host = redis_creds["host"]
-    port = redis_creds["port"]
-    password = redis_creds["pass"]
-
-    r = redis.Redis(host=host, port=port, password=password)
+    r = RedisSingleton.get_instance().get_client()
     worker = Worker(
         queues=["default"], connection=r, exception_handlers=worker_exception_handler
     )
+    logging.info("Registered the worker!")
     try:
         worker.work(with_scheduler=True, max_jobs=1)
     except KeyboardInterrupt:
