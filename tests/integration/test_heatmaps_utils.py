@@ -156,3 +156,56 @@ class TestHeatmapsUtils(TestCase):
         count = self.utils.get_users_count(is_bot=True)
         self.assertIsInstance(count, int)
         self.assertEqual(count, 3)
+
+    def test_get_last_date_no_document(self):
+        self.database.drop_collection("heatmaps")
+
+        last_date = self.utils.get_last_date()
+
+        self.assertIsNone(last_date)
+
+    def test_get_last_date_single_document(self):
+        self.database.drop_collection("heatmaps")
+
+        document = {
+            "user": 9000,
+            "channel_id": "124",
+            "date": datetime(2023, 1, 1),
+            "hourly_analytics": [],
+            "raw_analytics": [],
+        }
+        self.database["heatmaps"].insert_one(document)
+
+        last_date = self.utils.get_last_date()
+        self.assertEqual(last_date, datetime(2023, 1, 1))
+
+    def test_get_last_date_multiple_documents(self):
+        self.database.drop_collection("heatmaps")
+
+        documents = [
+            {
+                "user": 9000,
+                "channel_id": "124",
+                "date": datetime(2023, 1, 1),
+                "hourly_analytics": [],
+                "raw_analytics": [],
+            },
+            {
+                "user": 9000,
+                "channel_id": "124",
+                "date": datetime(2023, 1, 2),
+                "hourly_analytics": [],
+                "raw_analytics": [],
+            },
+            {
+                "user": 9001,
+                "channel_id": "126",
+                "date": datetime(2023, 1, 3),
+                "hourly_analytics": [],
+                "raw_analytics": [],
+            },
+        ]
+        self.database["heatmaps"].insert_many(documents)
+
+        last_date = self.utils.get_last_date()
+        self.assertEqual(last_date, datetime(2023, 1, 3))

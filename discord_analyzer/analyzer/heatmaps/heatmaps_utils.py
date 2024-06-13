@@ -1,6 +1,6 @@
 from pymongo.cursor import Cursor
 
-from discord_analyzer.schemas.raw_analytics_item import RawAnalyticsItem
+from datetime import datetime
 from utils.mongo import MongoSingleton
 
 
@@ -31,7 +31,7 @@ class HeatmapsUtils:
             {"is_bot": is_bot}, {"_id": 0, "id": 1}
         )
         return cursor
-    
+
     def get_users_count(self, is_bot: bool = False) -> int:
         """
         get the count of users
@@ -52,13 +52,20 @@ class HeatmapsUtils:
         )
         return users_count
 
-    def store_counts_dict(self, counts_dict):
-        # make empty result array
-        obj_array = []
+    def get_last_date(self) -> datetime | None:
+        """
+        get the last document's date
+        """
+        cursor = (
+            self.database["heatmaps"]
+            .find({}, {"date": 1, "_id": 0})
+            .sort("date", -1)
+            .limit(1)
+        )
+        documents = list(cursor)
+        if len(documents) != 0:
+            last_date = documents[0]["date"]
+        else:
+            last_date = None
 
-        # for each account
-        for acc in counts_dict.keys():
-            # make dict and store in array
-            obj_array.append(RawAnalyticsItem(acc, counts_dict[acc]).to_dict())
-
-        return obj_array
+        return last_date
