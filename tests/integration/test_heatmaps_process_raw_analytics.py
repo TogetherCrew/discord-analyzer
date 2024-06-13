@@ -38,13 +38,13 @@ class TestHeatmapsProcessRawAnalyticsSingleDay(TestCase):
         self.assertIn("reacted_per_acc", analytics.keys())
 
         self.assertIsInstance(analytics["replied_per_acc"], list)
-        self.assertIsInstance(len(analytics["replied_per_acc"]), 0)
+        self.assertEqual(len(analytics["replied_per_acc"]), 0)
 
         self.assertIsInstance(analytics["mentioner_per_acc"], list)
-        self.assertIsInstance(len(analytics["mentioner_per_acc"]), 0)
+        self.assertEqual(len(analytics["mentioner_per_acc"]), 0)
 
         self.assertIsInstance(analytics["reacted_per_acc"], list)
-        self.assertIsInstance(len(analytics["reacted_per_acc"]), 0)
+        self.assertEqual(len(analytics["reacted_per_acc"]), 0)
 
     def test_single_author(self):
         platform_id = self.heatmaps.platform_id
@@ -122,9 +122,9 @@ class TestHeatmapsProcessRawAnalyticsSingleDay(TestCase):
             author_id=9001,
         )
 
-        self.assertIsInstance(analytics["replied_per_acc"], list[RawAnalyticsItem])
-        self.assertIsInstance(analytics["mentioner_per_acc"], list[RawAnalyticsItem]),
-        self.assertIsInstance(analytics["reacted_per_acc"], list[RawAnalyticsItem]),
+        self.assertIsInstance(analytics["replied_per_acc"], list)
+        self.assertIsInstance(analytics["mentioner_per_acc"], list),
+        self.assertIsInstance(analytics["reacted_per_acc"], list),
 
         self.assertEqual(len(analytics["replied_per_acc"]), 1)
         self.assertEqual(analytics["replied_per_acc"][0].account, 9003)
@@ -217,9 +217,9 @@ class TestHeatmapsProcessRawAnalyticsSingleDay(TestCase):
             author_id=9001,
         )
 
-        self.assertIsInstance(analytics["replied_per_acc"], list[RawAnalyticsItem])
-        self.assertIsInstance(analytics["mentioner_per_acc"], list[RawAnalyticsItem]),
-        self.assertIsInstance(analytics["reacted_per_acc"], list[RawAnalyticsItem]),
+        self.assertIsInstance(analytics["replied_per_acc"], list)
+        self.assertIsInstance(analytics["mentioner_per_acc"], list),
+        self.assertIsInstance(analytics["reacted_per_acc"], list),
 
         self.assertEqual(analytics["replied_per_acc"], [])
 
