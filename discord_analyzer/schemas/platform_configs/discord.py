@@ -48,13 +48,13 @@ class DiscordAnalyzerConfig(PlatformConfigBase):
                 name="mentioner",
                 type=ActivityType.INTERACTION,
                 member_activities_used=False,
-                direction=ActivityDirection.RECEIVER,
+                direction=ActivityDirection.EMITTER,
             ),
             HourlyAnalytics(
                 name="mentioned",
                 type=ActivityType.INTERACTION,
                 member_activities_used=False,
-                direction=ActivityDirection.EMITTER,
+                direction=ActivityDirection.RECEIVER,
             ),
             HourlyAnalytics(
                 name="reacter",
@@ -81,7 +81,7 @@ class DiscordAnalyzerConfig(PlatformConfigBase):
                 name="mentioner_per_acc",
                 type=ActivityType.INTERACTION,
                 member_activities_used=True,
-                direction=ActivityDirection.RECEIVER,
+                direction=ActivityDirection.EMITTER,
             ),
             RawAnalytics(
                 name="reacted_per_acc",

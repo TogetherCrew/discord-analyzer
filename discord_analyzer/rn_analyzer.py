@@ -1,6 +1,6 @@
 import logging
 
-from discord_analyzer.analyzer.analyzer_heatmaps_old import Heatmaps
+from discord_analyzer.analyzer.heatmaps import Heatmaps
 from discord_analyzer.analyzer.analyzer_memberactivities import MemberActivities
 from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
 from discord_analyzer.analyzer.utils.analyzer_db_manager import AnalyzerDBManager
@@ -36,7 +36,9 @@ class RnDaoAnalyzer(AnalyzerDBManager):
         logging.info(f"Creating heatmaps for guild: {self.guild_id}")
 
         heatmaps_analysis = Heatmaps(self.DB_connections, self.testing)
-        heatmaps_data = heatmaps_analysis.analysis_heatmap(self.guild_id)
+
+        # TODO: update to platform_id
+        heatmaps_data = heatmaps_analysis.start(self.guild_id)
 
         # storing heatmaps since memberactivities use them
         analytics_data = {}

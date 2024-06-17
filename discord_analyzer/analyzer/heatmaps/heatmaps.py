@@ -96,7 +96,7 @@ class Heatmaps:
                     author_id = author["id"]
                     document = {
                         self.analyzer_config.resource_identifier: resource_id,
-                        "date": analytics_date,
+                        "date": analytics_date.date(),
                         "user": author_id,
                     }
                     hourly_analytics = self._process_hourly_analytics(

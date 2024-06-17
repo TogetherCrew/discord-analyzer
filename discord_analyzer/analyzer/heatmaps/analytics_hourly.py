@@ -118,6 +118,25 @@ class AnalyticsHourly:
             pipeline.append(
                 {"$match": filters},
             )
+        
+        # we need to count each enaged user as an interaction
+        if activity == "interactions":
+            pipeline.extend(
+                [
+                    {"$unwind": "$interactions.users_engaged_id"},
+                    # ignoring self-interactions
+                    {
+                        '$match': {
+                            '$expr': {
+                                '$ne': [
+                                    '$interactions.users_engaged_id',
+                                    '$author_id'
+                                ]
+                            }
+                        }
+                    },
+                ]
+            )
 
         pipeline.extend(
             [

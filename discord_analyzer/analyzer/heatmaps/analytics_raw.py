@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, time, timedelta
 
 from utils.mongo import MongoSingleton
@@ -145,12 +146,13 @@ class AnalyticsRaw:
 
         cursor = self.collection.aggregate(pipeline)
         db_result = list(cursor)
-        activity_count = self._prepare_raw_analytics_item(db_result)
+        activity_count = self._prepare_raw_analytics_item(author_id, db_result)
 
         return activity_count
 
     def _prepare_raw_analytics_item(
         self,
+        author_id: str,
         activities_data: list[dict[str, str | int]],
     ) -> list[RawAnalyticsItem]:
         """
@@ -160,6 +162,8 @@ class AnalyticsRaw:
 
         Parameters
         ------------
+        author_id : str
+            just for skipping self-interactions
         activities_data : dict[str, str | int]
             the user interaction count.
             the data will be as an example `[{'_id': 9000, 'count': 4}]`
@@ -172,10 +176,14 @@ class AnalyticsRaw:
         """
         analytics: list[RawAnalyticsItem] = []
         for data in activities_data:
-            raw_analytics = RawAnalyticsItem(
-                account=data["_id"],
-                count=data["count"],
-            )
-            analytics.append(raw_analytics)
+            if data["_id"] != author_id:
+                raw_analytics = RawAnalyticsItem(
+                    account=data["_id"],
+                    count=data["count"],
+                )
+                analytics.append(raw_analytics)
+            else:
+                # self interaction
+                logging.info("Skipping self-interaction!")
 
         return analytics
