@@ -5,22 +5,20 @@ from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
 from utils.mongo import MongoSingleton
 
 
-def test_lone_messages():
+def test_thread_messages():
     platform_id = "1122334455"
     mongo_client = MongoSingleton.get_instance().get_client()
-
     database = mongo_client[platform_id]
 
     database.drop_collection("rawmemberactivities")
     database.drop_collection("rawmembers")
-
     # data preparation
     DAY_COUNT = 2
     day = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(
         days=DAY_COUNT
     )
     # hours to include interactions
-    hours_to_include = [2, 4, 19]
+    hours_to_include = [2, 4, 5, 13, 16, 18, 19, 20, 21]
 
     acc_names = []
     prepared_rawmembers = []
@@ -44,8 +42,8 @@ def test_lone_messages():
     for i in range(DAY_COUNT):
         for hour in hours_to_include:
             for acc in acc_names:
-                data_date = (day + timedelta(days=i)).replace(hour=hour)
                 chId = "channel_0"
+                data_date = (day + timedelta(days=i)).replace(hour=hour)
                 prepared_rawdata = {
                     "author_id": acc,
                     "date": data_date,
@@ -54,10 +52,11 @@ def test_lone_messages():
                     "interactions": [],
                     "metadata": {
                         "channel_id": chId,
-                        "thread_id": None,
+                        "thread_id": chId + "THREAD",
                     },
                 }
                 prepared_rawmemberactivities.append(prepared_rawdata)
+
                 channelIds.add(chId)
                 dates.add(data_date.date())
 
@@ -72,20 +71,18 @@ def test_lone_messages():
     )
     results = analyzer_heatmaps.start(from_start=True)
 
-    assert len(results) == len(acc_names) * DAY_COUNT * len(channelIds)
+    assert len(results) == len(acc_names) * DAY_COUNT
     for document in results:
-        assert document["date"] in dates
         assert document["user"] in acc_names
+        assert document["date"] in dates
         assert document["channel_id"] in channelIds
         assert document["reacted_per_acc"] == []
         assert document["mentioner_per_acc"] == []
         assert document["replied_per_acc"] == []
-        assert sum(document["thr_messages"]) == 0
+        assert sum(document["thr_messages"]) == len(hours_to_include)
         assert sum(document["mentioner"]) == 0
         assert sum(document["replied"]) == 0
         assert sum(document["replier"]) == 0
         assert sum(document["mentioned"]) == 0
         assert sum(document["reacter"]) == 0
-
-        # the only document we have
-        assert sum(document["lone_messages"]) == len(hours_to_include)
+        assert sum(document["lone_messages"]) == 0
