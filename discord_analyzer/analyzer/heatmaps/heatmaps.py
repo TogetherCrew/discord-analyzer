@@ -1,10 +1,10 @@
 import logging
 from datetime import datetime, timedelta
 
-from discord_analyzer.analyzer.heatmaps.heatmaps_utils import HeatmapsUtils
 from discord_analyzer.analyzer.heatmaps import AnalyticsHourly, AnalyticsRaw
-from utils.mongo import MongoSingleton
+from discord_analyzer.analyzer.heatmaps.heatmaps_utils import HeatmapsUtils
 from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
+from utils.mongo import MongoSingleton
 
 
 class Heatmaps:
@@ -80,14 +80,12 @@ class Heatmaps:
 
         index = 0
         while analytics_date.date() < datetime.now().date():
-
             for resource_id in self.resources:
                 # for more efficient retrieval
                 # we're always using the cursor and re-querying the db
                 user_ids_cursor = self.utils.get_users()
 
                 for author in user_ids_cursor:
-
                     logging.info(
                         f"{log_prefix} ANALYZING HEATMAPS {index}/{iteration_count}"
                     )

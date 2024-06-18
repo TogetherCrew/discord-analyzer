@@ -1,8 +1,8 @@
 import logging
-from datetime import datetime, time, timedelta
+from datetime import datetime, date, time, timedelta
 
-from utils.mongo import MongoSingleton
 from discord_analyzer.schemas import RawAnalyticsItem
+from utils.mongo import MongoSingleton
 
 
 class AnalyticsRaw:
@@ -14,7 +14,7 @@ class AnalyticsRaw:
 
     def analyze(
         self,
-        day: datetime.date,
+        day: date,
         activity: str,
         activity_name: str,
         activity_direction: str,
@@ -77,7 +77,7 @@ class AnalyticsRaw:
 
     def get_analytics_count(
         self,
-        day: datetime.date,
+        day: date,
         activity: str,
         activity_name: str,
         author_id: str,
@@ -89,7 +89,7 @@ class AnalyticsRaw:
 
         Parameters
         ------------
-        day : datetime.date
+        day : date
             a specific day date
         activity : str
             to be `interactions` or `actions`

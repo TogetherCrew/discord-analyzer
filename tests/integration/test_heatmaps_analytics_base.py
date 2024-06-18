@@ -1,6 +1,6 @@
+from datetime import datetime
 from unittest import TestCase
 
-from datetime import datetime
 from discord_analyzer.analyzer.heatmaps.analytics_hourly import AnalyticsHourly
 from utils.mongo import MongoSingleton
 

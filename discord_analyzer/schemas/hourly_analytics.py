@@ -1,4 +1,4 @@
-from . import ActivityType, ActivityDirection
+from . import ActivityDirection, ActivityType
 
 
 class HourlyAnalytics:

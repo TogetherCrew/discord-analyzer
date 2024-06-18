@@ -1,9 +1,9 @@
+from datetime import datetime
 from unittest import TestCase
 
-from datetime import datetime
-from utils.mongo import MongoSingleton
 from discord_analyzer.analyzer.heatmaps import Heatmaps
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
+from utils.mongo import MongoSingleton
 
 
 class TestHeatmapsProcessHourlySingleDay(TestCase):

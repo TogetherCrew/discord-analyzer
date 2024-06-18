@@ -4,7 +4,6 @@ from discord_analyzer.schemas import ActivityDirection, ActivityType, HourlyAnal
 
 
 class TestHourlyAnalytics(TestCase):
-
     def test_initialization_with_metadata(self):
         analytics = HourlyAnalytics(
             name="analytics1",

@@ -1,6 +1,6 @@
+from datetime import datetime
 from unittest import TestCase
 
-from datetime import datetime
 from discord_analyzer.analyzer.heatmaps.analytics_hourly import AnalyticsHourly
 from utils.mongo import MongoSingleton
 
@@ -26,7 +26,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
             activity="actions",
             activity_name="reply",
             author_id=9000,
-            activity_type="emitter",
+            activity_direction="emitter",
             additional_filters={"metadata.channel_id": 123},
         )
 
@@ -83,7 +83,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
             activity="actions",
             activity_name="message",
             author_id=9002,
-            activity_type="emitter",
+            activity_direction="emitter",
             additional_filters={"metadata.channel_id": 2000},
         )
 
@@ -139,7 +139,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
             activity="actions",
             activity_name="message",
             author_id=9000,
-            activity_type="emitter",
+            activity_direction="emitter",
             additional_filters={
                 "metadata.channel_id": 2000,
             },
@@ -224,7 +224,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
             author_id=9001,
             activity="actions",
             activity_name="message",
-            activity_type="emitter",
+            activity_direction="emitter",
             additional_filters={"metadata.channel_id": 2000},
         )
 
@@ -269,7 +269,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                 activity_name="reply",
                 day=day,
                 author_id=9000,
-                activity_type="wrong_type",
+                activity_direction="wrong_type",
             )
 
     def test_wrong_activity(self):
@@ -281,5 +281,5 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                 activity_name="reply",
                 day=day,
                 author_id=9000,
-                activity_type="emitter",
+                activity_direction="emitter",
             )

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from discord_analyzer.schemas import ActivityType
+from discord_analyzer.schemas import ActivityType, ActivityDirection
 from discord_analyzer.schemas.platform_configs.config_base import RawAnalytics
 
 
@@ -8,7 +8,10 @@ class TestRawAnalytics(TestCase):
     def test_initialization(self):
         # Valid initialization
         raw_analytics = RawAnalytics(
-            name="analytics1", type=ActivityType.ACTION, member_activities_used=True
+            name="analytics1",
+            type=ActivityType.ACTION,
+            member_activities_used=True,
+            direction=ActivityDirection.EMITTER,
         )
         self.assertEqual(raw_analytics.name, "analytics1")
         self.assertEqual(raw_analytics.type, ActivityType.ACTION)
@@ -17,7 +20,10 @@ class TestRawAnalytics(TestCase):
         # Invalid initialization (Invalid ActivityType)
         with self.assertRaises(ValueError):
             RawAnalytics(
-                name="analytics1", type="invalid_type", member_activities_used=True
+                name="analytics1",
+                type="invalid_type",
+                member_activities_used=True,
+                direction=ActivityDirection.RECEIVER,
             )
 
     def test_to_dict(self):
@@ -25,6 +31,7 @@ class TestRawAnalytics(TestCase):
             name="analytics1",
             type=ActivityType.INTERACTION,
             member_activities_used=False,
+            direction=ActivityDirection.EMITTER,
         )
         expected_dict = {
             "name": "analytics1",

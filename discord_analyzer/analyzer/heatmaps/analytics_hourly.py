@@ -1,6 +1,6 @@
 from datetime import datetime, time, timedelta
-import numpy as np
 
+import numpy as np
 from utils.mongo import MongoSingleton
 
 

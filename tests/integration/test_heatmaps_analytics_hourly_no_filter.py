@@ -1,6 +1,6 @@
+from datetime import datetime
 from unittest import TestCase
 
-from datetime import datetime
 from discord_analyzer.analyzer.heatmaps.analytics_hourly import AnalyticsHourly
 from utils.mongo import MongoSingleton
 
@@ -138,7 +138,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
         self.assertEqual(len(hourly_analytics), 24)
         self.assertEqual(hourly_analytics, expected_analytics)
 
-    def test_get_hourly_analytics_multiple_date(self):
+    def test_get_hourly_analytics_multiple_date_multiple_data(self):
         sample_raw_data = [
             {
                 "author_id": 9000,

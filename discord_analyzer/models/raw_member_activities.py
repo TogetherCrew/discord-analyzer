@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import logging
-from datetime import datetime, timedelta, time
+from datetime import datetime, time, timedelta
 
-from discord_analyzer.models.BaseModel import BaseModel
 import numpy as np
+from discord_analyzer.models.BaseModel import BaseModel
 from utils.mongo import MongoSingleton
 
 

@@ -1,9 +1,9 @@
+from datetime import datetime, timedelta
 from unittest import TestCase
 
-from datetime import datetime, timedelta
-from utils.mongo import MongoSingleton
 from discord_analyzer.analyzer.heatmaps import Heatmaps
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
+from utils.mongo import MongoSingleton
 
 
 class TestHeatmapsAnalyticsSingleDay(TestCase):
@@ -146,7 +146,6 @@ class TestHeatmapsAnalyticsSingleDay(TestCase):
             self.assertEqual(sum(analytics[i]["reacter"]), 0)
             self.assertEqual(sum(analytics[i]["reacted"]), 0)
 
-            self.assertEqual(analytics[i]["mentioner_per_acc"], [])
             self.assertEqual(analytics[i]["mentioner_per_acc"], [])
             self.assertEqual(analytics[i]["reacted_per_acc"], [])
 

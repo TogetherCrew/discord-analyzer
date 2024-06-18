@@ -1,9 +1,9 @@
-from unittest import TestCase
 from datetime import datetime, timedelta
+from unittest import TestCase
 
 from discord_analyzer.analyzer.heatmaps.analytics_raw import AnalyticsRaw
-from utils.mongo import MongoSingleton
 from discord_analyzer.schemas import ActivityDirection, RawAnalyticsItem
+from utils.mongo import MongoSingleton
 
 
 class TestHeatmapsRawAnalytics(TestCase):
@@ -29,12 +29,6 @@ class TestHeatmapsRawAnalytics(TestCase):
                             9003,
                         ],
                         "type": "receiver",
-                    }
-                ],
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter",
                     }
                 ],
             },
@@ -79,12 +73,6 @@ class TestHeatmapsRawAnalytics(TestCase):
                         "type": "receiver",
                     }
                 ],
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter",
-                    }
-                ],
             },
         ]
         self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
@@ -121,12 +109,6 @@ class TestHeatmapsRawAnalytics(TestCase):
                             9003,
                         ],
                         "type": "receiver",
-                    }
-                ],
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter",
                     }
                 ],
             },
@@ -167,12 +149,6 @@ class TestHeatmapsRawAnalytics(TestCase):
                         "type": "receiver",
                     }
                 ],
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter",
-                    }
-                ],
             },
         ]
         self.mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
@@ -208,12 +184,6 @@ class TestHeatmapsRawAnalytics(TestCase):
                             9003,
                         ],
                         "type": "receiver",
-                    }
-                ],
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter",
                     }
                 ],
             },
@@ -254,12 +224,6 @@ class TestHeatmapsRawAnalytics(TestCase):
                         "type": "receiver",
                     }
                 ],
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter",
-                    }
-                ],
             },
             {
                 "author_id": 9000,
@@ -272,12 +236,6 @@ class TestHeatmapsRawAnalytics(TestCase):
                         "name": "reply",
                         "users_engaged_id": [9006, 9005],
                         "type": "receiver",
-                    }
-                ],
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter",
                     }
                 ],
             },
@@ -294,12 +252,6 @@ class TestHeatmapsRawAnalytics(TestCase):
                             9001,
                         ],
                         "type": "receiver",
-                    }
-                ],
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter",
                     }
                 ],
             },
