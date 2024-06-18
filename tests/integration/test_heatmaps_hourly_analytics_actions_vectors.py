@@ -43,7 +43,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                 "date": datetime(2023, 1, 1, 2),
                 "source_id": "10000",
                 "metadata": {"thread_id": 7000, "channel_id": 2000},
-                "actions": [{"name": "message", "type": "receiver"}],
+                "actions": [{"name": "message", "type": "emitter"}],
                 "interactions": [
                     {
                         "name": "reply",
@@ -59,7 +59,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                 "date": datetime(2023, 1, 1, 6),
                 "source_id": "10001",
                 "metadata": {"thread_id": 7000, "channel_id": 2000},
-                "actions": [{"name": "message", "type": "receiver"}],
+                "actions": [{"name": "message", "type": "emitter"}],
                 "interactions": [
                     {
                         "name": "mention",
@@ -94,7 +94,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                 "date": datetime(2023, 1, 1, 2),
                 "source_id": "10000",
                 "metadata": {"thread_id": 7000, "channel_id": 2000},
-                "actions": [{"name": "message", "type": "receiver"}],
+                "actions": [{"name": "message", "type": "emitter"}],
                 "interactions": [
                     {
                         "name": "reply",
@@ -110,7 +110,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                 "date": day,
                 "source_id": "10001",
                 "metadata": {"thread_id": 7000, "channel_id": 2000},
-                "actions": [{"name": "message", "type": "receiver"}],
+                "actions": [{"name": "message", "type": "emitter"}],
                 "interactions": [
                     {
                         "name": "mention",
@@ -174,7 +174,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                 "date": datetime(2023, 1, 1, 2),
                 "source_id": "10000",
                 "metadata": {"thread_id": 7000, "channel_id": 2000},
-                "actions": [{"name": "message", "type": "receiver"}],
+                "actions": [{"name": "message", "type": "emitter"}],
                 "interactions": [],
             },
             {
@@ -182,7 +182,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                 "date": datetime(2023, 1, 1, 5),
                 "source_id": "10001",
                 "metadata": {"thread_id": 7000, "channel_id": 2000},
-                "actions": [{"name": "message", "type": "receiver"}],
+                "actions": [{"name": "message", "type": "emitter"}],
                 "interactions": [
                     {
                         "name": "mention",
