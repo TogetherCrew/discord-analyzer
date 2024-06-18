@@ -1,6 +1,6 @@
 import os
 
-from discord_analyzer import RnDaoAnalyzer
+from discord_analyzer.rn_analyzer import RnDaoAnalyzer
 from dotenv import load_dotenv
 from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
 from tc_core_analyzer_lib.utils.activity import DiscordActivity

@@ -138,7 +138,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
         self.assertEqual(len(hourly_analytics), 24)
         self.assertEqual(hourly_analytics, expected_analytics)
 
-    def test_get_hourly_analytics_multiple_date_multiple_data(self):
+    def test_get_hourly_analytics_multiple_date_multiple_authors(self):
         sample_raw_data = [
             {
                 "author_id": 9000,

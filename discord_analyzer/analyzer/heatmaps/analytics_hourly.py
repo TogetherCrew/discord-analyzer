@@ -1,4 +1,4 @@
-from datetime import datetime, time, timedelta
+from datetime import date, datetime, time, timedelta
 from typing import Any
 
 import numpy as np
@@ -14,7 +14,7 @@ class AnalyticsHourly:
 
     def analyze(
         self,
-        day: datetime.date,
+        day: date,
         activity: str,
         activity_name: str,
         activity_direction: str,
@@ -26,7 +26,7 @@ class AnalyticsHourly:
 
         Parameters
         ------------
-        day : datetime.date
+        day : date
             analyze for a specific day
         activity : str
             the activity to be `actions` or `interactions`
@@ -72,7 +72,7 @@ class AnalyticsHourly:
 
     def get_hourly_analytics(
         self,
-        day: datetime.date,
+        day: date,
         activity: str,
         author_id: str | int,
         filters: dict[str, dict[str, Any] | str] | None = None,
@@ -82,7 +82,7 @@ class AnalyticsHourly:
 
         Parameters
         ------------
-        day : datetime.date
+        day : date
             a specific day date
         activity : str
             to be `interactions` or `actions`

@@ -1,6 +1,6 @@
 from typing import Any
 
-from discord_analyzer import RnDaoAnalyzer
+from discord_analyzer.rn_analyzer import RnDaoAnalyzer
 from utils.credentials import get_mongo_credentials
 
 

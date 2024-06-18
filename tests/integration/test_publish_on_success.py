@@ -1,7 +1,6 @@
 import os
 from datetime import datetime, timedelta
 
-import pytest
 from automation.utils.interfaces import (
     Automation,
     AutomationAction,
@@ -9,19 +8,18 @@ from automation.utils.interfaces import (
     AutomationTrigger,
 )
 from bson.objectid import ObjectId
+from discord_utils import publish_on_success
 from dotenv import load_dotenv
 from utils.credentials import get_mongo_credentials
 
+from .utils.analyzer_setup import launch_db_access
 
-@pytest.mark.skip("Skipping for now as memberactivities is not updated!")
+
 def test_publish_on_success_check_notification_choreographies():
     """
     test the publish on success functions
     we want to check the database if the notify choreographies are created
     """
-    from discord_utils import publish_on_success
-    from .utils.analyzer_setup import launch_db_access
-
     load_dotenv()
     platform_id = "515151515151515151515151"
     guild_id = "1234"

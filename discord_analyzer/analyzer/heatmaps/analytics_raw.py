@@ -153,7 +153,7 @@ class AnalyticsRaw:
 
     def _prepare_raw_analytics_item(
         self,
-        author_id: str,
+        author_id: str | int,
         activities_data: list[dict[str, str | int]],
     ) -> list[RawAnalyticsItem]:
         """

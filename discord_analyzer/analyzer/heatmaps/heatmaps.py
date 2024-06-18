@@ -171,13 +171,14 @@ class Heatmaps:
             # the mongodb condition is given in their configuration
             else:
                 conditions = config.rawmemberactivities_condition
-                activity_name = config.activity_name
 
-                if activity_name is None or conditions is None:
+                if config.activity_name is None or conditions is None:
                     raise ValueError(
                         "For custom analytics the `activity_name` and `conditions`"
                         "in analyzer config shouldn't be None"
                     )
+
+                activity_name = config.activity_name
 
                 analytics_vector = analytics_hourly.analyze(
                     day=day,
@@ -198,7 +199,7 @@ class Heatmaps:
         self,
         day: date,
         resource: str,
-        author_id: str,
+        author_id: str | int,
     ) -> dict[str, list[dict]]:
         analytics_raw = AnalyticsRaw(self.platform_id)
         analytics: dict[str, list[dict]] = {}
