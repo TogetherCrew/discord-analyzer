@@ -11,7 +11,6 @@ class AnalyticsHourly:
         self.collection = client[platform_id]["rawmemberactivities"]
         self.msg_prefix = f"PLATFORMID: {platform_id}:"
 
-    
     def analyze(
         self,
         day: datetime.date,
@@ -38,7 +37,7 @@ class AnalyticsHourly:
             the author to filter data for
         activity_direction : str
             should be always either `emitter` or `receiver`
-        **kwargs : 
+        **kwargs :
             additional_filters : dict[str, str]
                 the additional filtering for `rawmemberactivities` data of each platform
                 the keys could be `metadata.channel_id` with a specific value
@@ -56,7 +55,7 @@ class AnalyticsHourly:
                 "Wrong `activity` given, "
                 "should be either `interactions` or `actions`"
             )
-        
+
         activity_vector = self.get_hourly_analytics(
             day=day,
             activity=activity,
@@ -118,7 +117,7 @@ class AnalyticsHourly:
             pipeline.append(
                 {"$match": filters},
             )
-        
+
         # we need to count each enaged user as an interaction
         if activity == "interactions":
             pipeline.extend(
@@ -126,12 +125,9 @@ class AnalyticsHourly:
                     {"$unwind": "$interactions.users_engaged_id"},
                     # ignoring self-interactions
                     {
-                        '$match': {
-                            '$expr': {
-                                '$ne': [
-                                    '$interactions.users_engaged_id',
-                                    '$author_id'
-                                ]
+                        "$match": {
+                            "$expr": {
+                                "$ne": ["$interactions.users_engaged_id", "$author_id"]
                             }
                         }
                     },

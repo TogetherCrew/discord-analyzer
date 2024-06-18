@@ -22,7 +22,9 @@ class TestRawAnalytics(TestCase):
 
     def test_to_dict(self):
         raw_analytics = RawAnalytics(
-            name="analytics1", type=ActivityType.INTERACTION, member_activities_used=False
+            name="analytics1",
+            type=ActivityType.INTERACTION,
+            member_activities_used=False,
         )
         expected_dict = {
             "name": "analytics1",

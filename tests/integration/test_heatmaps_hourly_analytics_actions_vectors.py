@@ -7,8 +7,9 @@ from utils.mongo import MongoSingleton
 
 class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
     """
-    test the 24 hour vector 
+    test the 24 hour vector
     """
+
     def setUp(self) -> None:
         client = MongoSingleton.get_instance().get_client()
         platform_id = "781298"
@@ -57,7 +58,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                         "name": "message",
                         "type": "emitter",
                     }
-                ]
+                ],
             },
             {
                 "author_id": 9001,
@@ -114,7 +115,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                         "name": "message",
                         "type": "emitter",
                     }
-                ]
+                ],
             },
             {
                 "author_id": 9001,
@@ -192,7 +193,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                         "name": "message",
                         "type": "emitter",
                     }
-                ]
+                ],
             },
             {
                 "author_id": 9001,
@@ -213,7 +214,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                         "name": "message",
                         "type": "emitter",
                     }
-                ]
+                ],
             },
         ]
         self.database["rawmemberactivities"].insert_many(sample_raw_data)
@@ -264,8 +265,8 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
 
         with self.assertRaises(ValueError):
             self.analytics.analyze(
-            activity="interactions",
-            activity_name="reply",
+                activity="interactions",
+                activity_name="reply",
                 day=day,
                 author_id=9000,
                 activity_type="wrong_type",
@@ -276,8 +277,8 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
 
         with self.assertRaises(ValueError):
             self.analytics.analyze(
-            activity="activity1",
-            activity_name="reply",
+                activity="activity1",
+                activity_name="reply",
                 day=day,
                 author_id=9000,
                 activity_type="emitter",

@@ -7,8 +7,9 @@ from utils.mongo import MongoSingleton
 
 class TestHeatmapsRawAnalyticsVectorsInteractions(TestCase):
     """
-    test the 24 hour vector 
+    test the 24 hour vector
     """
+
     def setUp(self) -> None:
         client = MongoSingleton.get_instance().get_client()
         platform_id = "781298"
@@ -355,8 +356,8 @@ class TestHeatmapsRawAnalyticsVectorsInteractions(TestCase):
 
         with self.assertRaises(ValueError):
             self.analytics.analyze(
-            activity="interactions",
-            activity_name="reply",
+                activity="interactions",
+                activity_name="reply",
                 day=day,
                 author_id=9000,
                 activity_direction="wrong_type",
@@ -367,8 +368,8 @@ class TestHeatmapsRawAnalyticsVectorsInteractions(TestCase):
 
         with self.assertRaises(ValueError):
             self.analytics.analyze(
-            activity="activity1",
-            activity_name="reply",
+                activity="activity1",
+                activity_name="reply",
                 day=day,
                 author_id=9000,
                 activity_direction="emitter",
