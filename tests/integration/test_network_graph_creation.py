@@ -8,11 +8,10 @@ from discord_analyzer.analysis.utils.activity import Activity
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
-@pytest.mark.skip(
-    "To be updated to platform centric!"
-)
+@pytest.mark.skip("To be updated to platform centric!")
 def test_network_graph_create():
     from .utils.mock_graph import generate_mock_graph, store_mock_data_in_neo4j
+
     community_id = "4321"
     neo4j_ops = Neo4jOps.get_instance()
     # deleting all data

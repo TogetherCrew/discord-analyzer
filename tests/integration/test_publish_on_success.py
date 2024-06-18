@@ -14,15 +14,14 @@ from dotenv import load_dotenv
 from utils.credentials import get_mongo_credentials
 
 
-@pytest.mark.skip(
-    "Skipping for now as memberactivities is not updated!"
-)
+@pytest.mark.skip("Skipping for now as memberactivities is not updated!")
 def test_publish_on_success_check_notification_choreographies():
     """
     test the publish on success functions
     we want to check the database if the notify choreographies are created
     """
     from .utils.analyzer_setup import launch_db_access
+
     load_dotenv()
     platform_id = "515151515151515151515151"
     guild_id = "1234"

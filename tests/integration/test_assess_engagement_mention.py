@@ -11,9 +11,7 @@ from .utils.analyzer_setup import launch_db_access
 from .utils.remove_and_setup_guild import setup_db_guild
 
 
-@pytest.mark.skip(
-    "Skipping for now as memberactivities is not updated!"
-)
+@pytest.mark.skip("Skipping for now as memberactivities is not updated!")
 class TestAssessEngagementMentions(TestCase):
     def setUp(self) -> None:
         self.guildId = "1234"
@@ -37,6 +35,7 @@ class TestAssessEngagementMentions(TestCase):
         heatmaps are the input for assess_engagement's interaction matrix
         """
         from discord_analyzer.analyzer.heatmaps import Heatmaps
+
         heatmaps = Heatmaps(DB_connections=self.db_connections, testing=False)
         heatmaps_data = heatmaps.analysis_heatmap(guildId=self.guildId, from_start=True)
         analytics_data = {}

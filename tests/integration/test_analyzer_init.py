@@ -5,12 +5,10 @@ import pytest
 from utils.mongo import MongoSingleton
 
 
-@pytest.mark.skip(
-    "To be removed! "
-    "Analyzer will be a library."
-)
+@pytest.mark.skip("To be removed! " "Analyzer will be a library.")
 def test_analyzer_init():
     from analyzer_init import AnalyzerInit
+
     platform_id = "515151515151515151515151"
     days_ago_period = 30
     community_id = "aabbccddeeff001122334455"
