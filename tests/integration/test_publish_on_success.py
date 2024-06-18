@@ -1,7 +1,7 @@
 import os
 from datetime import datetime, timedelta
-import pytest
 
+import pytest
 from automation.utils.interfaces import (
     Automation,
     AutomationAction,

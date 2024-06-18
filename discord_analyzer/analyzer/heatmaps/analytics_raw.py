@@ -1,5 +1,6 @@
 import logging
-from datetime import datetime, date, time, timedelta
+from datetime import date, datetime, time, timedelta
+from typing import Any
 
 from discord_analyzer.schemas import RawAnalyticsItem
 from utils.mongo import MongoSingleton
@@ -80,10 +81,10 @@ class AnalyticsRaw:
         day: date,
         activity: str,
         activity_name: str,
-        author_id: str,
+        author_id: str | int,
         activity_direction: str,
         **kwargs,
-    ) -> RawAnalyticsItem:
+    ) -> list[RawAnalyticsItem]:
         """
         Gets the list of documents for the stated day
 
@@ -96,7 +97,7 @@ class AnalyticsRaw:
         activity_name : str
             the activity name to do filtering
             could be `reply`, `reaction`, `mention, or ...
-        author_id : str
+        author_id : str | int
             the author to do analytics on its data
         activity_direction : str
             the direction of activity
@@ -113,7 +114,7 @@ class AnalyticsRaw:
             raw analytics item which holds the user and
             the count of interaction in that day
         """
-        filters: dict[str, dict[str] | str] | None = kwargs.get("filters")
+        filters: dict[str, dict[str, Any] | str] | None = kwargs.get("filters")
         start_day = datetime.combine(day, time(0, 0, 0))
         end_day = start_day + timedelta(days=1)
 
@@ -178,8 +179,8 @@ class AnalyticsRaw:
         for data in activities_data:
             if data["_id"] != author_id:
                 raw_analytics = RawAnalyticsItem(
-                    account=data["_id"],
-                    count=data["count"],
+                    account=data["_id"],  # type: ignore
+                    count=data["count"],  # type: ignore
                 )
                 analytics.append(raw_analytics)
             else:

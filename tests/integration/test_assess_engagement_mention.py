@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from unittest import TestCase
-import pytest
 
+import pytest
 from discord_analyzer.analysis.utils.member_activity_utils import assess_engagement
 from discord_analyzer.analyzer.utils.analyzer_db_manager import AnalyzerDBManager
 from tc_core_analyzer_lib.utils.activity import DiscordActivity

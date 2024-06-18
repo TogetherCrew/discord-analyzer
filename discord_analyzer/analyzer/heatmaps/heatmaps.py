@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 from discord_analyzer.analyzer.heatmaps import AnalyticsHourly, AnalyticsRaw
 from discord_analyzer.analyzer.heatmaps.heatmaps_utils import HeatmapsUtils
@@ -119,26 +119,25 @@ class Heatmaps:
 
     def _process_hourly_analytics(
         self,
-        day: datetime.date,
+        day: date,
         resource: str,
-        author_id: str,
+        author_id: str | int,
     ) -> dict[str, list]:
         """
         start processing hourly analytics for a day based on given config
 
         Parameters
         ------------
-        day : datetime.date
+        day : date
             analyze for a specific day
         resurce : str
             the resource we want to apply the filtering on
-        author_id : str
+        author_id : str | int
             the author to filter data for
         """
         analytics_hourly = AnalyticsHourly(self.platform_id)
         analytics: dict[str, list[int]] = {}
         for config in self.analyzer_config.hourly_analytics:
-
             # if it was a predefined analytics
             if config.name in [
                 "replied",
@@ -174,9 +173,9 @@ class Heatmaps:
                 conditions = config.rawmemberactivities_condition
                 activity_name = config.activity_name
 
-                if activity_name is None:
+                if activity_name is None or conditions is None:
                     raise ValueError(
-                        "For custom analytics the `activity_name` "
+                        "For custom analytics the `activity_name` and `conditions`"
                         "in analyzer config shouldn't be None"
                     )
 
@@ -197,7 +196,7 @@ class Heatmaps:
 
     def _process_raw_analytics(
         self,
-        day: datetime.date,
+        day: date,
         resource: str,
         author_id: str,
     ) -> dict[str, list[dict]]:
@@ -205,7 +204,6 @@ class Heatmaps:
         analytics: dict[str, list[dict]] = {}
 
         for config in self.analyzer_config.raw_analytics:
-
             # default analytics that we always can have
             activity_name: str
             if config.name == "reacted_per_acc":

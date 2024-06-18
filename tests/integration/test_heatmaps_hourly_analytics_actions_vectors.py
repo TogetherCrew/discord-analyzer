@@ -53,12 +53,6 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                         "type": "receiver",
                     }
                 ],
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter",
-                    }
-                ],
             },
             {
                 "author_id": 9001,
@@ -107,12 +101,6 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                         "users_engaged_id": [
                             9003,
                         ],
-                        "type": "emitter",
-                    }
-                ],
-                "actions": [
-                    {
-                        "name": "message",
                         "type": "emitter",
                     }
                 ],
@@ -188,12 +176,6 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                 "metadata": {"thread_id": 7000, "channel_id": 2000},
                 "actions": [{"name": "message", "type": "receiver"}],
                 "interactions": [],
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter",
-                    }
-                ],
             },
             {
                 "author_id": 9001,
@@ -208,12 +190,6 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
                         "type": "emitter",
                     },
                     {"name": "reply", "users_engaged_id": [9003], "type": "emitter"},
-                ],
-                "actions": [
-                    {
-                        "name": "message",
-                        "type": "emitter",
-                    }
                 ],
             },
         ]

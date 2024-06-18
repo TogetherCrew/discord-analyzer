@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from bson.objectid import ObjectId
 import pytest
+from bson.objectid import ObjectId
 from utils.mongo import MongoSingleton
 
 

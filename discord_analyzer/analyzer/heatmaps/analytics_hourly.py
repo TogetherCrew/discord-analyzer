@@ -1,4 +1,5 @@
 from datetime import datetime, time, timedelta
+from typing import Any
 
 import numpy as np
 from utils.mongo import MongoSingleton
@@ -17,7 +18,7 @@ class AnalyticsHourly:
         activity: str,
         activity_name: str,
         activity_direction: str,
-        author_id: int,
+        author_id: str | int,
         **kwargs,
     ) -> list[int]:
         """
@@ -73,8 +74,8 @@ class AnalyticsHourly:
         self,
         day: datetime.date,
         activity: str,
-        author_id: str,
-        filters: dict[str, dict[str] | str] | None = None,
+        author_id: str | int,
+        filters: dict[str, dict[str, Any] | str] | None = None,
     ) -> list[int]:
         """
         Gets the list of documents for the stated day

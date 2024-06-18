@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from discord_analyzer.schemas import ActivityType, ActivityDirection
+from discord_analyzer.schemas import ActivityDirection, ActivityType
 from discord_analyzer.schemas.platform_configs.config_base import RawAnalytics
 
 

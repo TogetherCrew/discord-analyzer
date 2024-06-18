@@ -169,7 +169,6 @@ class TestHeatmapsAnalyticsSingleDay(TestCase):
                 "reacter": [0] * 24,
                 "reacted": [0] * 24,
                 "mentioner_per_acc": [],
-                "mentioner_per_acc": [],
                 "reacted_per_acc": [],
             }
         )

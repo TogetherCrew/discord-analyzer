@@ -1,9 +1,9 @@
 # test out local clustering coefficient with all nodes connected
 from datetime import datetime, timedelta
 
-import pytest
 import networkx as nx
 import numpy as np
+import pytest
 from discord_analyzer.analysis.utils.activity import Activity
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
