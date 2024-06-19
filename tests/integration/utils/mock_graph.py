@@ -1,6 +1,6 @@
 import os
 
-from discord_analyzer.rn_analyzer import RnDaoAnalyzer
+from discord_analyzer.tc_analyzer import TCAnalyzer
 from dotenv import load_dotenv
 from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
 from tc_core_analyzer_lib.utils.activity import DiscordActivity
@@ -72,7 +72,7 @@ def store_mock_data_in_neo4j(graph_dict, guildId, community_id):
     host = os.getenv("MONGODB_HOST")
     port = os.getenv("MONGODB_PORT")
 
-    analyzer = RnDaoAnalyzer(guildId)
+    analyzer = TCAnalyzer(guildId)
 
     analyzer.set_mongo_database_info(
         mongo_db_host=host,

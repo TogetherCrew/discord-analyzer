@@ -8,9 +8,9 @@ from discord_analyzer.analyzer.utils.platform import Platform
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
 
 
-class RnDaoAnalyzer(AnalyzerDBManager):
+class TCAnalyzer(AnalyzerDBManager):
     """
-    RnDaoAnalyzer
+    TCAnalyzer
     class that handles database connections and data analysis
     """
 

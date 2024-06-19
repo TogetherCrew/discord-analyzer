@@ -1,16 +1,16 @@
 import os
 
 from discord_analyzer.DB_operations.mongodb_access import DB_access
-from discord_analyzer.rn_analyzer import RnDaoAnalyzer
+from discord_analyzer.tc_analyzer import TCAnalyzer
 from dotenv import load_dotenv
 
 
 def setup_analyzer(
     guild_id: str,
-) -> RnDaoAnalyzer:
+) -> TCAnalyzer:
     load_dotenv()
 
-    analyzer = RnDaoAnalyzer(guild_id)
+    analyzer = TCAnalyzer(guild_id)
 
     user = os.getenv("MONGODB_USER", "")
     password = os.getenv("MONGODB_PASS", "")

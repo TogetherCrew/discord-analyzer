@@ -1,6 +1,6 @@
 from typing import Any
 
-from discord_analyzer.rn_analyzer import RnDaoAnalyzer
+from discord_analyzer.tc_analyzer import TCAnalyzer
 from utils.credentials import get_mongo_credentials
 
 
@@ -13,13 +13,13 @@ class AnalyzerInit:
     def __init__(self, guild_id: str) -> None:
         self.guild_id = guild_id
 
-    def get_analyzer(self) -> RnDaoAnalyzer:
+    def get_analyzer(self) -> TCAnalyzer:
         """
         Returns:
         ---------
-        analyzer : RnDaoAnalyzer
+        analyzer : TCAnalyzer
         """
-        analyzer = RnDaoAnalyzer(self.guild_id)
+        analyzer = TCAnalyzer(self.guild_id)
 
         # credentials
         mongo_creds = get_mongo_credentials()
