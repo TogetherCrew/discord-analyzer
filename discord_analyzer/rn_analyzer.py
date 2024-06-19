@@ -4,7 +4,8 @@ from discord_analyzer.analyzer.analyzer_memberactivities import MemberActivities
 from discord_analyzer.analyzer.heatmaps import Heatmaps
 from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
 from discord_analyzer.analyzer.utils.analyzer_db_manager import AnalyzerDBManager
-from discord_analyzer.analyzer.utils.guild import Guild
+from discord_analyzer.analyzer.utils.platform import Platform
+from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
 
 
 class RnDaoAnalyzer(AnalyzerDBManager):
@@ -13,19 +14,24 @@ class RnDaoAnalyzer(AnalyzerDBManager):
     class that handles database connections and data analysis
     """
 
-    def __init__(self, guild_id: str, testing=False):
+    def __init__(
+        self,
+        platform_id: str,
+    ):
         """
         Class initiation function
         """
-        """ Testing, prevents from data upload"""
         logging.basicConfig()
         logging.getLogger().setLevel(logging.INFO)
 
-        self.testing = testing
+        # hard-coded for now
+        # TODO: define a structure and make it read from db
+        self.analyzer_config = DiscordAnalyzerConfig()
+
         self.neo4j_analytics = Neo4JAnalytics()
-        self.guild_object = Guild(guild_id)
-        self.guild_id = guild_id
-        self.community_id = self.guild_object.get_community_id()
+        self.platform_utils = Platform(platform_id)
+        self.platform_id = platform_id
+        self.community_id = self.platform_utils.get_community_id()
 
     def run_once(self):
         """Run analysis once (Wrapper)"""
@@ -33,12 +39,15 @@ class RnDaoAnalyzer(AnalyzerDBManager):
         # if not, will raise an error
         self.check_guild()
 
-        logging.info(f"Creating heatmaps for guild: {self.guild_id}")
+        logging.info(f"Creating heatmaps for platform id: {self.platform_id}")
 
-        heatmaps_analysis = Heatmaps(self.DB_connections, self.testing)
-
-        # TODO: update to platform_id
-        heatmaps_data = heatmaps_analysis.start(self.guild_id)
+        heatmaps_analysis = Heatmaps(
+            platform_id=self.platform_id,
+            period=self.platform_utils.get_platform_period(),
+            resources=self.platform_utils.get_platform_resources(),
+            analyzer_config=self.analyzer_config,
+        )
+        heatmaps_data = heatmaps_analysis.start(self.platform_id)
 
         # storing heatmaps since memberactivities use them
         analytics_data = {}
@@ -47,7 +56,7 @@ class RnDaoAnalyzer(AnalyzerDBManager):
 
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
-            guild_id=self.guild_id,
+            guild_id=self.platform_id,
             community_id=self.community_id,
             remove_memberactivities=False,
             remove_heatmaps=False,
@@ -58,7 +67,7 @@ class RnDaoAnalyzer(AnalyzerDBManager):
             member_activities_data,
             member_acitivities_networkx_data,
         ) = memberactivities_analysis.analysis_member_activity(
-            self.guild_id, self.connection_str
+            self.platform_id, self.connection_str
         )
 
         analytics_data = {}
@@ -71,15 +80,15 @@ class RnDaoAnalyzer(AnalyzerDBManager):
 
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
-            guild_id=self.guild_id,
+            guild_id=self.platform_id,
             community_id=self.community_id,
             remove_heatmaps=False,
             remove_memberactivities=False,
         )
 
-        self.neo4j_analytics.compute_metrics(guildId=self.guild_id, from_start=False)
+        self.neo4j_analytics.compute_metrics(guildId=self.platform_id, from_start=False)
 
-        self.guild_object.update_isin_progress()
+        self.platform_utils.update_isin_progress()
 
     def recompute_analytics(self):
         """
@@ -104,12 +113,14 @@ class RnDaoAnalyzer(AnalyzerDBManager):
         # if not, will raise an error
         self.check_guild()
 
-        heatmaps_analysis = Heatmaps(self.DB_connections, self.testing)
-
-        logging.info(f"Analyzing the Heatmaps data for guild: {self.guild_id}!")
-        heatmaps_data = heatmaps_analysis.analysis_heatmap(
-            guildId=self.guild_id, from_start=True
+        logging.info(f"Analyzing the Heatmaps data for guild: {self.platform_id}!")
+        heatmaps_analysis = Heatmaps(
+            platform_id=self.platform_id,
+            period=self.platform_utils.get_platform_period(),
+            resources=self.platform_utils.get_platform_resources(),
+            analyzer_config=self.analyzer_config,
         )
+        heatmaps_data = heatmaps_analysis.start(self.platform_id)
 
         # storing heatmaps since memberactivities use them
         analytics_data = {}
@@ -118,20 +129,22 @@ class RnDaoAnalyzer(AnalyzerDBManager):
 
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
-            guild_id=self.guild_id,
+            guild_id=self.platform_id,
             community_id=self.community_id,
             remove_memberactivities=False,
             remove_heatmaps=True,
         )
 
         # run the member_activity analyze
-        logging.info(f"Analyzing the MemberActivities data for guild: {self.guild_id}!")
+        logging.info(
+            f"Analyzing the MemberActivities data for guild: {self.platform_id}!"
+        )
         memberactivity_analysis = MemberActivities(self.DB_connections)
         (
             member_activities_data,
             member_acitivities_networkx_data,
         ) = memberactivity_analysis.analysis_member_activity(
-            self.guild_id, self.connection_str, from_start=True
+            self.platform_id, self.connection_str, from_start=True
         )
 
         # storing whole data into a dictinoary
@@ -143,22 +156,22 @@ class RnDaoAnalyzer(AnalyzerDBManager):
             member_acitivities_networkx_data,
         )
 
-        logging.info(f"Storing analytics data for guild: {self.guild_id}!")
+        logging.info(f"Storing analytics data for guild: {self.platform_id}!")
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
-            guild_id=self.guild_id,
+            guild_id=self.platform_id,
             community_id=self.community_id,
             remove_memberactivities=True,
             remove_heatmaps=False,
         )
 
-        self.neo4j_analytics.compute_metrics(guildId=self.guild_id, from_start=True)
-        self.guild_object.update_isin_progress()
+        self.neo4j_analytics.compute_metrics(guildId=self.platform_id, from_start=True)
+        self.platform_utils.update_isin_progress()
 
     def check_guild(self):
         """
         check if the guild is available
         """
-        exist = self.guild_object.check_existance()
+        exist = self.platform_utils.check_existance()
         if exist is False:
-            raise ValueError(f"Guild with guildId: {self.guild_id} doesn't exist!")
+            raise ValueError(f"Guild with guildId: {self.platform_id} doesn't exist!")
