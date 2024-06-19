@@ -3,7 +3,7 @@ from typing import Any
 
 import numpy as np
 import pymongo
-from discord_analyzer.analysis.compute_interaction_matrix_discord import (
+from discord_analyzer.algorithms.compute_interaction_matrix_discord import (
     compute_interaction_matrix_discord,
 )
 from discord_analyzer.DB_operations.mongodb_access import DB_access

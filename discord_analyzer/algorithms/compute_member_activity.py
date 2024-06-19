@@ -11,11 +11,11 @@ from datetime import datetime, timedelta
 import networkx as nx
 import numpy as np
 from dateutil.relativedelta import relativedelta
-from discord_analyzer.analysis.member_activity_history import check_past_history
-from discord_analyzer.analysis.utils.member_activity_history_utils import (
+from discord_analyzer.algorithms.member_activity_history import check_past_history
+from discord_analyzer.algorithms.utils.member_activity_history_utils import (
     MemberActivityPastUtils,
 )
-from discord_analyzer.analysis.utils.member_activity_utils import (
+from discord_analyzer.algorithms.utils.member_activity_utils import (
     assess_engagement,
     convert_to_dict,
     get_joined_accounts,

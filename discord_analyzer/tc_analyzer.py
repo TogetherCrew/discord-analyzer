@@ -1,10 +1,10 @@
 import logging
 
-from discord_analyzer.analyzer.analyzer_memberactivities import MemberActivities
-from discord_analyzer.analyzer.heatmaps import Heatmaps
-from discord_analyzer.analyzer.neo4j_analytics import Neo4JAnalytics
-from discord_analyzer.analyzer.utils.analyzer_db_manager import AnalyzerDBManager
-from discord_analyzer.analyzer.utils.platform import Platform
+from discord_analyzer.metrics.analyzer_memberactivities import MemberActivities
+from discord_analyzer.metrics.heatmaps import Heatmaps
+from discord_analyzer.metrics.neo4j_analytics import Neo4JAnalytics
+from discord_analyzer.metrics.utils.analyzer_db_manager import AnalyzerDBManager
+from discord_analyzer.metrics.utils.platform import Platform
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
 
 

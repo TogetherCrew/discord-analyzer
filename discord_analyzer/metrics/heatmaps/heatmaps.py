@@ -1,8 +1,8 @@
 import logging
 from datetime import date, datetime, timedelta
 
-from discord_analyzer.analyzer.heatmaps import AnalyticsHourly, AnalyticsRaw
-from discord_analyzer.analyzer.heatmaps.heatmaps_utils import HeatmapsUtils
+from discord_analyzer.metrics.heatmaps import AnalyticsHourly, AnalyticsRaw
+from discord_analyzer.metrics.heatmaps.heatmaps_utils import HeatmapsUtils
 from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
 from utils.mongo import MongoSingleton
 

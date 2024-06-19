@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 import numpy as np
-from discord_analyzer.analysis.utils.member_activity_utils import get_users_past_window
+from discord_analyzer.algorithms.utils.member_activity_utils import get_users_past_window
 
 from .utils.analyzer_setup import launch_db_access
 

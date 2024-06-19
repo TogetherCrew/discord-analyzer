@@ -1,4 +1,4 @@
-from discord_analyzer.analysis.analytics_interactions_script import (
+from discord_analyzer.algorithms.analytics_interactions_script import (
     filter_channel_thread,
 )
 

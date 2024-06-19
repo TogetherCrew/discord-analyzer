@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from discord_analyzer.analyzer.heatmaps.analytics_hourly import AnalyticsHourly
+from discord_analyzer.metrics.heatmaps.analytics_hourly import AnalyticsHourly
 
 
 class TestRawMemberActivitiesProcessVectors(TestCase):

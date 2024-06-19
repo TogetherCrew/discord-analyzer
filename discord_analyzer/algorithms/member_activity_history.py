@@ -4,7 +4,7 @@
 import datetime
 
 from dateutil import parser
-from discord_analyzer.analysis.utils.member_activity_history_utils import (
+from discord_analyzer.algorithms.utils.member_activity_history_utils import (
     MemberActivityPastUtils,
 )
 from discord_analyzer.DB_operations.mongodb_access import DB_access

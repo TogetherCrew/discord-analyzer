@@ -2,7 +2,7 @@ import logging
 from typing import Literal
 
 import pandas as pd
-from discord_analyzer.analysis.neo4j_analysis.utils import Neo4JMetrics, ProjectionUtils
+from discord_analyzer.algorithms.neo4j_analysis.utils import Neo4JMetrics, ProjectionUtils
 from tc_neo4j_lib.neo4j_ops import Neo4jOps, Query
 
 

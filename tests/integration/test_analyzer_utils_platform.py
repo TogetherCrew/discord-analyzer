@@ -1,7 +1,7 @@
 from bson import ObjectId
 from unittest import TestCase
 
-from discord_analyzer.analyzer.utils import Platform
+from discord_analyzer.metrics.utils import Platform
 from utils.mongo import MongoSingleton
 
 

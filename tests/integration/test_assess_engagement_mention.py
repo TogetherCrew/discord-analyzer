@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 from unittest import TestCase
 
 import pytest
-from discord_analyzer.analysis.utils.member_activity_utils import assess_engagement
-from discord_analyzer.analyzer.utils.analyzer_db_manager import AnalyzerDBManager
+from discord_analyzer.algorithms.utils.member_activity_utils import assess_engagement
+from discord_analyzer.metrics.utils.analyzer_db_manager import AnalyzerDBManager
 from tc_core_analyzer_lib.utils.activity import DiscordActivity
 from utils.credentials import get_mongo_credentials
 
@@ -34,7 +34,7 @@ class TestAssessEngagementMentions(TestCase):
         """
         heatmaps are the input for assess_engagement's interaction matrix
         """
-        from discord_analyzer.analyzer.heatmaps import Heatmaps
+        from discord_analyzer.metrics.heatmaps import Heatmaps
 
         heatmaps = Heatmaps(DB_connections=self.db_connections, testing=False)
         heatmaps_data = heatmaps.analysis_heatmap(guildId=self.guildId, from_start=True)

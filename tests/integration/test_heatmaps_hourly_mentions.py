@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from discord_analyzer.analyzer.heatmaps import Heatmaps
+from discord_analyzer.metrics.heatmaps import Heatmaps
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
 from utils.mongo import MongoSingleton
 
