@@ -35,9 +35,9 @@ class TCAnalyzer(AnalyzerDBManager):
 
     def run_once(self):
         """Run analysis once (Wrapper)"""
-        # check if the guild was available
+        # check if the platform was available
         # if not, will raise an error
-        self.check_guild()
+        self.check_platform()
 
         logging.info(f"Creating heatmaps for platform id: {self.platform_id}")
 
@@ -62,13 +62,11 @@ class TCAnalyzer(AnalyzerDBManager):
             remove_heatmaps=False,
         )
 
-        memberactivities_analysis = MemberActivities(self.DB_connections)
+        memberactivities_analysis = MemberActivities()
         (
             member_activities_data,
             member_acitivities_networkx_data,
-        ) = memberactivities_analysis.analysis_member_activity(
-            self.platform_id, self.connection_str
-        )
+        ) = memberactivities_analysis.analysis_member_activity(self.platform_id)
 
         analytics_data = {}
         # storing whole data into a dictinoary
@@ -109,11 +107,11 @@ class TCAnalyzer(AnalyzerDBManager):
         ---------
         `None`
         """
-        # check if the guild was available
+        # check if the platform was available
         # if not, will raise an error
-        self.check_guild()
+        self.check_platform()
 
-        logging.info(f"Analyzing the Heatmaps data for guild: {self.platform_id}!")
+        logging.info(f"Analyzing the Heatmaps data for platform: {self.platform_id}!")
         heatmaps_analysis = Heatmaps(
             platform_id=self.platform_id,
             period=self.platform_utils.get_platform_period(),
@@ -137,14 +135,14 @@ class TCAnalyzer(AnalyzerDBManager):
 
         # run the member_activity analyze
         logging.info(
-            f"Analyzing the MemberActivities data for guild: {self.platform_id}!"
+            f"Analyzing the MemberActivities data for platform: {self.platform_id}!"
         )
-        memberactivity_analysis = MemberActivities(self.DB_connections)
+        memberactivity_analysis = MemberActivities()
         (
             member_activities_data,
             member_acitivities_networkx_data,
         ) = memberactivity_analysis.analysis_member_activity(
-            self.platform_id, self.connection_str, from_start=True
+            self.platform_id, from_start=True
         )
 
         # storing whole data into a dictinoary
@@ -156,7 +154,7 @@ class TCAnalyzer(AnalyzerDBManager):
             member_acitivities_networkx_data,
         )
 
-        logging.info(f"Storing analytics data for guild: {self.platform_id}!")
+        logging.info(f"Storing analytics data for platform: {self.platform_id}!")
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
             guild_id=self.platform_id,
@@ -168,10 +166,10 @@ class TCAnalyzer(AnalyzerDBManager):
         self.neo4j_analytics.compute_metrics(guildId=self.platform_id, from_start=True)
         self.platform_utils.update_isin_progress()
 
-    def check_guild(self):
+    def check_platform(self):
         """
-        check if the guild is available
+        check if the platform is available
         """
         exist = self.platform_utils.check_existance()
-        if exist is False:
-            raise ValueError(f"Guild with guildId: {self.platform_id} doesn't exist!")
+        if not exist:
+            raise ValueError(f"Platform with platform_id: {self.platform_id} doesn't exist!")

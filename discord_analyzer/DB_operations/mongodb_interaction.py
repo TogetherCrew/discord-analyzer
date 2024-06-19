@@ -1,21 +1,19 @@
 import logging
 
 from discord_analyzer.DB_operations.mongodb_access import DB_access
+from utils.credentials import get_mongo_credentials
 from pymongo.read_concern import ReadConcern
 from pymongo.write_concern import WriteConcern
 
 
 class MongoDBOps:
-    def __init__(self, user, password, host, port):
+    def __init__(self):
         """
         mongoDB database operations
         """
-        self.connection_str = f"mongodb://{user}:{password}@{host}:{port}"
         self.DB_access = DB_access
-
         self.guild_msg = ""
-        # logging.basicConfig()
-        # logging.getLogger().setLevel(logging.INFO)
+
 
     def set_mongo_db_access(self, guildId=None):
         """
@@ -26,6 +24,8 @@ class MongoDBOps:
         but if wasn't then mongo_db_access
          would also have db_client which is connected to a guild
         """
+        mongo_creds = get_mongo_credentials()
+        self.connection_str = mongo_creds["connection_str"]
         self.mongo_db_access = self.DB_access(
             db_name=guildId, connection_string=self.connection_str
         )

@@ -19,12 +19,12 @@ class Platform:
 
     def check_existance(self) -> bool:
         """
-        check for existance of a Guild
+        check for existance of a platform
 
         Returns
         ----------
         exists : bool
-            if the Guild exist or not
+            if the platform exist or not
         """
         platform = self.client["Core"]["platforms"].find_one(
             {"_id": ObjectId(self.platform_id)},
@@ -58,7 +58,7 @@ class Platform:
         Returns
         --------
         community_id : str
-            the community that the Guild is related to
+            the community that the Platform is related to
         """
         platform = self.client["Core"]["platforms"].find_one(
             {"_id": ObjectId(self.platform_id)}, {"community": 1}

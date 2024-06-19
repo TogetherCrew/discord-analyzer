@@ -15,16 +15,11 @@ class MongoNeo4jDB:
         self.mongoOps = None
         self.testing = testing
 
-    def set_mongo_db_ops(
-        self, mongo_user: str, mongo_pass: str, mongo_host: str, mongo_port: str
-    ):
+    def set_mongo_db_ops(self):
         """
         setup the MongoDBOps class with the parameters needed
-
         """
-        self.mongoOps = MongoDBOps(
-            user=mongo_user, password=mongo_pass, host=mongo_host, port=mongo_port
-        )
+        self.mongoOps = MongoDBOps()
         self.mongoOps.set_mongo_db_access()
         try:
             info = self.mongoOps.mongo_db_access.db_mongo_client.server_info()

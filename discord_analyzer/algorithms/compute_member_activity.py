@@ -25,11 +25,11 @@ from discord_analyzer.algorithms.utils.member_activity_utils import (
     update_activities,
 )
 from discord_analyzer.DB_operations.mongodb_access import DB_access
+from utils.credentials import get_mongo_credentials
 
 
 def compute_member_activity(
     db_name: str,
-    connection_string: str,
     channels: list[str],
     acc_names: list[str],
     date_range: tuple[str, str],
@@ -43,7 +43,6 @@ def compute_member_activity(
     Parameters
     ------------
     db_name: (str) - guild id
-    connection_string: (str) - connection to db string
     channels: [str] - list of all channel ids that should be analysed
     acc_names: [str] - list of all account names that should be analysed
     date_range: [str] - list of first and last date to be analysed (one output per date)
@@ -110,6 +109,9 @@ def compute_member_activity(
     # make empty results output array
 
     # # # DATABASE SETTINGS # # #
+
+    credentials = get_mongo_credentials()
+    connection_string = credentials["connection_str"]
 
     # set up database access
     db_access = DB_access(db_name, connection_string)

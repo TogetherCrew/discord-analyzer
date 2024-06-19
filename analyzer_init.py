@@ -1,7 +1,6 @@
 from typing import Any
 
 from discord_analyzer.tc_analyzer import TCAnalyzer
-from utils.credentials import get_mongo_credentials
 
 
 class AnalyzerInit:
@@ -20,16 +19,6 @@ class AnalyzerInit:
         analyzer : TCAnalyzer
         """
         analyzer = TCAnalyzer(self.guild_id)
-
-        # credentials
-        mongo_creds = get_mongo_credentials()
-
-        analyzer.set_mongo_database_info(
-            mongo_db_host=mongo_creds["host"],
-            mongo_db_password=mongo_creds["password"],
-            mongo_db_port=mongo_creds["port"],
-            mongo_db_user=mongo_creds["user"],
-        )
         analyzer.database_connect()
 
         return analyzer

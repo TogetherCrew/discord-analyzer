@@ -3,18 +3,16 @@ from datetime import datetime, timedelta
 
 from discord_analyzer.algorithms.compute_member_activity import compute_member_activity
 from discord_analyzer.metrics.memberactivity_utils import MemberActivityUtils
-from discord_analyzer.DB_operations.mongo_neo4j_ops import MongoNeo4jDB
 from discord_analyzer.models.MemberActivityModel import MemberActivityModel
 from discord_analyzer.models.RawInfoModel import RawInfoModel
+from utils.mongo import MongoSingleton
 
 
 class MemberActivities:
-    def __init__(self, DB_connections: MongoNeo4jDB) -> None:
-        self.DB_connections = DB_connections
+    def __init__(self) -> None:
+        self.utils = MemberActivityUtils()
 
-        self.utils = MemberActivityUtils(DB_connections)
-
-    def analysis_member_activity(self, guildId, mongo_connection_str, from_start=False):
+    def analysis_member_activity(self, guildId, from_start=False):
         """
         Based on the rawdata creates and stores the member activity data
 
@@ -40,7 +38,7 @@ class MemberActivities:
         """
         guild_msg = f"GUILDID: {guildId}:"
 
-        client = self.DB_connections.mongoOps.mongo_db_access.db_mongo_client
+        client = MongoSingleton.get_instance().get_client()
 
         # check current guild is exist
         if guildId not in client.list_database_names():
@@ -124,7 +122,6 @@ class MemberActivities:
 
         networkx_objects, activities = compute_member_activity(
             guildId,
-            mongo_connection_str,
             channels,
             all_users,
             date_range,

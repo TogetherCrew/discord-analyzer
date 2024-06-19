@@ -11,19 +11,6 @@ def setup_analyzer(
     load_dotenv()
 
     analyzer = TCAnalyzer(guild_id)
-
-    user = os.getenv("MONGODB_USER", "")
-    password = os.getenv("MONGODB_PASS", "")
-    host = os.getenv("MONGODB_HOST", "")
-    port = os.getenv("MONGODB_PORT", "")
-
-    analyzer.set_mongo_database_info(
-        mongo_db_host=host,
-        mongo_db_password=password,
-        mongo_db_user=user,
-        mongo_db_port=port,
-    )
-
     analyzer.database_connect()
 
     return analyzer

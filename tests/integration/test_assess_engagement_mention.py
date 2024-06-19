@@ -5,7 +5,6 @@ import pytest
 from discord_analyzer.algorithms.utils.member_activity_utils import assess_engagement
 from discord_analyzer.metrics.utils.analyzer_db_manager import AnalyzerDBManager
 from tc_core_analyzer_lib.utils.activity import DiscordActivity
-from utils.credentials import get_mongo_credentials
 
 from .utils.analyzer_setup import launch_db_access
 from .utils.remove_and_setup_guild import setup_db_guild
@@ -20,13 +19,6 @@ class TestAssessEngagementMentions(TestCase):
 
     def create_db_connections(self):
         base_analyzer = AnalyzerDBManager()
-        mongo_creds = get_mongo_credentials()
-        base_analyzer.set_mongo_database_info(
-            mongo_db_user=mongo_creds["user"],
-            mongo_db_password=mongo_creds["password"],
-            mongo_db_host=mongo_creds["host"],
-            mongo_db_port=mongo_creds["port"],
-        )
         base_analyzer.database_connect()
         self.db_connections = base_analyzer.DB_connections
 
