@@ -86,7 +86,6 @@ class MongoNeo4jDB:
                     guildId=guild_id,
                     community_id=community_id,
                 )
-                print(queries_list[0])
                 self.run_operations_transaction(
                     guildId=guild_id,
                     queries_list=queries_list,

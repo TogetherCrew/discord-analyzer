@@ -43,7 +43,7 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
                 "id": guildId,
                 "icon": "111111111111111111111111",
                 "name": "A guild",
-                "selectedChannels": ["1020707129214111827"],
+                "resources": ["1020707129214111827"],
                 "window": {"period_size": 7, "step_size": 1},
                 "action": action,
                 "period": datetime.now() - timedelta(days=30),

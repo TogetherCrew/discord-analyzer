@@ -7,8 +7,8 @@ from .utils.remove_and_setup_guild import setup_db_guild
 
 class TestMemberActivitiesReactions(TestCase):
     def setUp(self) -> None:
-        self.guildId = "1234"
-        self.db_access = launch_db_access(self.guildId)
+        self.platform_id = "60d5ec44f9a3c2b6d7e2d11a"
+        self.db_access = launch_db_access(self.platform_id)
 
     def test_single_user_action(self):
         """
@@ -34,14 +34,13 @@ class TestMemberActivitiesReactions(TestCase):
 
         setup_db_guild(
             self.db_access,
-            platform_id,
-            self.guildId,
+            self.platform_id,
             discordId_list=users_id_list,
             days_ago_period=35,
             action=action,
         )
-        self.db_access.db_mongo_client[self.guildId]["heatmaps"].delete_many({})
-        self.db_access.db_mongo_client[self.guildId].create_collection("heatmaps")
+        self.db_access.db_mongo_client[self.platform_id]["heatmaps"].delete_many({})
+        self.db_access.db_mongo_client[self.platform_id].create_collection("heatmaps")
 
         rawinfo_samples = []
         for i in range(35 * 24):
@@ -63,12 +62,12 @@ class TestMemberActivitiesReactions(TestCase):
             }
             rawinfo_samples.append(sample)
 
-        self.db_access.db_mongo_client[self.guildId]["rawinfos"].insert_many(
+        self.db_access.db_mongo_client[self.platform_id]["rawinfos"].insert_many(
             rawinfo_samples
         )
-        analyzer = setup_analyzer(self.guildId)
+        analyzer = setup_analyzer(self.platform_id)
         analyzer.recompute_analytics()
-        cursor = self.db_access.db_mongo_client[self.guildId]["memberactivities"].find(
+        cursor = self.db_access.db_mongo_client[self.platform_id]["memberactivities"].find(
             {},
             {
                 "_id": 0,

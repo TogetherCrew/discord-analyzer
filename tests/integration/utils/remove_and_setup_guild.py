@@ -9,7 +9,6 @@ from discord_analyzer.DB_operations.mongodb_access import DB_access
 def setup_db_guild(
     db_access: DB_access,
     platform_id: str,
-    guildId: str = "1234",
     discordId_list: list[str] = ["973993299281076285"],
     discordId_isbot: list[bool] = [False],
     dates: Optional[list[datetime]] = None,
@@ -28,7 +27,7 @@ def setup_db_guild(
     db_access.db_mongo_client["Core"]["platforms"].delete_one(
         {"_id": ObjectId(platform_id)}
     )
-    db_access.db_mongo_client.drop_database(guildId)
+    db_access.db_mongo_client.drop_database(platform_id)
 
     action = kwargs.get(
         "action",
@@ -49,6 +48,7 @@ def setup_db_guild(
         },
     )
 
+    guildId = "1234"
     db_access.db_mongo_client["Core"]["platforms"].insert_one(
         {
             "_id": ObjectId(platform_id),
@@ -57,7 +57,7 @@ def setup_db_guild(
                 "id": guildId,
                 "icon": "111111111111111111111111",
                 "name": "A guild",
-                "selectedChannels": ["1020707129214111827"],
+                "resources": ["1020707129214111827"],
                 "window": {"period_size": 7, "step_size": 1},
                 "action": action,
                 "period": datetime.now() - timedelta(days=days_ago_period),

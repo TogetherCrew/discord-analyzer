@@ -35,16 +35,21 @@ class TestRawAnalytics(TestCase):
         )
         expected_dict = {
             "name": "analytics1",
-            "type": "interaction",
+            "type": "interactions",
             "member_activities_used": False,
+            "activity_name": None,
+            "direction": "emitter",
+            "rawmemberactivities_condition": None,
         }
+        print(raw_analytics.to_dict())
         self.assertEqual(raw_analytics.to_dict(), expected_dict)
 
     def test_from_dict(self):
         data = {
             "name": "analytics1",
-            "type": "action",
+            "type": "actions",
             "member_activities_used": True,
+            "direction": "receiver"
         }
         raw_analytics = RawAnalytics.from_dict(data)
         self.assertEqual(raw_analytics.name, "analytics1")

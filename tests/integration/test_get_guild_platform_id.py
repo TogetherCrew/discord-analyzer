@@ -21,7 +21,7 @@ class TestGetGuildId(TestCase):
                     "id": guild_id,
                     "icon": "111111111111111111111111",
                     "name": "A guild",
-                    "selectedChannels": [
+                    "resources": [
                         "11111111",
                         "22222222",
                         "33333333",
