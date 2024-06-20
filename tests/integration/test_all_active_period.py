@@ -8,9 +8,8 @@ def test_two_weeks_period_active_members():
     """
     test all_active members for the two weeks period in the new schema
     """
-    guildId = "1234567"
     platform_id = "60d5ec44f9a3c2b6d7e2d11a"
-    db_access = launch_db_access(guildId)
+    db_access = launch_db_access(platform_id)
 
     acc_id = [
         "user0",
@@ -181,7 +180,9 @@ def test_two_weeks_period_active_members():
     rawinfo_samples.append(sample)
     rawinfo_samples.append(sample2)
 
-    db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
+        rawinfo_samples
+    )
 
     analyzer = setup_analyzer(platform_id)
     analyzer.run_once()

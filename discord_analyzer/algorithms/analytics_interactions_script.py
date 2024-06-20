@@ -10,6 +10,7 @@ def per_account_interactions(
     """
     get per account interactions as `mentioner_accounts`,
     `reacter_accounts`, and `replier_accounts` (summing)
+
     Parameters:
     ------------
     cursor_list : list
@@ -35,10 +36,11 @@ def per_account_interactions(
 
         # flatten the list
         samples_flattened = list(itertools.chain(*samples))
+        # print(samples_flattened)
 
-        for _, sample in enumerate(samples_flattened):
-            account_name = sample[0]["account"]
-            interaction_count = sample[0]["count"]
+        for sample in samples_flattened:
+            account_name = sample["account"]
+            interaction_count = sample["count"]
 
             if account_name not in temp_dict.keys():
                 temp_dict[account_name] = interaction_count

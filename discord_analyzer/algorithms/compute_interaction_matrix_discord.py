@@ -52,7 +52,7 @@ def compute_interaction_matrix_discord(
         ],
     )
     feature_projection = {
-        "channelId": 0,
+        "channel_id": 0,
         "replier": 0,
         "replied": 0,
         "mentioner": 0,
@@ -146,7 +146,7 @@ def process_non_reactions(
                 action_count = sum(document[action])
                 if action_count:
                     document[action] = [
-                        [{"account": account, "count": sum(document[action])}]
+                        {"account": account, "count": sum(document[action])}
                     ]
                 else:
                     # action count was zero

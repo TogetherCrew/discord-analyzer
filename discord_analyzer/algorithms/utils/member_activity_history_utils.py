@@ -249,7 +249,7 @@ class MemberActivityPastUtils:
         return activity_dict
 
     def _get_accounts_per_date(
-        self, joined_acc, date, date_key="joinedAt", account_key="discordId"
+        self, joined_acc, date, date_key="joined_at", account_key="id"
     ):
         """
         get the accounts for a special date
