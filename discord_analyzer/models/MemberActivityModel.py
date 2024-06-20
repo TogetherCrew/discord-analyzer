@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import logging
-from datetime import datetime
 
 import pymongo
 from discord_analyzer.models.BaseModel import BaseModel
@@ -18,15 +17,13 @@ class MemberActivityModel(BaseModel):
         Gets the date of the last document
         """
         try:
-            date_str = (
+            date = (
                 self.database[self.collection_name]
                 .find()
                 .sort([("date", pymongo.DESCENDING)])
                 .limit(1)[0]["date"]
             )
-            date_format = "%Y-%m-%dT%H:%M:%S"
-            date_object = datetime.strptime(date_str, date_format)
-            return date_object
+            return date
         except Exception as e:
             print(e)
             return None

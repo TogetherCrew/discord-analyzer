@@ -11,7 +11,7 @@ from discord_analyzer.DB_operations.mongodb_access import DB_access
 # the main script function
 def check_past_history(
     db_access: DB_access,
-    date_range: tuple[datetime, datetime],
+    date_range: list[datetime],
     window_param: dict[str, int],
     collection_name: str = "memberactivities",
     verbose=False,
@@ -112,7 +112,7 @@ def check_past_history(
     # date_range_start = datetime.datetime.strptime(date_range[0], date_format)
     # date_range_end = datetime.datetime.strptime(date_range[1], date_format)
 
-    new_date_range: tuple
+    new_date_range: list[datetime]
     # if for the requested date_range, its results were available in db
     if (db_analysis_end_date is not None) and (date_range_start < db_analysis_end_date):
         # refine the dates
@@ -120,13 +120,13 @@ def check_past_history(
         #  then empty the new_date_range
         # empty it, since all the requested analysis are available in db
         if date_range_end <= db_analysis_end_date:
-            new_date_range = ()
+            new_date_range = []
         else:
             # start date would be the next day of the end day
-            new_date_range = (
+            new_date_range = [
                 db_analysis_end_date + timedelta(days=1),
                 date_range_end,
-            )
+            ]
 
         all_activity_data_dict = past_data
         # maximum key is used for having the key for future data

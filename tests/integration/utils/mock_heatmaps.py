@@ -14,7 +14,7 @@ def create_empty_heatmaps_data(
     for i in range(count):
         date = start_date + timedelta(days=i)
         document = {
-            "date": date.strftime("%Y-%m-%d"),
+            "date": date,
             "channel_id": "1020707129214111827",
             "thr_messages": list(np.zeros(24)),
             "lone_messages": list(np.zeros(24)),

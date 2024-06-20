@@ -47,7 +47,7 @@ class TCAnalyzer(AnalyzerDBManager):
             resources=self.platform_utils.get_platform_resources(),
             analyzer_config=self.analyzer_config,
         )
-        heatmaps_data = heatmaps_analysis.start(self.platform_id)
+        heatmaps_data = heatmaps_analysis.start(from_start=False)
 
         # storing heatmaps since memberactivities use them
         analytics_data = {}
@@ -74,7 +74,7 @@ class TCAnalyzer(AnalyzerDBManager):
         (
             member_activities_data,
             member_acitivities_networkx_data,
-        ) = memberactivity_analysis.analysis_member_activity(from_start=True)
+        ) = memberactivity_analysis.analysis_member_activity(from_start=False)
 
         analytics_data = {}
         # storing whole data into a dictinoary
@@ -126,7 +126,7 @@ class TCAnalyzer(AnalyzerDBManager):
             resources=self.platform_utils.get_platform_resources(),
             analyzer_config=self.analyzer_config,
         )
-        heatmaps_data = heatmaps_analysis.start(self.platform_id)
+        heatmaps_data = heatmaps_analysis.start(from_start=True)
 
         # storing heatmaps since memberactivities use them
         analytics_data = {}

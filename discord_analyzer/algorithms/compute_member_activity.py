@@ -32,7 +32,7 @@ def compute_member_activity(
     resources: list[str],
     resource_identifier: str,
     acc_names: list[str],
-    date_range: tuple[datetime, datetime],
+    date_range: list[datetime],
     window_param: dict[str, int],
     act_param: dict[str, int],
     load_past_data=True,
@@ -151,7 +151,7 @@ def compute_member_activity(
         )
     else:
         past_activities_data = {}
-        new_date_range = (date_range[0], date_range[1])
+        new_date_range = [date_range[0], date_range[1]]
         starting_key = 0
 
     # if in past there was an activity, we'll update the dictionaries
@@ -165,7 +165,7 @@ def compute_member_activity(
 
     # if there was still a need to analyze some data in the range
     # also if there was some accounts and channels to be analyzed
-    if new_date_range != ():
+    if new_date_range != []:
         # all_joined data
 
         # if the date range wasn't as long as a date window,

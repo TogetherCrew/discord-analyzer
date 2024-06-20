@@ -221,9 +221,9 @@ class MemberActivityPastUtils:
 
         for idx in range(len(retrieved_data)):
             db_record = retrieved_data[idx]
-            parser.parse(db_record["date"]) - timedelta(
-                days=window_param["period_size"]
-            )
+            # parser.parse(db_record["date"]) - timedelta(
+            #     days=window_param["period_size"]
+            # )
 
             for activity in activity_dict.keys():
                 try:

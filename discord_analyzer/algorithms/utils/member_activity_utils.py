@@ -110,7 +110,7 @@ def store_based_date(
         else:
             date_using = analytics_date
 
-        data_record["date"] = date_using.isoformat()
+        data_record["date"] = date_using
 
         # analytics that were done in that date
         for activity in all_activities.keys():
@@ -134,7 +134,7 @@ def store_based_date(
         data_record = {}
         data_record["date"] = (
             start_date + timedelta(days=analytics_day_range)
-        ).isoformat()
+        )
 
         for activity in all_activities.keys():
             data_record[activity] = []

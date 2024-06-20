@@ -21,10 +21,9 @@ class MemberActivityUtils:
             the first date of saving date
             we would use this to specify the exact data activity to save
         """
-
         data_to_save = []
         for activity in all_member_activities:
-            if first_date is None or parser.parse(activity["date"]) > first_date:
+            if first_date is None or activity["date"] > first_date:
                 data_to_save.append(activity)
 
         return data_to_save

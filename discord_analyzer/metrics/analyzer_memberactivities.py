@@ -95,7 +95,7 @@ class MemberActivities:
 
         last_date = today - timedelta(days=1)
 
-        date_range: tuple[datetime, datetime] = (first_date, last_date)
+        date_range: list[datetime] = [first_date, last_date]
 
         if load_past_data:
             # num_days_to_load = (
