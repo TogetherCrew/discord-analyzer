@@ -18,13 +18,6 @@ def setup_analyzer(
 
 def launch_db_access(platform_id: str):
     load_dotenv()
-    user = os.getenv("MONGODB_USER")
-    password = os.getenv("MONGODB_PASS")
-    host = os.getenv("MONGODB_HOST")
-    port = os.getenv("MONGODB_PORT")
-
-    connection_str = f"mongodb://{user}:{password}@{host}:{port}"
-
-    db_access = DB_access(platform_id, connection_str)
+    db_access = DB_access(platform_id)
     print("CONNECTED to MongoDB!")
     return db_access
