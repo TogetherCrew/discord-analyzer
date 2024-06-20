@@ -14,7 +14,6 @@ class MongoDBOps:
         self.DB_access = DB_access
         self.guild_msg = ""
 
-
     def set_mongo_db_access(self, guildId=None):
         """
         set a database access to a specific guild

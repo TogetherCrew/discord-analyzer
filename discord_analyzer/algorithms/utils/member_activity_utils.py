@@ -28,13 +28,13 @@ def get_joined_accounts(db_access: DB_access, date_range: tuple[datetime, dateti
     Returns:
     ----------
     data : list of dictionaries
-        an array of dictionaries, each dictionary has `discordId` and `joined_at` member
+        an array of dictionaries, each dictionary has `id` and `joined_at` member
     """
-    query = {"joinedAt": {"$gte": date_range[0], "$lte": date_range[1]}}
-    feature_projection = {"joinedAt": 1, "discordId": 1, "_id": 0}
+    query = {"joined_at": {"$gte": date_range[0], "$lte": date_range[1]}}
+    feature_projection = {"joined_at": 1, "id": 1, "_id": 0}
 
     # quering the db now
-    cursor = db_access.query_db_find("guildmembers", query, feature_projection)
+    cursor = db_access.query_db_find("rawmembers", query, feature_projection)
 
     data = list(cursor)
 
@@ -65,7 +65,7 @@ def store_based_date(
         to make sure that the dates of analytics is for the past
         `analytics_day_range` days, not `analytics_day_range` forward
     joined_acc_dict : array of dictionary
-        an array of dictionaries, each dictionary has `discordId` and `joined_at` member
+        an array of dictionaries, each dictionary has `id` and `joined_at` member
     load_past : bool
         whether we loaded the past data or start processing from scratch
         If True, indicates that the past data is loaded beside the analytics data
@@ -80,10 +80,10 @@ def store_based_date(
             return []
 
     # post processing the
-    account_names = list(map(lambda record: record["discordId"], joined_acc_dict))
+    account_names = list(map(lambda record: record["id"], joined_acc_dict))
     acc_join_date = list(
         map(
-            lambda record: record["joinedAt"].date(),
+            lambda record: record["joined_at"].date(),
             joined_acc_dict,
         )
     )
@@ -207,7 +207,7 @@ def get_users_past_window(
     pipeline = [
         # Filter documents based on date
         {"$match": {"date": {"$gte": window_start_date, "$lte": window_end_date}}},
-        {"$group": {"_id": "$account_name"}},
+        {"$group": {"_id": "$user"}},
         {
             "$group": {
                 "_id": None,
@@ -245,14 +245,14 @@ def get_latest_joined_users(db_access: DB_access, count: int = 5) -> list[str]:
         the userIds to use
     """
     cursor = db_access.query_db_find(
-        table="guildmembers",
-        query={"isBot": False},
-        feature_projection={"discordId": 1, "_id": 0},
-        sorting=("joinedAt", -1),
+        table="rawmembers",
+        query={"is_bot": False},
+        feature_projection={"id": 1, "_id": 0},
+        sorting=("joined_at", -1),
     ).limit(count)
     usersId = list(cursor)
 
-    usersId = list(map(lambda x: x["discordId"], usersId))
+    usersId = list(map(lambda x: x["id"], usersId))
 
     return usersId
 
@@ -262,16 +262,16 @@ def assess_engagement(
     accounts: list[str],
     action_params: dict[str, int],
     period_size: int,
-    db_access: DB_access,
-    channels: list[str],
-    analyze_dates: list[str],
+    platform_id: str,
+    resources: list[str],
+    resource_identifier: str,
+    analyze_dates: tuple[datetime, datetime],
     activities_name: list[str],
     activity_dict: dict[str, dict],
     **kwargs,
 ) -> tuple[DiGraph, dict[str, dict]]:
     """
     assess engagement of a window index for users
-
     """
     activities_to_analyze = kwargs.get(
         "activities_to_analyze",
@@ -304,10 +304,11 @@ def assess_engagement(
     )
     # obtain interaction matrix
     int_mat = compute_interaction_matrix_discord(
-        accounts,
-        analyze_dates,
-        channels,
-        db_access,
+        acc_names=accounts,
+        date_range=analyze_dates,
+        resources=resources,
+        resource_identifier=resource_identifier,
+        platform_id=platform_id,
         activities=activities_to_analyze,
     )
 

@@ -18,13 +18,13 @@ def test_single_account():
     per_acc_interactions = {
         "968122690118512720": [
             {
-                "account_name": "968122690118512720",
+                "user": "968122690118512720",
                 "reacted_per_acc": [[{"account": "968122690118512720", "count": 1}]],
                 "mentioner_per_acc": [[{"account": "968122690118512720", "count": 1}]],
                 "replied_per_acc": [],
             },
             {
-                "account_name": "968122690118512720",
+                "user": "968122690118512720",
                 "reacted_per_acc": [[{"account": "968122690118512720", "count": 1}]],
                 "mentioner_per_acc": [[{"account": "968122690118512720", "count": 1}]],
                 "replied_per_acc": [],
@@ -47,13 +47,13 @@ def test_two_accounts():
     per_acc_interactions = {
         "968122690118512720": [
             {
-                "account_name": "968122690118512720",
+                "user": "968122690118512720",
                 "reacted_per_acc": [[{"account": "968122690118512799", "count": 1}]],
                 "mentioner_per_acc": [[{"account": "968122690118512799", "count": 1}]],
                 "replied_per_acc": [],
             },
             {
-                "account_name": "968122690118512720",
+                "user": "968122690118512720",
                 "reacted_per_acc": [[{"account": "968122690118512720", "count": 2}]],
                 "mentioner_per_acc": [[{"account": "968122690118512720", "count": 1}]],
                 "replied_per_acc": [],
@@ -83,19 +83,19 @@ def test_multiple_interactions():
     per_acc_interactions = {
         "968122690118512720": [
             {
-                "account_name": "968122690118512720",
+                "user": "968122690118512720",
                 "reacted_per_acc": [[{"account": "795295822534148096", "count": 9}]],
                 "mentioner_per_acc": [[{"account": "795295822534148096", "count": 2}]],
                 "replied_per_acc": [],
             },
             {
-                "account_name": "968122690118512720",
+                "user": "968122690118512720",
                 "reacted_per_acc": [],
                 "mentioner_per_acc": [],
                 "replied_per_acc": [],
             },
             {
-                "account_name": "968122690118512720",
+                "user": "968122690118512720",
                 "reacted_per_acc": [],
                 "mentioner_per_acc": [
                     [{"account": "7952958225341480444", "count": 5}],
@@ -106,13 +106,13 @@ def test_multiple_interactions():
         ],
         "968122690118512721": [
             {
-                "account_name": "968122690118512721",
+                "user": "968122690118512721",
                 "reacted_per_acc": [[{"account": "795295822534148096", "count": 3}]],
                 "mentioner_per_acc": [[{"account": "795295822534148096", "count": 4}]],
                 "replied_per_acc": [],
             },
             {
-                "account_name": "968122690118512721",
+                "user": "968122690118512721",
                 "reacted_per_acc": [],
                 "mentioner_per_acc": [],
                 "replied_per_acc": [[{"account": "7952958225341480444", "count": 8}]],

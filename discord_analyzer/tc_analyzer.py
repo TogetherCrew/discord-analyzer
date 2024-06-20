@@ -137,7 +137,15 @@ class TCAnalyzer(AnalyzerDBManager):
         logging.info(
             f"Analyzing the MemberActivities data for platform: {self.platform_id}!"
         )
-        memberactivity_analysis = MemberActivities()
+        window, action = self.platform_utils.get_platform_analyzer_params()
+        memberactivity_analysis = MemberActivities(
+            platform_id=self.platform_id,
+            resources=self.platform_utils.get_platform_resources(),
+            action_config=action,
+            window_config=window,
+            analyzer_config=self.analyzer_config,
+            analyzer_period=self.platform_utils.get_platform_period(),
+        )
         (
             member_activities_data,
             member_acitivities_networkx_data,
@@ -172,4 +180,6 @@ class TCAnalyzer(AnalyzerDBManager):
         """
         exist = self.platform_utils.check_existance()
         if not exist:
-            raise ValueError(f"Platform with platform_id: {self.platform_id} doesn't exist!")
+            raise ValueError(
+                f"Platform with platform_id: {self.platform_id} doesn't exist!"
+            )

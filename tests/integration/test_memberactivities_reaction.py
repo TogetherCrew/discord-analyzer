@@ -67,7 +67,9 @@ class TestMemberActivitiesReactions(TestCase):
         )
         analyzer = setup_analyzer(self.platform_id)
         analyzer.recompute_analytics()
-        cursor = self.db_access.db_mongo_client[self.platform_id]["memberactivities"].find(
+        cursor = self.db_access.db_mongo_client[self.platform_id][
+            "memberactivities"
+        ].find(
             {},
             {
                 "_id": 0,

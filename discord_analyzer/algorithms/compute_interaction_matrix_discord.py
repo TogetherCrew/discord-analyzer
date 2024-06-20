@@ -1,11 +1,11 @@
 import copy
 from typing import Any
+from datetime import datetime
 
-from discord_analyzer.DB_operations.mongodb_access import DB_access
-from discord_analyzer.DB_operations.mongodb_query import MongodbQuery
 from numpy import diag_indices_from, ndarray
 from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
+from utils.mongo import MongoSingleton
 from .utils.compute_interaction_mtx_utils import (
     generate_interaction_matrix,
     prepare_per_account,
@@ -14,9 +14,10 @@ from .utils.compute_interaction_mtx_utils import (
 
 def compute_interaction_matrix_discord(
     acc_names: list[str],
-    dates: list[str],
-    channels: list[str],
-    db_access: DB_access,
+    date_range: tuple[datetime, datetime],
+    resources: list[str],
+    resource_identifier: str,
+    platform_id: str,
     **kwargs,
 ) -> dict[str, ndarray]:
     """
@@ -26,8 +27,7 @@ def compute_interaction_matrix_discord(
     --------
     acc_names - [str] : list of all account names to be considered for analysis
     dates - [str] : list of all dates to be considered for analysis
-    channels - [str] : list of all channel ids to be considered for analysis
-    db_access - obj : database access object
+    resources - [str] : list of all channel ids to be considered for analysis
     **kwargs :
         activities - list[Activity] :
             the list of activities to generate the matrix for
@@ -40,6 +40,7 @@ def compute_interaction_matrix_discord(
         keys are representative of an activity
         and the 2d matrix representing the interactions for the activity
     """
+    client = MongoSingleton.get_instance().get_client()
     activities = kwargs.get(
         "activities",
         [
@@ -62,22 +63,22 @@ def compute_interaction_matrix_discord(
         "_id": 0,
     }
 
-    # intiate query
-    query = MongodbQuery()
+    query = {
+        "$and": [
+            {"user": {"$in": acc_names}},
+            {resource_identifier: {"$in": resources}},
+            {
+                "date": {
+                    "$gte": date_range[0],
+                    "$lt": date_range[1],
+                }
+            },
+        ]
+    }
 
-    # set up query dictionary
-    query_dict = query.create_query_filter_account_channel_dates(
-        acc_names=acc_names,
-        channels=channels,
-        dates=list(dates),
-        date_key="date",
-        channel_key="channelId",
-        account_key="account_name",
-    )
-
-    # create cursor for db
-    cursor = db_access.query_db_find(
-        table="heatmaps", query=query_dict, feature_projection=feature_projection
+    cursor = client[platform_id]["heatmaps"].find(
+        query,
+        feature_projection,
     )
     db_results = list(cursor)
 
@@ -110,7 +111,7 @@ def process_non_reactions(
         "reacted_per_acc",
         "mentioner_per_acc",
         "replied_per_acc",
-        "account_name",
+        "user",
         "date",
     ],
 ) -> dict[str, list[dict[str, Any]]]:

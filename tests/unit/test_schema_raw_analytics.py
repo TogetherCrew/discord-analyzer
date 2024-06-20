@@ -49,7 +49,7 @@ class TestRawAnalytics(TestCase):
             "name": "analytics1",
             "type": "actions",
             "member_activities_used": True,
-            "direction": "receiver"
+            "direction": "receiver",
         }
         raw_analytics = RawAnalytics.from_dict(data)
         self.assertEqual(raw_analytics.name, "analytics1")

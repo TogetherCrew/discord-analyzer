@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
 
 import numpy as np
-from discord_analyzer.algorithms.utils.member_activity_utils import get_users_past_window
+from discord_analyzer.algorithms.utils.member_activity_utils import (
+    get_users_past_window,
+)
 
 from .utils.analyzer_setup import launch_db_access
 
@@ -27,7 +29,7 @@ def test_get_past_7_days_heatmap_users_available_users():
         account = f"9739932992810762{i}"
         document = {
             "date": date.strftime("%Y-%m-%d"),
-            "channelId": "1020707129214111827",
+            "channel_id": "1020707129214111827",
             "thr_messages": list(np.zeros(24)),
             "lone_messages": list(np.zeros(24)),
             "replier": list(np.zeros(24)),
@@ -39,7 +41,7 @@ def test_get_past_7_days_heatmap_users_available_users():
             "reacted_per_acc": [],
             "mentioner_per_acc": [],
             "replied_per_acc": [],
-            "account_name": account,
+            "user": account,
         }
 
         heatmaps_data.append(document)
@@ -79,7 +81,7 @@ def test_get_all_days_heatmap_users_available_users():
         account = f"9739932992810762{i}"
         document = {
             "date": date.strftime("%Y-%m-%d"),
-            "channelId": "1020707129214111827",
+            "channel_id": "1020707129214111827",
             "thr_messages": list(np.zeros(24)),
             "lone_messages": list(np.zeros(24)),
             "replier": list(np.zeros(24)),
@@ -91,7 +93,7 @@ def test_get_all_days_heatmap_users_available_users():
             "reacted_per_acc": [],
             "mentioner_per_acc": [],
             "replied_per_acc": [],
-            "account_name": account,
+            "user": account,
         }
 
         heatmaps_data.append(document)
@@ -129,7 +131,7 @@ def test_get_just_7_days_heatmap_users_available_users():
         account = f"9739932992810762{i}"
         document = {
             "date": date.strftime("%Y-%m-%d"),
-            "channelId": "1020707129214111827",
+            "channel_id": "1020707129214111827",
             "thr_messages": list(np.zeros(24)),
             "lone_messages": list(np.zeros(24)),
             "replier": list(np.zeros(24)),
@@ -141,7 +143,7 @@ def test_get_just_7_days_heatmap_users_available_users():
             "reacted_per_acc": [],
             "mentioner_per_acc": [],
             "replied_per_acc": [],
-            "account_name": account,
+            "user": account,
         }
 
         heatmaps_data.append(document)

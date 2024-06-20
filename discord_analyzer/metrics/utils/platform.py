@@ -116,3 +116,32 @@ class Platform:
 
         resources = platform["metadata"]["resources"]
         return resources
+
+    def get_platform_analyzer_params(self) -> tuple[dict[str, int], dict[str, int]]:
+        """
+        get the platform's analyzer parameters
+        the parameters are `window` and `action`
+
+        Returns
+        ---------
+        window : dict[str, int]
+            the window parameters
+        action : dict[str, int]
+            the action parameters to configura analyzer
+        """
+        platform = self.client["Core"]["platforms"].find_one(
+            {"_id": ObjectId(self.platform_id)},
+            {
+                "metadata.window": 1,
+                "metadata.action": 1,
+            },
+        )
+        if platform is None:
+            raise AttributeError(
+                f"No such platform for platform_id: {self.platform_id}"
+            )
+
+        window = platform["metadata"]["window"]
+        action = platform["metadata"]["action"]
+
+        return window, action

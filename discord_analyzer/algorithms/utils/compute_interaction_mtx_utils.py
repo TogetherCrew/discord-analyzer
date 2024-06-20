@@ -29,7 +29,7 @@ def prepare_per_account(db_results: list) -> dict[str, list[dict]]:
 
     # a dictionary for results of each account
     for db_record in db_results:
-        acc_name = db_record["account_name"]
+        acc_name = db_record["user"]
         per_acc_query_result.setdefault(acc_name, [])
         per_acc_query_result[acc_name].append(db_record)
 
