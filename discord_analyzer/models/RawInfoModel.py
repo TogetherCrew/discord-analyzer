@@ -10,7 +10,7 @@ from pymongo.database import Database
 
 class RawInfoModel(BaseModel):
     def __init__(self, database: Database):
-        super().__init__(collection_name="rawinfos", database=database)
+        super().__init__(collection_name="rawmemberactivities", database=database)
         self.guild_msg = f"GUILDID: {self.database.name}:"
 
     def get_first_date(self):

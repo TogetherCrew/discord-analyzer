@@ -59,7 +59,7 @@ class TestMemberActivitiesReply(TestCase):
             }
             rawinfo_samples.append(sample)
 
-        self.db_access.db_mongo_client[self.guildId]["rawinfos"].insert_many(
+        self.db_access.db_mongo_client[self.guildId]["rawmemberactivities"].insert_many(
             rawinfo_samples
         )
         analyzer = setup_analyzer(self.guildId)

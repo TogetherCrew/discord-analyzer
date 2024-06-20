@@ -59,15 +59,13 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
     db_access.db_mongo_client[platform_id].create_collection("heatmaps")
     db_access.db_mongo_client[platform_id].create_collection("memberactivities")
 
-    db_access.db_mongo_client[platform_id]["guildmembers"].insert_one(
+    db_access.db_mongo_client[platform_id]["rawmembers"].insert_one(
         {
-            "discordId": "3451791",
-            "username": "sample_user",
-            "roles": ["99909821"],
-            "joinedAt": (datetime.now() - timedelta(days=10)),
-            "avatar": "3ddd6e429f75d6a711d0a58ba3060694",
-            "isBot": False,
-            "discriminator": "0",
+            "id": "3451791",
+            "joined_at": (datetime.now() - timedelta(days=10)),
+            "left_at": None,
+            "is_bot": False,
+            "options": {},
         }
     )
 
@@ -92,7 +90,7 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
         }
         rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[platform_id]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(rawinfo_samples)
 
     analyzer = setup_analyzer(platform_id)
     analyzer.recompute_analytics()

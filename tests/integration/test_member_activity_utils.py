@@ -34,7 +34,7 @@ def test_utils_get_members():
         }
         rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[platform_id]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(rawinfo_samples)
 
     db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")

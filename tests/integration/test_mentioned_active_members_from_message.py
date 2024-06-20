@@ -8,7 +8,7 @@ def test_mention_active_members_from_rawinfo():
     """
     test whether the people are being mentioned are active or not
     the shouldn't considered as active as we're not counting them
-    the rawinfos is used
+    the rawmemberactivities is used
     """
     # first create the collections
     guildId = "1234"
@@ -53,7 +53,7 @@ def test_mention_active_members_from_rawinfo():
         }
         rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[platform_id]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(rawinfo_samples)
 
     analyzer = setup_analyzer(platform_id)
     analyzer.run_once()

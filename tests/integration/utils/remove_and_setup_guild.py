@@ -18,7 +18,7 @@ def setup_db_guild(
     """
     Remove the guild from Core databse and then insert it there
     also drop the guildId database and re-create
-      it then create the guildmembers collection in it
+      it then create the rawmembers collection in it
 
     `discordId_isbot` is representative if each user is bot or not
     `community_id` can be passed in kwargs. default is `aabbccddeeff001122334455`
@@ -89,14 +89,12 @@ def setup_db_guild(
         user_data = zip(discordId_list, discordId_isbot)
 
     for idx, (discordId, isbot) in enumerate(user_data):
-        db_access.db_mongo_client[platform_id]["guildmembers"].insert_one(
+        db_access.db_mongo_client[platform_id]["rawmembers"].insert_one(
             {
-                "discordId": discordId,
-                "username": f"sample_user_{idx}",
-                "roles": ["1012430565959553145"],
-                "joinedAt": dates_using[idx],
-                "avatar": "3ddd6e429f75d6a711d0a58ba3060694",
-                "isBot": isbot,
-                "discriminator": "0",
+                "id": discordId,
+                "joined_at": dates_using[idx],
+                "left_at": None,
+                "is_bot": isbot,
+                "options": {},
             }
         )

@@ -49,7 +49,7 @@ def test_analyzer_member_activities_from_start_available_member_activity():
         }
         rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[platform_id]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(rawinfo_samples)
 
     analyzer = setup_analyzer(platform_id)
     analyzer.recompute_analytics()

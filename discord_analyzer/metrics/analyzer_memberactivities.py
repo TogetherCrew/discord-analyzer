@@ -68,7 +68,7 @@ class MemberActivities:
         # Testing if there are entries in the rawinfo collection
         if rawinfo_c.count() == 0:
             logging.warning(
-                f"No entries in the collection 'rawinfos' in {self.platform_id} databse"
+                f"No entries in the collection 'rawmemberactivities' in {self.platform_id} databse"
             )
             return (None, None)
 

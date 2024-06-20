@@ -50,14 +50,14 @@ class MemberActivityUtils:
             )
             all_users = []
         else:
-            cursor = self.client[guildId]["guildmembers"].find(
+            cursor = self.client[guildId]["rawmembers"].find(
                 {
-                    "isBot": {"$ne": True},
+                    "is_bot": {"$ne": True},
                 },
-                {"discordId": 1, "_id": 0},
+                {"id": 1, "_id": 0},
             )
             users_data = list(cursor)
-            all_users = list(map(lambda x: x["discordId"], users_data))
+            all_users = list(map(lambda x: x["id"], users_data))
 
         return all_users
 

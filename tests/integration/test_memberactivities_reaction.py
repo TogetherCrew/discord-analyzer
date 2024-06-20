@@ -62,7 +62,7 @@ class TestMemberActivitiesReactions(TestCase):
             }
             rawinfo_samples.append(sample)
 
-        self.db_access.db_mongo_client[self.platform_id]["rawinfos"].insert_many(
+        self.db_access.db_mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
             rawinfo_samples
         )
         analyzer = setup_analyzer(self.platform_id)

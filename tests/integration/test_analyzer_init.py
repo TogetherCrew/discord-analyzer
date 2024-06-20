@@ -62,15 +62,12 @@ def test_analyzer_init():
 
     analyzer = AnalyzerInit(guildId)
 
-    mongo_client[guildId]["guildmembers"].insert_one(
+    mongo_client[guildId]["rawmembers"].insert_one(
         {
-            "discordId": "user1",
-            "username": "sample_user1",
-            "roles": ["1012430565959553145"],
-            "joinedAt": datetime.now() - timedelta(days=5),
-            "avatar": "3ddd6e429f75d6a711d0a58ba3060694",
-            "isBot": False,
-            "discriminator": "0",
+            "id": "user1",
+            "joined_At": datetime.now() - timedelta(days=5),
+            "left_at": None,
+            "is_bot": False,
         }
     )
     mongo_client[guildId].create_collection("heatmaps")
@@ -99,7 +96,7 @@ def test_analyzer_init():
         }
         rawinfo_samples.append(sample)
 
-    mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    mongo_client[guildId]["rawmemberactivities"].insert_many(rawinfo_samples)
 
     tc_discord_analyzer = analyzer.get_analyzer()
 

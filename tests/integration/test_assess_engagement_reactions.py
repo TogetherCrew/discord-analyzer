@@ -95,7 +95,7 @@ class TestAssessEngagementReactions(TestCase):
             analyze_dates.add(raw_data_date.strftime("%Y-%m-%d"))
             rawinfo_samples.append(sample)
 
-        self.db_access.db_mongo_client[self.guildId]["rawinfos"].insert_many(
+        self.db_access.db_mongo_client[self.guildId]["rawmemberactivities"].insert_many(
             rawinfo_samples
         )
         self.heatmaps_analytics()
