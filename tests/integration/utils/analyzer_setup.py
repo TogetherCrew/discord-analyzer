@@ -6,11 +6,11 @@ from dotenv import load_dotenv
 
 
 def setup_analyzer(
-    guild_id: str,
+    platform_id: str,
 ) -> TCAnalyzer:
     load_dotenv()
 
-    analyzer = TCAnalyzer(guild_id)
+    analyzer = TCAnalyzer(platform_id)
     analyzer.database_connect()
 
     return analyzer

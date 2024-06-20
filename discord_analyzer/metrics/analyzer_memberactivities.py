@@ -14,7 +14,6 @@ class MemberActivities:
         self,
         platform_id: str,
         resources: list[str],
-        resource_identifier: str,
         action_config: dict[str, int],
         window_config: dict[str, int],
         analyzer_config: PlatformConfigBase,
@@ -22,7 +21,6 @@ class MemberActivities:
     ) -> None:
         self.platform_id = platform_id
         self.resources = resources
-        self.resource_identifier = resource_identifier
         self.action_config = action_config
         self.window_config = window_config
         self.analyzer_config = analyzer_config
@@ -129,7 +127,7 @@ class MemberActivities:
         networkx_objects, activities = compute_member_activity(
             platform_id=self.platform_id,
             resources=self.resources,
-            resource_identifier=self.resource_identifier,
+            resource_identifier=self.analyzer_config.resource_identifier,
             acc_names=all_users,
             date_range=date_range,
             window_param=self.window_config,

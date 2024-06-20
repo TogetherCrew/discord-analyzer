@@ -30,15 +30,14 @@ def test_excluding_bots_heatmaps():
     setup_db_guild(
         db_access,
         platform_id,
-        guildId,
         discordId_list=acc_id,
         discordId_isbot=acc_isbots,
         days_ago_period=connected_days_before,
     )
     window_start_date = datetime.now() - timedelta(days=connected_days_before)
 
-    db_access.db_mongo_client[guildId].create_collection("heatmaps")
-    db_access.db_mongo_client[guildId].create_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
     # generating rawinfo samples
     rawinfo_samples = []
@@ -65,12 +64,12 @@ def test_excluding_bots_heatmaps():
         }
         rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer(guildId)
+    analyzer = setup_analyzer(platform_id)
     analyzer.run_once()
 
-    db_access.db_mongo_client[guildId]
+    db_access.db_mongo_client[platform_id]
 
     pipeline = [
         # Filter documents based on date
@@ -83,7 +82,9 @@ def test_excluding_bots_heatmaps():
             }
         },
     ]
-    result = list(db_access.db_mongo_client[guildId]["heatmaps"].aggregate(pipeline))
+    result = list(
+        db_access.db_mongo_client[platform_id]["heatmaps"].aggregate(pipeline)
+    )
 
     print(result[0]["uniqueAccounts"])
     print(f"np.array(acc_id)[acc_isbots]: {np.array(acc_id)[acc_isbots]}")

@@ -9,6 +9,7 @@ class TestMemberActivitiesActionsAllActive(TestCase):
     def setUp(self) -> None:
         self.guildId = "1234"
         self.db_access = launch_db_access(self.guildId)
+        self.db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
 
     def test_single_user_action(self):
         platform_id = "515151515151515151515151"
@@ -16,12 +17,9 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         setup_db_guild(
             self.db_access,
             platform_id,
-            self.guildId,
             discordId_list=users_id_list,
             days_ago_period=35,
         )
-        self.db_access.db_mongo_client[self.guildId]["heatmaps"].delete_many({})
-        self.db_access.db_mongo_client[self.guildId].create_collection("heatmaps")
 
         rawinfo_samples = []
         for i in range(35 * 24):
@@ -65,12 +63,10 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         setup_db_guild(
             self.db_access,
             platform_id,
-            self.guildId,
             discordId_list=users_id_list,
             days_ago_period=35,
         )
-        self.db_access.db_mongo_client[self.guildId]["heatmaps"].delete_many({})
-        self.db_access.db_mongo_client[self.guildId].create_collection("heatmaps")
+        self.db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
 
         rawinfo_samples = []
         active_users = ["user1", "user2"]
@@ -114,12 +110,10 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         setup_db_guild(
             self.db_access,
             platform_id,
-            self.guildId,
             discordId_list=users_id_list,
             days_ago_period=35,
         )
-        self.db_access.db_mongo_client[self.guildId]["heatmaps"].delete_many({})
-        self.db_access.db_mongo_client[self.guildId].create_collection("heatmaps")
+        self.db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
 
         rawinfo_samples = []
         active_users = ["user1", "user2"]

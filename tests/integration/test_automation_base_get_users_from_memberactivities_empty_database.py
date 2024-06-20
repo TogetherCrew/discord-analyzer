@@ -12,7 +12,7 @@ def test_automation_base_get_users_no_data_new_disengaged():
     guildId = "1234"
     db_access = launch_db_access(guildId)
 
-    db_access.db_mongo_client[guildId].drop_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
     automation_base = AutomationBase()
     users1, users2 = automation_base._get_users_from_memberactivities(
@@ -30,7 +30,7 @@ def test_automation_base_get_users_no_data_new_active():
     guildId = "1234"
     db_access = launch_db_access(guildId)
 
-    db_access.db_mongo_client[guildId].drop_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
     automation_base = AutomationBase()
     users1, users2 = automation_base._get_users_from_memberactivities(
@@ -48,8 +48,8 @@ def test_automation_base_get_users_empty_new_disengaged():
     guildId = "1234"
     db_access = launch_db_access(guildId)
 
-    db_access.db_mongo_client[guildId].drop_collection("memberactivities")
-    db_access.db_mongo_client[guildId]["memberactivities"].delete_many({})
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
+    db_access.db_mongo_client[platform_id]["memberactivities"].delete_many({})
 
     date_yesterday = (
         (datetime.now() - timedelta(days=1))
@@ -63,7 +63,7 @@ def test_automation_base_get_users_empty_new_disengaged():
         .strftime("%Y-%m-%dT%H:%M:%S")
     )
 
-    db_access.db_mongo_client[guildId]["memberactivities"].insert_many(
+    db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(
         [
             {
                 "date": date_yesterday,
@@ -130,8 +130,8 @@ def test_automation_base_get_users_empty_new_active():
     guildId = "1234"
     db_access = launch_db_access(guildId)
 
-    db_access.db_mongo_client[guildId].drop_collection("memberactivities")
-    db_access.db_mongo_client[guildId]["memberactivities"].delete_many({})
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
+    db_access.db_mongo_client[platform_id]["memberactivities"].delete_many({})
 
     date_yesterday = (
         (datetime.now() - timedelta(days=1))
@@ -145,7 +145,7 @@ def test_automation_base_get_users_empty_new_active():
         .strftime("%Y-%m-%dT%H:%M:%S")
     )
 
-    db_access.db_mongo_client[guildId]["memberactivities"].insert_many(
+    db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(
         [
             {
                 "date": date_yesterday,

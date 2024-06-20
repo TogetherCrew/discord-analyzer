@@ -20,11 +20,14 @@ def test_mention_active_members_from_rawinfo():
         "user2",
     ]
     setup_db_guild(
-        db_access, platform_id, guildId, discordId_list=acc_id, days_ago_period=7
+        db_access=db_access,
+        platform_id=platform_id,
+        discordId_list=acc_id,
+        days_ago_period=7,
     )
 
-    db_access.db_mongo_client[guildId].create_collection("heatmaps")
-    db_access.db_mongo_client[guildId].create_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].create_collection("heatmaps")
+    db_access.db_mongo_client[platform_id].create_collection("memberactivities")
 
     # generating rawinfo samples
     rawinfo_samples = []
@@ -50,9 +53,9 @@ def test_mention_active_members_from_rawinfo():
         }
         rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer(guildId)
+    analyzer = setup_analyzer(platform_id)
     analyzer.run_once()
 
     memberactivities_cursor = db_access.query_db_find(

@@ -14,9 +14,7 @@ def test_analyzer_from_start_one_interval():
     guildId = "1234"
     db_access = launch_db_access(guildId)
 
-    setup_db_guild(
-        db_access, platform_id, guildId, discordId_list=["973993299281076285"]
-    )
+    setup_db_guild(db_access, platform_id, discordId_list=["973993299281076285"])
 
     rawinfo_samples = []
 
@@ -39,18 +37,18 @@ def test_analyzer_from_start_one_interval():
         }
         rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawinfos"].insert_many(rawinfo_samples)
 
-    db_access.db_mongo_client[guildId].create_collection("heatmaps")
-    db_access.db_mongo_client[guildId].create_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
-    analyzer = setup_analyzer(guildId)
+    analyzer = setup_analyzer(platform_id)
     analyzer.recompute_analytics()
 
-    memberactivities_data = db_access.db_mongo_client[guildId][
+    memberactivities_data = db_access.db_mongo_client[platform_id][
         "memberactivities"
     ].find_one({})
-    heatmaps_data = db_access.db_mongo_client[guildId]["heatmaps"].find_one({})
+    heatmaps_data = db_access.db_mongo_client[platform_id]["heatmaps"].find_one({})
     guild_document = db_access.db_mongo_client["Core"]["platforms"].find_one(
         {"metadata.id": guildId}
     )

@@ -16,17 +16,15 @@ def test_analyzer_member_activities_from_start_available_member_activity():
     platform_id = "515151515151515151515151"
     db_access = launch_db_access(guildId)
 
-    setup_db_guild(
-        db_access, platform_id, guildId, discordId_list=["973993299281076285"]
-    )
+    setup_db_guild(db_access, platform_id, discordId_list=["973993299281076285"])
 
-    db_access.db_mongo_client[guildId].create_collection("heatmaps")
-    db_access.db_mongo_client[guildId].create_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
     memberactivity_data = create_empty_memberactivities_data(
         datetime(year=2023, month=6, day=5)
     )
-    db_access.db_mongo_client[guildId]["memberactivities"].insert_many(
+    db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(
         memberactivity_data
     )
 
@@ -51,15 +49,15 @@ def test_analyzer_member_activities_from_start_available_member_activity():
         }
         rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer(guildId)
+    analyzer = setup_analyzer(platform_id)
     analyzer.recompute_analytics()
 
-    memberactivities_data = db_access.db_mongo_client[guildId][
+    memberactivities_data = db_access.db_mongo_client[platform_id][
         "memberactivities"
     ].find_one({})
-    heatmaps_data = db_access.db_mongo_client[guildId]["heatmaps"].find_one({})
+    heatmaps_data = db_access.db_mongo_client[platform_id]["heatmaps"].find_one({})
     guild_document = db_access.db_mongo_client["Core"]["platforms"].find_one(
         {"metadata.id": guildId}
     )

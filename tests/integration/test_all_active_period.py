@@ -29,8 +29,8 @@ def test_two_weeks_period_active_members():
         days_ago_period=connected_days_before,
     )
 
-    db_access.db_mongo_client[guildId].create_collection("heatmaps")
-    db_access.db_mongo_client[guildId].create_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
     # generating rawinfo samples
     rawinfo_samples = []
@@ -115,9 +115,9 @@ def test_two_weeks_period_active_members():
 
     rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer(guildId)
+    analyzer = setup_analyzer(platform_id)
     analyzer.run_once()
 
     memberactivities_cursor = db_access.query_db_find(

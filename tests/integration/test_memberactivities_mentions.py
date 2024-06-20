@@ -32,7 +32,6 @@ class TestMemberActivitiesReply(TestCase):
         setup_db_guild(
             self.db_access,
             platform_id,
-            self.guildId,
             discordId_list=users_id_list,
             days_ago_period=35,
             action=action,

@@ -11,12 +11,8 @@ def test_utils_get_members():
     guildId = "1012430565959553145"
     users = ["973993299281076285"]
     db_access = launch_db_access(guildId)
-    setup_db_guild(
-        db_access, platform_id, guildId, discordId_list=users, days_ago_period=7
-    )
-    analyzer = setup_analyzer(guildId)
-
-    setup_db_guild(db_access, platform_id, guildId, discordId_list=users)
+    setup_db_guild(db_access, platform_id, discordId_list=users, days_ago_period=7)
+    analyzer = setup_analyzer(platform_id)
 
     rawinfo_samples = []
     for i in range(150):
@@ -38,10 +34,10 @@ def test_utils_get_members():
         }
         rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawinfos"].insert_many(rawinfo_samples)
 
-    db_access.db_mongo_client[guildId].create_collection("heatmaps")
-    db_access.db_mongo_client[guildId].create_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
     memberactivities_utils = MemberActivityUtils(analyzer.DB_connections)
 

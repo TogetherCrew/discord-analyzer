@@ -56,10 +56,10 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
             "updatedAt": datetime(2023, 11, 1),
         }
     )
-    db_access.db_mongo_client[guildId].create_collection("heatmaps")
-    db_access.db_mongo_client[guildId].create_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].create_collection("heatmaps")
+    db_access.db_mongo_client[platform_id].create_collection("memberactivities")
 
-    db_access.db_mongo_client[guildId]["guildmembers"].insert_one(
+    db_access.db_mongo_client[platform_id]["guildmembers"].insert_one(
         {
             "discordId": "3451791",
             "username": "sample_user",
@@ -92,15 +92,15 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
         }
         rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawinfos"].insert_many(rawinfo_samples)
 
-    analyzer = setup_analyzer(guildId)
+    analyzer = setup_analyzer(platform_id)
     analyzer.recompute_analytics()
 
-    memberactivities_data = db_access.db_mongo_client[guildId][
+    memberactivities_data = db_access.db_mongo_client[platform_id][
         "memberactivities"
     ].find_one({})
-    heatmaps_data = db_access.db_mongo_client[guildId]["heatmaps"].find_one({})
+    heatmaps_data = db_access.db_mongo_client[platform_id]["heatmaps"].find_one({})
     guild_document = db_access.db_mongo_client["Core"]["platforms"].find_one(
         {"metadata.id": guildId}
     )

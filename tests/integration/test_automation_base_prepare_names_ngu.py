@@ -13,7 +13,7 @@ def test_prepare_ngu_no_data():
     guildId = "1234"
     db_access = launch_db_access(guildId)
 
-    db_access.db_mongo_client[guildId].drop_collection("guildmembers")
+    db_access.db_mongo_client[platform_id].drop_collection("guildmembers")
 
     automation_base = AutomationBase()
     names = automation_base.prepare_names(guild_id=guildId, user_ids=[])
@@ -29,9 +29,9 @@ def test_prepare_ngu_some_data_ngu_strategy():
     guildId = "1234"
     db_access = launch_db_access(guildId)
 
-    db_access.db_mongo_client[guildId].drop_collection("guildmembers")
+    db_access.db_mongo_client[platform_id].drop_collection("guildmembers")
 
-    db_access.db_mongo_client[guildId]["guildmembers"].insert_many(
+    db_access.db_mongo_client[platform_id]["guildmembers"].insert_many(
         [
             {
                 "discordId": "1111",

@@ -62,11 +62,19 @@ class TCAnalyzer(AnalyzerDBManager):
             remove_heatmaps=False,
         )
 
-        memberactivities_analysis = MemberActivities()
+        window, action = self.platform_utils.get_platform_analyzer_params()
+        memberactivity_analysis = MemberActivities(
+            platform_id=self.platform_id,
+            resources=self.platform_utils.get_platform_resources(),
+            action_config=action,
+            window_config=window,
+            analyzer_config=self.analyzer_config,
+            analyzer_period=self.platform_utils.get_platform_period(),
+        )
         (
             member_activities_data,
             member_acitivities_networkx_data,
-        ) = memberactivities_analysis.analysis_member_activity(self.platform_id)
+        ) = memberactivity_analysis.analysis_member_activity(from_start=True)
 
         analytics_data = {}
         # storing whole data into a dictinoary
@@ -149,9 +157,7 @@ class TCAnalyzer(AnalyzerDBManager):
         (
             member_activities_data,
             member_acitivities_networkx_data,
-        ) = memberactivity_analysis.analysis_member_activity(
-            self.platform_id, from_start=True
-        )
+        ) = memberactivity_analysis.analysis_member_activity(from_start=True)
 
         # storing whole data into a dictinoary
         analytics_data = {}

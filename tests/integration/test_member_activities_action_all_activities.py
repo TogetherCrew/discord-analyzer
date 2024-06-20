@@ -35,13 +35,11 @@ class TestMemberActivitiesActionsAllActivities(TestCase):
         setup_db_guild(
             self.db_access,
             platform_id,
-            self.guildId,
             discordId_list=users_id_list,
             days_ago_period=35,
             action=action,
         )
-        self.db_access.db_mongo_client[self.guildId]["heatmaps"].delete_many({})
-        self.db_access.db_mongo_client[self.guildId].create_collection("heatmaps")
+        self.db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
 
         rawinfo_samples = []
         for i in range(35 * 24):

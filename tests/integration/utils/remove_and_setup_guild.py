@@ -89,7 +89,7 @@ def setup_db_guild(
         user_data = zip(discordId_list, discordId_isbot)
 
     for idx, (discordId, isbot) in enumerate(user_data):
-        db_access.db_mongo_client[guildId]["guildmembers"].insert_one(
+        db_access.db_mongo_client[platform_id]["guildmembers"].insert_one(
             {
                 "discordId": discordId,
                 "username": f"sample_user_{idx}",

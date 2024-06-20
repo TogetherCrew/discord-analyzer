@@ -13,9 +13,9 @@ def test_prepare_ngu_some_data_nickname_strategy():
     guildId = "1234"
     db_access = launch_db_access(guildId)
 
-    db_access.db_mongo_client[guildId].drop_collection("guildmembers")
+    db_access.db_mongo_client[platform_id].drop_collection("guildmembers")
 
-    db_access.db_mongo_client[guildId]["guildmembers"].insert_many(
+    db_access.db_mongo_client[platform_id]["guildmembers"].insert_many(
         [
             {
                 "discordId": "1111",
