@@ -15,9 +15,8 @@ def test_analyzer_one_year_period_recompute_available_analytics():
     and use recompute method with some analytics data available
     """
     # first create the collections
-    guildId = "1234"
     platform_id = "515151515151515151515151"
-    db_access = launch_db_access(guildId)
+    db_access = launch_db_access(platform_id)
 
     acc_id = [
         "973993299281076285",
@@ -28,8 +27,6 @@ def test_analyzer_one_year_period_recompute_available_analytics():
 
     db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
-    db_access.db_mongo_client[platform_id].create_collection("heatmaps")
-    db_access.db_mongo_client[platform_id].create_collection("memberactivities")
 
     # filling memberactivities with some data
     # filling heatmaps with some data
@@ -56,23 +53,40 @@ def test_analyzer_one_year_period_recompute_available_analytics():
     # 24 hours
     # 360 days
     for i in range(24 * 360):
-        sample = {
-            "type": 19,
-            "author": np.random.choice(acc_id),
-            "content": f"test{i}",
-            "user_mentions": [],
-            "role_mentions": [],
-            "reactions": [],
-            "replied_user": np.random.choice(acc_id),
-            "createdDate": (datetime.now() - timedelta(hours=i)),
-            "messageId": f"11188143219343360{i}",
-            "channelId": "1020707129214111827",
-            "channelName": "general",
-            "threadId": None,
-            "threadName": None,
-            "isGeneratedByWebhook": False,
-        }
-        rawinfo_samples.append(sample)
+        author = np.random.choice(acc_id)
+        replied_user = np.random.choice(acc_id)
+        samples = [
+            {
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": author,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [
+                    {"name": "reply", "type": "emitter", "users_engaged_id": [replied_user]}
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
+            },
+            {
+                "actions": [],
+                "author_id": replied_user,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [
+                    {"name": "reply", "type": "receiver", "users_engaged_id": [author]}
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
+            }
+        ]
+        rawinfo_samples.extend(samples)
+
 
     db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
         rawinfo_samples
@@ -104,6 +118,6 @@ def test_analyzer_one_year_period_recompute_available_analytics():
     # (accounts are: "973993299281076285", "973993299281076286")
     assert len(heatmaps_data) == 360 * 2
     # checking first and last document
-    assert heatmaps_data[0]["date"] == yesterday.strftime("%Y-%m-%d")
+    assert heatmaps_data[0]["date"] == yesterday
     date_ago = yesterday - timedelta(359)
-    assert heatmaps_data[-1]["date"] == date_ago.strftime("%Y-%m-%d")
+    assert heatmaps_data[-1]["date"] == date_ago

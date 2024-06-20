@@ -37,30 +37,44 @@ def test_all_joined_day_members():
 
     db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
-    db_access.db_mongo_client[platform_id].create_collection("heatmaps")
-    db_access.db_mongo_client[platform_id].create_collection("memberactivities")
 
     rawinfo_samples = []
 
     # generating random rawinfo data
     for i in range(150):
-        sample = {
-            "type": 19,
-            "author": np.random.choice(acc_id),
-            "content": f"test{i}",
-            "user_mentions": [],
-            "role_mentions": [],
-            "reactions": [],
-            "replied_user": np.random.choice(acc_id),
-            "createdDate": (datetime.now() - timedelta(hours=i)),
-            "messageId": f"11188143219343360{i}",
-            "channelId": "1020707129214111827",
-            "channelName": "general",
-            "threadId": None,
-            "threadName": None,
-            "isGeneratedByWebhook": False,
-        }
-        rawinfo_samples.append(sample)
+        author = np.random.choice(acc_id)
+        replied_user = np.random.choice(acc_id)
+        samples = [
+            {
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": author,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [
+                    {"name": "reply", "type": "emitter", "users_engaged_id": [replied_user]}
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
+            },
+            {
+                "actions": [],
+                "author_id": replied_user,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [
+                    {"name": "reply", "type": "receiver", "users_engaged_id": [author]}
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
+            }
+        ]
+        rawinfo_samples.extend(samples)
 
     db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
         rawinfo_samples
