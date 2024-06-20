@@ -54,7 +54,9 @@ def test_analyzer_six_month_period_recompute_empty_analytics():
         }
         rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
+        rawinfo_samples
+    )
 
     analyzer = setup_analyzer(platform_id)
     analyzer.recompute_analytics()

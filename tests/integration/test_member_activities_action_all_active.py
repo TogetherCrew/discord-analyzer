@@ -40,14 +40,14 @@ class TestMemberActivitiesActionsAllActive(TestCase):
             }
             rawinfo_samples.append(sample)
 
-        self.db_access.db_mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
-            rawinfo_samples
-        )
+        self.db_access.db_mongo_client[self.platform_id][
+            "rawmemberactivities"
+        ].insert_many(rawinfo_samples)
         analyzer = setup_analyzer(self.platform_id)
         analyzer.recompute_analytics()
-        cursor = self.db_access.db_mongo_client[self.platform_id]["memberactivities"].find(
-            {}, {"_id": 0, "all_active": 1}
-        )
+        cursor = self.db_access.db_mongo_client[self.platform_id][
+            "memberactivities"
+        ].find({}, {"_id": 0, "all_active": 1})
 
         # memberactivities
         computed_analytics = list(cursor)
@@ -87,14 +87,14 @@ class TestMemberActivitiesActionsAllActive(TestCase):
             }
             rawinfo_samples.append(sample)
 
-        self.db_access.db_mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
-            rawinfo_samples
-        )
+        self.db_access.db_mongo_client[self.platform_id][
+            "rawmemberactivities"
+        ].insert_many(rawinfo_samples)
         analyzer = setup_analyzer(self.platform_id)
         analyzer.recompute_analytics()
-        cursor = self.db_access.db_mongo_client[self.platform_id]["memberactivities"].find(
-            {}, {"_id": 0, "all_active": 1}
-        )
+        cursor = self.db_access.db_mongo_client[self.platform_id][
+            "memberactivities"
+        ].find({}, {"_id": 0, "all_active": 1})
 
         # memberactivities
         computed_analytics = list(cursor)
@@ -133,14 +133,14 @@ class TestMemberActivitiesActionsAllActive(TestCase):
             }
             rawinfo_samples.append(sample)
 
-        self.db_access.db_mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
-            rawinfo_samples
-        )
+        self.db_access.db_mongo_client[self.platform_id][
+            "rawmemberactivities"
+        ].insert_many(rawinfo_samples)
         analyzer = setup_analyzer(self.platform_id)
         analyzer.recompute_analytics()
-        cursor = self.db_access.db_mongo_client[self.platform_id]["memberactivities"].find(
-            {}, {"_id": 0, "all_active": 1, "date": 1}
-        )
+        cursor = self.db_access.db_mongo_client[self.platform_id][
+            "memberactivities"
+        ].find({}, {"_id": 0, "all_active": 1, "date": 1})
 
         # memberactivities
         computed_analytics = list(cursor)
