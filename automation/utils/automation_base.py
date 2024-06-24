@@ -85,13 +85,11 @@ class AutomationBase:
         projection = {category: 1, "date": 1, "_id": 0}
         date_yesterday = (
             (datetime.now() - timedelta(days=1))
-            .replace(hour=0, minute=0, second=0)
-            .strftime("%Y-%m-%dT%H:%M:%S")
+            .replace(hour=0, minute=0, second=0, microsecond=0)
         )
         date_two_past_days = (
             (datetime.now() - timedelta(days=2))
-            .replace(hour=0, minute=0, second=0)
-            .strftime("%Y-%m-%dT%H:%M:%S")
+            .replace(hour=0, minute=0, second=0, microsecond=0)
         )
 
         users = (

@@ -15,9 +15,9 @@ def test_analyzer_member_activities_from_start_available_heatmaps():
     # first create the collections
     guildId = "1234"
     platform_id = "515151515151515151515151"
-    db_access = launch_db_access(guildId)
+    db_access = launch_db_access(platform_id)
 
-    setup_db_guild(db_access, platform_id, discordId_list=["973993299281076285"])
+    setup_db_guild(db_access, platform_id, discordId_list=["user_0"])
 
     db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
@@ -37,21 +37,18 @@ def test_analyzer_member_activities_from_start_available_heatmaps():
     rawinfo_samples = []
 
     for i in range(150):
+        author = "user_0"
         sample = {
-            "type": 0,
-            "author": "973993299281076285",
-            "content": "test10",
-            "user_mentions": [],
-            "role_mentions": [],
-            "reactions": [],
-            "replied_user": None,
-            "createdDate": (datetime.now() - timedelta(hours=i)),
-            "messageId": f"11188143219343360{i}",
-            "channelId": "1020707129214111827",
-            "channelName": "general",
-            "threadId": None,
-            "threadName": None,
-            "isGeneratedByWebhook": False,
+            "actions": [{"name": "message", "type": "emitter"}],
+            "author_id": author,
+            "date": datetime.now() - timedelta(hours=i),
+            "interactions": [],
+            "metadata": {
+                "bot_activity": False,
+                "channel_id": "1020707129214111827",
+                "thread_id": None,
+            },
+            "source_id": f"11188143219343360{i}",
         }
         rawinfo_samples.append(sample)
 

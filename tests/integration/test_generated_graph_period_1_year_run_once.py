@@ -19,7 +19,7 @@ def test_networkgraph_one_year_period_run_once_available_analytics():
     guildId = "1234"
     community_id = "aabbccddeeff001122334455"
     platform_id = "515151515151515151515151"
-    db_access = launch_db_access(guildId)
+    db_access = launch_db_access(platform_id)
     neo4j_ops = Neo4jOps.get_instance()
 
     neo4j_ops.gds.run_cypher(

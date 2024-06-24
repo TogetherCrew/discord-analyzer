@@ -11,14 +11,13 @@ def test_all_joined_day_members():
     """
     testing the all_joined_day
     """
-    guildId = "1234"
     platform_id = "515151515151515151515151"
-    db_access = launch_db_access(guildId)
+    db_access = launch_db_access(platform_id)
     today = datetime.now()
 
     acc_id = [
-        "973993299281076285",
-        "973993299281076286",
+        "user_0",
+        "user_1",
     ]
     # users joining 15 days ago
     # and 13 days ago
@@ -92,8 +91,7 @@ def test_all_joined_day_members():
     memberactivities = list(cursor)
 
     for document in memberactivities:
-        date_str = document["date"].split("T")[0]
-        date = datetime.strptime(date_str, "%Y-%m-%d")
+        date = document["date"]
 
         # checking the types
         assert isinstance(document["all_joined_day"], list)
@@ -103,35 +101,35 @@ def test_all_joined_day_members():
         joined = set(document["all_joined"])
 
         if (today - date).days == 15:
-            assert joined_day == {"973993299281076285"}
-            assert joined == {"973993299281076285"}
+            assert joined_day == {"user_0"}
+            assert joined == {"user_0"}
         elif (today - date).days == 14:
             assert joined_day == set()
-            assert joined == {"973993299281076285"}
+            assert joined == {"user_0"}
         elif (today - date).days == 13:
-            assert joined_day == {"973993299281076286"}
-            assert joined == {"973993299281076285", "973993299281076286"}
+            assert joined_day == {"user_1"}
+            assert joined == {"user_0", "user_1"}
         elif (today - date).days == 12:
             assert joined_day == set()
-            assert joined == {"973993299281076286", "973993299281076285"}
+            assert joined == {"user_1", "user_0"}
         elif (today - date).days == 11:
             assert joined_day == set()
-            assert joined == {"973993299281076286", "973993299281076285"}
+            assert joined == {"user_1", "user_0"}
         elif (today - date).days == 10:
             assert joined_day == set()
-            assert joined == {"973993299281076286", "973993299281076285"}
+            assert joined == {"user_1", "user_0"}
         elif (today - date).days == 9:
             assert joined_day == set()
-            assert joined == {"973993299281076286", "973993299281076285"}
+            assert joined == {"user_1", "user_0"}
         elif (today - date).days == 8:
             assert joined_day == set()
-            assert joined == {"973993299281076286", "973993299281076285"}
+            assert joined == {"user_1", "user_0"}
         elif (today - date).days == 7:
             assert joined_day == set()
-            assert joined == {"973993299281076286"}
+            assert joined == {"user_1"}
         elif (today - date).days == 6:
             assert joined_day == set()
-            assert joined == {"973993299281076286"}
+            assert joined == {"user_1"}
         else:
             assert joined_day == set()
             assert joined == set()

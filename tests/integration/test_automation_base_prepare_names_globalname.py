@@ -10,8 +10,8 @@ def test_prepare_ngu_some_data_globalname_strategy():
     test the preparation module in case of some data available
     the output should be have the names of the field `globalName`
     """
-    guildId = "1234"
-    db_access = launch_db_access(guildId)
+    platform_id = "515151515151515151515151"
+    db_access = launch_db_access(platform_id)
 
     db_access.db_mongo_client[platform_id].drop_collection("guildmembers")
 
@@ -87,7 +87,7 @@ def test_prepare_ngu_some_data_globalname_strategy():
 
     automation_base = AutomationBase()
     id_names = automation_base.prepare_names(
-        guild_id=guildId,
+        guild_id=platform_id,
         user_ids=["1111", "1112", "1113", "1116"],
         user_field="globalName",
     )

@@ -13,9 +13,8 @@ def test_analyzer_six_month_period_run_once_empty_analytics():
     and use run_once method with empty analytics available
     """
     # first create the collections
-    guildId = "1234"
     platform_id = "515151515151515151515151"
-    db_access = launch_db_access(guildId)
+    db_access = launch_db_access(platform_id)
 
     acc_id = [
         "973993299281076285",

@@ -11,8 +11,7 @@ def test_excluding_bots_heatmaps():
     test if we're excluding bots from analyzer pipeline
     """
     platform_id = "515151515151515151515151"
-    guildId = "1234567"
-    db_access = launch_db_access(guildId)
+    db_access = launch_db_access(platform_id)
 
     acc_id = [
         "user0",
@@ -46,23 +45,43 @@ def test_excluding_bots_heatmaps():
     # 30 days
     # 24 * 30
     for i in range(720):
-        sample = {
-            "type": 19,
-            "author": acc_id[i % len(acc_id)],
-            "content": f"test{i}",
-            "user_mentions": [],
-            "role_mentions": [],
-            "reactions": [],
-            "replied_user": np.random.choice(acc_id),
-            "createdDate": (datetime.now() - timedelta(hours=i)),
-            "messageId": f"11188143219343360{i}",
-            "channelId": "1020707129214111827",
-            "channelName": "general",
-            "threadId": None,
-            "threadName": None,
-            "isGeneratedByWebhook": False,
-        }
-        rawinfo_samples.append(sample)
+        author = acc_id[i % len(acc_id)]
+        replied_user = np.random.choice(acc_id)
+        samples = [
+            {
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": author,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [
+                    {
+                        "name": "reply",
+                        "type": "emitter",
+                        "users_engaged_id": [replied_user],
+                    }
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
+            },
+            {
+                "actions": [],
+                "author_id": replied_user,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [
+                    {"name": "reply", "type": "receiver", "users_engaged_id": [author]}
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
+            },
+        ]
+        rawinfo_samples.extend(samples)
 
     db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
         rawinfo_samples
@@ -75,8 +94,8 @@ def test_excluding_bots_heatmaps():
 
     pipeline = [
         # Filter documents based on date
-        {"$match": {"date": {"$gte": window_start_date.strftime("%Y-%m-%d")}}},
-        {"$group": {"_id": "$account_name"}},
+        {"$match": {"date": {"$gte": window_start_date}}},
+        {"$group": {"_id": "$user"}},
         {
             "$group": {
                 "_id": None,
@@ -88,8 +107,8 @@ def test_excluding_bots_heatmaps():
         db_access.db_mongo_client[platform_id]["heatmaps"].aggregate(pipeline)
     )
 
-    print(result[0]["uniqueAccounts"])
-    print(f"np.array(acc_id)[acc_isbots]: {np.array(acc_id)[acc_isbots]}")
+    # print(result[0]["uniqueAccounts"])
+    # print(f"np.array(acc_id)[acc_isbots]: {np.array(acc_id)[acc_isbots]}")
 
     # checking if the bots are not included in heatmaps
     for account_name in result[0]["uniqueAccounts"]:

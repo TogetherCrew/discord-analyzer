@@ -9,21 +9,19 @@ def test_automation_base_get_users_one_user_new_disengaged():
     """
     get empty users in case of no data available
     """
-    guildId = "1234"
-    db_access = launch_db_access(guildId)
+    platform_id = "515151515151515151515151"
+    db_access = launch_db_access(platform_id)
 
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
     date_yesterday = (
         (datetime.now() - timedelta(days=1))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
+        .replace(hour=0, minute=0, second=0, microsecond=0)
     )
 
     date_two_past_days = (
         (datetime.now() - timedelta(days=2))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
+        .replace(hour=0, minute=0, second=0, microsecond=0)
     )
 
     db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(
@@ -79,7 +77,7 @@ def test_automation_base_get_users_one_user_new_disengaged():
 
     automation_base = AutomationBase()
     users1, users2 = automation_base._get_users_from_memberactivities(
-        guildId, category="all_new_disengaged"
+        platform_id, category="all_new_disengaged"
     )
 
     assert users1 == ["user1"]
@@ -90,21 +88,19 @@ def test_automation_base_get_users_multiple_user_new_disengaged():
     """
     get empty users in case of no data available
     """
-    guildId = "1234"
-    db_access = launch_db_access(guildId)
+    platform_id = "515151515151515151515151"
+    db_access = launch_db_access(platform_id)
 
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
     date_yesterday = (
         (datetime.now() - timedelta(days=1))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
+        .replace(hour=0, minute=0, second=0, microsecond=0)
     )
 
     date_two_past_days = (
         (datetime.now() - timedelta(days=2))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
+        .replace(hour=0, minute=0, second=0, microsecond=0)
     )
 
     db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(
@@ -160,7 +156,7 @@ def test_automation_base_get_users_multiple_user_new_disengaged():
 
     automation_base = AutomationBase()
     users1, users2 = automation_base._get_users_from_memberactivities(
-        guildId, category="all_new_disengaged"
+        platform_id, category="all_new_disengaged"
     )
 
     assert users1 == ["user1", "user2"]
@@ -171,22 +167,20 @@ def test_automation_base_get_users_multiple_user_new_active():
     """
     get empty users in case of no data available
     """
-    guildId = "1234"
-    db_access = launch_db_access(guildId)
+    platform_id = "515151515151515151515151"
+    db_access = launch_db_access(platform_id)
 
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
     db_access.db_mongo_client[platform_id]["memberactivities"].delete_many({})
 
     date_yesterday = (
         (datetime.now() - timedelta(days=1))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
+        .replace(hour=0, minute=0, second=0, microsecond=0)
     )
 
     date_two_past_days = (
         (datetime.now() - timedelta(days=2))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
+        .replace(hour=0, minute=0, second=0, microsecond=0)
     )
 
     db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(
@@ -242,7 +236,7 @@ def test_automation_base_get_users_multiple_user_new_active():
 
     automation_base = AutomationBase()
     users1, users2 = automation_base._get_users_from_memberactivities(
-        guildId, category="all_new_active"
+        platform_id, category="all_new_active"
     )
 
     assert users1 == ["user5", "user8", "user12"]

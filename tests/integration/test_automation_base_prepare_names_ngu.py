@@ -10,13 +10,13 @@ def test_prepare_ngu_no_data():
     test the ngu preparation module in case of no data available
     the output should be an empty list
     """
-    guildId = "1234"
-    db_access = launch_db_access(guildId)
+    platform_id = "515151515151515151515151"
+    db_access = launch_db_access(platform_id)
 
     db_access.db_mongo_client[platform_id].drop_collection("guildmembers")
 
     automation_base = AutomationBase()
-    names = automation_base.prepare_names(guild_id=guildId, user_ids=[])
+    names = automation_base.prepare_names(guild_id=platform_id, user_ids=[])
 
     assert names == []
 
@@ -26,8 +26,8 @@ def test_prepare_ngu_some_data_ngu_strategy():
     test the name preparation module in case of some data available
     the output should be have the names with the priority of ngu
     """
-    guildId = "1234"
-    db_access = launch_db_access(guildId)
+    platform_id = "515151515151515151515151"
+    db_access = launch_db_access(platform_id)
 
     db_access.db_mongo_client[platform_id].drop_collection("guildmembers")
 
@@ -103,7 +103,7 @@ def test_prepare_ngu_some_data_ngu_strategy():
 
     automation_base = AutomationBase()
     id_names = automation_base.prepare_names(
-        guild_id=guildId,
+        guild_id=platform_id,
         user_ids=["1111", "1112", "1113", "1116", "1119"],
         user_field="ngu",
     )

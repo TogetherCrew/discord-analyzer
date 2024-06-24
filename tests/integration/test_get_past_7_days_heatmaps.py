@@ -13,8 +13,8 @@ def test_get_past_7_days_heatmap_users_available_users():
     test if we're getting the right heatmap users
     """
     # first create the collections
-    guildId = "1234"
-    db_access = launch_db_access(guildId)
+    platform_id = "515151515151515151515151"
+    db_access = launch_db_access(platform_id)
 
     start_date = datetime(2023, 1, 1)
 
@@ -65,8 +65,8 @@ def test_get_all_days_heatmap_users_available_users():
     test if we're getting the right heatmap users
     """
     # first create the collections
-    guildId = "1234"
-    db_access = launch_db_access(guildId)
+    platform_id = "515151515151515151515151"
+    db_access = launch_db_access(platform_id)
 
     start_date = datetime(2023, 1, 1)
 
@@ -115,8 +115,8 @@ def test_get_just_7_days_heatmap_users_available_users():
     test if we're getting the right heatmap users
     """
     # first create the collections
-    guildId = "1234"
-    db_access = launch_db_access(guildId)
+    platform_id = "515151515151515151515151"
+    db_access = launch_db_access(platform_id)
 
     start_date = datetime(2023, 1, 1)
 
@@ -179,8 +179,8 @@ def test_get_past_7_days_heatmap_users_no_users():
     test if we're getting the right heatmap users
     """
     # first create the collections
-    guildId = "1234"
-    db_access = launch_db_access(guildId)
+    platform_id = "515151515151515151515151"
+    db_access = launch_db_access(platform_id)
 
     start_date = datetime(2023, 1, 1)
 
