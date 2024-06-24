@@ -60,7 +60,9 @@ def setup_db_guild(
                 "resources": ["1020707129214111827"],
                 "window": {"period_size": 7, "step_size": 1},
                 "action": action,
-                "period": datetime.now() - timedelta(days=days_ago_period),
+                "period": (datetime.now() - timedelta(days=days_ago_period)).replace(
+                    hour=0, minute=0, second=0, microsecond=0
+                ),
             },
             "community": ObjectId(community_id),
             "disconnectedAt": None,
