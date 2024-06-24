@@ -25,8 +25,8 @@ def test_analyzer_month_period_recompute_available_analytics():
 
     setup_db_guild(db_access, platform_id, discordId_list=acc_id, days_ago_period=30)
 
-    db_access.db_mongo_client[platform_id].create_collection("heatmaps")
-    db_access.db_mongo_client[platform_id].create_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
     # filling memberactivities with some data
     # filling heatmaps with some data
@@ -41,12 +41,10 @@ def test_analyzer_month_period_recompute_available_analytics():
     # filling heatmaps with some data
     # filling up to 2 days ago with 29 documents
     # just yesterday is left to be analyzed
-    start_day = (
-        datetime.now() - timedelta(days=30)
-    ).replace(hour=0, minute=0, second=0, microsecond=0)
-    heatmaps_data = create_empty_heatmaps_data(
-        start_day, count=29
+    start_day = (datetime.now() - timedelta(days=30)).replace(
+        hour=0, minute=0, second=0, microsecond=0
     )
+    heatmaps_data = create_empty_heatmaps_data(start_day, count=29)
     db_access.db_mongo_client[platform_id]["heatmaps"].insert_many(heatmaps_data)
 
     # generating rawinfo samples
@@ -63,7 +61,11 @@ def test_analyzer_month_period_recompute_available_analytics():
                 "author_id": author,
                 "date": datetime.now() - timedelta(hours=i),
                 "interactions": [
-                    {"name": "reply", "type": "emitter", "users_engaged_id": [replied_user]}
+                    {
+                        "name": "reply",
+                        "type": "emitter",
+                        "users_engaged_id": [replied_user],
+                    }
                 ],
                 "metadata": {
                     "bot_activity": False,
@@ -85,7 +87,7 @@ def test_analyzer_month_period_recompute_available_analytics():
                     "thread_id": None,
                 },
                 "source_id": f"11188143219343360{i}",
-            }
+            },
         ]
         rawinfo_samples.extend(samples)
 

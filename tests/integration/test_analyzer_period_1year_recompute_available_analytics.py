@@ -61,7 +61,11 @@ def test_analyzer_one_year_period_recompute_available_analytics():
                 "author_id": author,
                 "date": datetime.now() - timedelta(hours=i),
                 "interactions": [
-                    {"name": "reply", "type": "emitter", "users_engaged_id": [replied_user]}
+                    {
+                        "name": "reply",
+                        "type": "emitter",
+                        "users_engaged_id": [replied_user],
+                    }
                 ],
                 "metadata": {
                     "bot_activity": False,
@@ -83,10 +87,9 @@ def test_analyzer_one_year_period_recompute_available_analytics():
                     "thread_id": None,
                 },
                 "source_id": f"11188143219343360{i}",
-            }
+            },
         ]
         rawinfo_samples.extend(samples)
-
 
     db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
         rawinfo_samples

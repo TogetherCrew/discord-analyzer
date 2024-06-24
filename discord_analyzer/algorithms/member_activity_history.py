@@ -134,7 +134,7 @@ def check_past_history(
         maximum_key = len(past_data_new_schema)
     else:
         all_activity_data_dict = {}
-        new_date_range = (date_range_start, date_range_end)
+        new_date_range = [date_range_start, date_range_end]
         maximum_key = 0
 
     return all_activity_data_dict, new_date_range, maximum_key

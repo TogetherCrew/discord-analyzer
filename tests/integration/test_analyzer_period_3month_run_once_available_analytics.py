@@ -41,12 +41,10 @@ def test_analyzer_three_month_period_run_once_available_analytics():
     # filling heatmaps with some data
     # filling up to 2 days ago with 89 documents
     # just yesterday is left to be analyzed
-    start_day = (
-        datetime.now() - timedelta(days=90)
-    ).replace(hour=0, minute=0, second=0, microsecond=0)
-    heatmaps_data = create_empty_heatmaps_data(
-        start_day, count=89
+    start_day = (datetime.now() - timedelta(days=90)).replace(
+        hour=0, minute=0, second=0, microsecond=0
     )
+    heatmaps_data = create_empty_heatmaps_data(start_day, count=89)
     db_access.db_mongo_client[platform_id]["heatmaps"].insert_many(heatmaps_data)
 
     # generating rawinfo samples
@@ -64,7 +62,11 @@ def test_analyzer_three_month_period_run_once_available_analytics():
                 "author_id": author,
                 "date": datetime.now() - timedelta(hours=i),
                 "interactions": [
-                    {"name": "reply", "type": "emitter", "users_engaged_id": [replied_user]}
+                    {
+                        "name": "reply",
+                        "type": "emitter",
+                        "users_engaged_id": [replied_user],
+                    }
                 ],
                 "metadata": {
                     "bot_activity": False,
@@ -86,7 +88,7 @@ def test_analyzer_three_month_period_run_once_available_analytics():
                     "thread_id": None,
                 },
                 "source_id": f"11188143219343360{i}",
-            }
+            },
         ]
         rawinfo_samples.extend(samples)
 

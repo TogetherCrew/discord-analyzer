@@ -61,7 +61,11 @@ def test_analyzer_three_month_period_recompute_available_analytics():
                 "author_id": author,
                 "date": datetime.now() - timedelta(hours=i),
                 "interactions": [
-                    {"name": "reply", "type": "emitter", "users_engaged_id": [replied_user]}
+                    {
+                        "name": "reply",
+                        "type": "emitter",
+                        "users_engaged_id": [replied_user],
+                    }
                 ],
                 "metadata": {
                     "bot_activity": False,
@@ -83,7 +87,7 @@ def test_analyzer_three_month_period_recompute_available_analytics():
                     "thread_id": None,
                 },
                 "source_id": f"11188143219343360{i}",
-            }
+            },
         ]
         rawinfo_samples.extend(samples)
 
