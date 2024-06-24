@@ -238,7 +238,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
     def test_wrong_activity_type(self):
         day = datetime(2023, 1, 1)
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(AttributeError):
             self.analytics.analyze(
                 activity="interactions",
                 activity_name="reply",
@@ -250,7 +250,7 @@ class TestHeatmapsRawAnalyticsVectorsActions(TestCase):
     def test_wrong_activity(self):
         day = datetime(2023, 1, 1)
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(AttributeError):
             self.analytics.analyze(
                 activity="activity1",
                 activity_name="reply",
