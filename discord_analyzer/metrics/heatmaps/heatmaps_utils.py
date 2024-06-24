@@ -63,9 +63,6 @@ class HeatmapsUtils:
             .limit(1)
         )
         documents = list(cursor)
-        if len(documents) != 0:
-            last_date = documents[0]["date"]
-        else:
-            last_date = None
+        last_date = documents[0]["date"] if documents != [] else None
 
         return last_date

@@ -46,13 +46,13 @@ class AnalyticsHourly:
         additional_filters: dict[str, str] = kwargs.get("additional_filters", {})
 
         if activity_direction not in ["emitter", "receiver"]:
-            raise ValueError(
+            raise AttributeError(
                 "Wrong activity_direction given, "
                 "should be either `emitter` or `receiver`!"
             )
 
         if activity not in ["interactions", "actions"]:
-            raise ValueError(
+            raise AttributeError(
                 "Wrong `activity` given, "
                 "should be either `interactions` or `actions`"
             )

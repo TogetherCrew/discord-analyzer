@@ -47,6 +47,12 @@ class RawMemberActivities(BaseModel):
         """
         prefix = f"{self.msg_prefix} {msg}"
 
+        if activity not in ["interactions", "actions"]:
+            raise ValueError(
+                f"{prefix} Wrong activity given!"
+                " Should be either `interactions`, or `actions`"
+            )
+
         start_day = datetime.combine(day, time(0, 0, 0))
         end_day = start_day + timedelta(days=1)
 
@@ -107,6 +113,8 @@ class RawMemberActivities(BaseModel):
 
         for analytics in analytics_mongo_results:
             hour = analytics["_id"]
+            if hour < 0 or hour > 24:
+                raise ValueError("Wrong hour given from mongodb query!")
             activity_count = analytics["count"]
 
             hourly_analytics[hour] = activity_count

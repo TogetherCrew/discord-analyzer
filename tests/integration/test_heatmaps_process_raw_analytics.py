@@ -8,7 +8,7 @@ from utils.mongo import MongoSingleton
 
 class TestHeatmapsProcessRawAnalyticsSingleDay(TestCase):
     def setUp(self) -> None:
-        platform_id = "1234567890"
+        self.platform_id = "1234567890"
         period = datetime(2024, 1, 1)
         resources = list["123", "124", "125"]
         # using one of the configs we currently have
@@ -16,13 +16,16 @@ class TestHeatmapsProcessRawAnalyticsSingleDay(TestCase):
         discord_analyzer_config = DiscordAnalyzerConfig()
 
         self.heatmaps = Heatmaps(
-            platform_id=platform_id,
+            platform_id=self.platform_id,
             period=period,
             resources=resources,
             analyzer_config=discord_analyzer_config,
         )
         self.mongo_client = MongoSingleton.get_instance().get_client()
-        self.mongo_client[platform_id].drop_collection("rawmemberactivities")
+        self.mongo_client[self.platform_id].drop_collection("rawmemberactivities")
+
+    def tearDown(self) -> None:
+        self.mongo_client.drop_database(self.platform_id)
 
     def test_empty_data(self):
         day = datetime(2023, 1, 1)

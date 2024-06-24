@@ -42,6 +42,9 @@ def test_louvain_get_computed_dates_empty_data():
 
     assert computed_dates == set()
 
+    # clean-up
+    neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
+
 
 def test_louvain_get_computed_dates_empty_data_with_have_metrics_relation():
     """
@@ -82,6 +85,8 @@ def test_louvain_get_computed_dates_empty_data_with_have_metrics_relation():
     computed_dates = louvain.get_computed_dates(projection_utils, guildId=guild_id)
 
     assert computed_dates == set()
+    # clean-up
+    neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
 
 
 def test_louvain_get_computed_dates_one_data():
@@ -123,3 +128,5 @@ def test_louvain_get_computed_dates_one_data():
     computed_dates = louvain.get_computed_dates(projection_utils, guildId=guild_id)
 
     assert computed_dates == {yesterday}
+    # clean-up
+    neo4j_ops.gds.run_cypher("MATCH (n) DETACH DELETE (n)")
