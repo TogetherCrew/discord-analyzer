@@ -10,7 +10,6 @@ from .utils.analyzer_setup import launch_db_access
 from .utils.remove_and_setup_guild import setup_db_guild
 
 
-@pytest.mark.skip("Skipping for now as memberactivities is not updated!")
 class TestAssessEngagementMentions(TestCase):
     def setUp(self) -> None:
         self.guildId = "1234"

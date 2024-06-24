@@ -11,7 +11,6 @@ from .utils.remove_and_setup_guild import setup_db_guild
 from discord_analyzer.metrics.heatmaps import Heatmaps
 
 
-@pytest.mark.skip("Skipping for now as memberactivities is not updated!")
 class TestAssessEngagementReplies(TestCase):
     def setUp(self) -> None:
         self.guildId = "1234"
