@@ -7,8 +7,8 @@ from .utils.remove_and_setup_guild import setup_db_guild
 
 class TestMemberActivitiesReply(TestCase):
     def setUp(self) -> None:
-        self.guildId = "1234"
-        self.db_access = launch_db_access(self.guildId)
+        self.platform_id = "515151515151515151515151"
+        self.db_access = launch_db_access(self.platform_id)
 
     def test_single_user_interaction(self):
         users_id_list = ["user1", "user2"]
@@ -27,44 +27,63 @@ class TestMemberActivitiesReply(TestCase):
             "DROP_H_THR": 2,
             "DROP_I_THR": 1,
         }
-        platform_id = "515151515151515151515151"
 
         setup_db_guild(
             self.db_access,
-            platform_id,
+            self.platform_id,
             discordId_list=users_id_list,
             days_ago_period=35,
             action=action,
         )
-        self.db_access.db_mongo_client[self.guildId]["heatmaps"].delete_many({})
-        self.db_access.db_mongo_client[self.guildId].create_collection("heatmaps")
+        self.db_access.db_mongo_client[self.platform_id]["heatmaps"].delete_many({})
+        self.db_access.db_mongo_client[self.platform_id].create_collection("heatmaps")
 
         rawinfo_samples = []
         for i in range(35 * 24):
-            sample = {
-                "type": 0,
-                "author": "user1",
-                "content": f"test message {i} @user2",
-                "user_mentions": ["user2"],
-                "role_mentions": [],
-                "reactions": [],
-                "replied_user": None,
-                "createdDate": (datetime.now() - timedelta(hours=i)),
-                "messageId": f"11188143219343360{i}",
-                "channelId": "1020707129214111827",
-                "channelName": "general",
-                "threadId": None,
-                "threadName": None,
-                "isGeneratedByWebhook": False,
-            }
-            rawinfo_samples.append(sample)
+            author = "user1"
+            mentioned_user = "user2"
+            samples = [
+                {
+                    "actions": [{"name": "message", "type": "emitter"}],
+                    "author_id": author,
+                    "date": datetime.now() - timedelta(hours=i),
+                    "interactions": [
+                        {
+                            "name": "mention",
+                            "type": "emitter",
+                            "users_engaged_id": [mentioned_user],
+                        }
+                    ],
+                    "metadata": {
+                        "bot_activity": False,
+                        "channel_id": "1020707129214111827",
+                        "thread_id": None,
+                    },
+                    "source_id": f"11188143219343360{i}",
+                },
+                {
+                    "actions": [],
+                    "author_id": mentioned_user,
+                    "date": datetime.now() - timedelta(hours=i),
+                    "interactions": [
+                        {"name": "mention", "type": "receiver", "users_engaged_id": [author]}
+                    ],
+                    "metadata": {
+                        "bot_activity": False,
+                        "channel_id": "1020707129214111827",
+                        "thread_id": None,
+                    },
+                    "source_id": f"11188143219343360{i}",
+                },
+            ]
+            rawinfo_samples.extend(samples)
 
-        self.db_access.db_mongo_client[self.guildId]["rawmemberactivities"].insert_many(
+        self.db_access.db_mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
             rawinfo_samples
         )
-        analyzer = setup_analyzer(self.guildId)
+        analyzer = setup_analyzer(self.platform_id)
         analyzer.recompute_analytics()
-        cursor = self.db_access.db_mongo_client[self.guildId]["memberactivities"].find(
+        cursor = self.db_access.db_mongo_client[self.platform_id]["memberactivities"].find(
             {},
             {
                 "_id": 0,
