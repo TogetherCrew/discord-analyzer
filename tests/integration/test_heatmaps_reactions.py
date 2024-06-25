@@ -121,7 +121,9 @@ def test_reacted_messages():
                 ]
                 prepared_rawmemberactivities.extend(prepared_rawdata)
                 channelIds.add(chId)
-                dates.add(data_date.date())
+                dates.add(
+                    data_date.replace(hour=0, minute=0, second=0, microsecond=0)
+                )
 
     database["rawmemberactivities"].insert_many(prepared_rawmemberactivities)
     database["rawmembers"].insert_many(prepared_rawmembers)

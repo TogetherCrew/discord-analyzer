@@ -16,8 +16,8 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
     platform_id = "515151515151515151515151"
     db_access = launch_db_access(platform_id)
 
-    db_access.db_mongo_client["Core"]["platforms"].delete_one({"metadata.id": guildId})
-    db_access.db_mongo_client.drop_database(guildId)
+    db_access.db_mongo_client["Core"].drop_collection("platforms")
+    db_access.db_mongo_client.drop_database(platform_id)
 
     action = {
         "INT_THR": 1,

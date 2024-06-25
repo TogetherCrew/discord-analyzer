@@ -6,7 +6,14 @@ from discord_analyzer.algorithms.analytics_interactions_script import (
 def test_per_account_interaction_no_inputs():
     sample_input = []
 
-    results = per_account_interactions(sample_input)
+    results = per_account_interactions(
+        sample_input,
+        dict_keys=[
+            "mentioner_accounts",
+            "reacter_accounts",
+            "replier_accounts",
+        ]
+    )
 
     assert results["mentioner_accounts"] == {}
     assert results["reacter_accounts"] == {}
@@ -39,7 +46,14 @@ def test_per_account_interaction_empty_inputs():
         },
     ]
 
-    results = per_account_interactions(sample_input)
+    results = per_account_interactions(
+        sample_input,
+        dict_keys=[
+            "mentioner_accounts",
+            "reacter_accounts",
+            "replier_accounts",
+        ]
+    )
 
     assert results["mentioner_accounts"] == {}
     assert results["reacter_accounts"] == {}
@@ -52,37 +66,37 @@ def test_per_account_interaction_accounts():
         {
             "user": "acc1",
             "channel_id": "1234",
-            "mentioner_accounts": [[{"account": "Ene SS Rawa#0855", "count": 1}]],
-            "reacter_accounts": [[{"account": "ahmadyazdanii#7517", "count": 1}]],
-            "replier_accounts": [[{"account": "ahmadyazdanii#7517", "count": 5}]],
+            "mentioner_accounts": [{"account": "Ene SS Rawa#0855", "count": 1}],
+            "reacter_accounts": [{"account": "ahmadyazdanii#7517", "count": 1}],
+            "replier_accounts": [{"account": "ahmadyazdanii#7517", "count": 5}],
         },
         {
             "user": "acc1",
             "channel_id": "1234",
-            "mentioner_accounts": [[{"account": "Ene SS Rawa#0855", "count": 1}]],
-            "reacter_accounts": [[{"account": "Mehrdad", "count": 1}]],
-            "replier_accounts": [[{"account": "ahmadyazdanii#7517", "count": 5}]],
+            "mentioner_accounts": [{"account": "Ene SS Rawa#0855", "count": 1}],
+            "reacter_accounts": [{"account": "Mehrdad", "count": 1}],
+            "replier_accounts": [{"account": "ahmadyazdanii#7517", "count": 5}],
         },
         {
             "user": "acc1",
             "channel_id": "1234",
-            "mentioner_accounts": [[{"account": "Ene SS Rawa#0855", "count": 10}]],
-            "reacter_accounts": [[{"account": "ahmadyazdanii#7517", "count": 2}]],
-            "replier_accounts": [[{"account": "ahmadyazdanii#7517", "count": 5}]],
+            "mentioner_accounts": [{"account": "Ene SS Rawa#0855", "count": 10}],
+            "reacter_accounts": [{"account": "ahmadyazdanii#7517", "count": 2}],
+            "replier_accounts": [{"account": "ahmadyazdanii#7517", "count": 5}],
         },
         {
             "user": "acc1",
             "channel_id": "546",
-            "mentioner_accounts": [[{"account": "mramin22#1669", "count": 10}]],
-            "reacter_accounts": [[{"account": "ahmadyazdanii#7517", "count": 2}]],
-            "replier_accounts": [[{"account": "ahmadyazdanii#7517", "count": 5}]],
+            "mentioner_accounts": [{"account": "mramin22#1669", "count": 10}],
+            "reacter_accounts": [{"account": "ahmadyazdanii#7517", "count": 2}],
+            "replier_accounts": [{"account": "ahmadyazdanii#7517", "count": 5}],
         },
         {
             "user": "acc1",
             "channel_id": "000",
-            "mentioner_accounts": [[{"account": "mramin22#1669", "count": 10}]],
-            "reacter_accounts": [[{"account": "Behzad", "count": 6}]],
-            "replier_accounts": [[{"account": "Behzad", "count": 7}]],
+            "mentioner_accounts": [{"account": "mramin22#1669", "count": 10}],
+            "reacter_accounts": [{"account": "Behzad", "count": 6}],
+            "replier_accounts": [{"account": "Behzad", "count": 7}],
         },
     ]
 
@@ -91,15 +105,22 @@ def test_per_account_interaction_accounts():
     reacter_accounts_names = ["ahmadyazdanii#7517", "Mehrdad", "Behzad"]
     replier_accounts_names = ["Behzad", "ahmadyazdanii#7517"]
 
-    results = per_account_interactions(sample_input)
+    results = per_account_interactions(
+        sample_input,
+        dict_keys=[
+            "mentioner_accounts",
+            "reacter_accounts",
+            "replier_accounts",
+        ]
+    )
 
     # the whole results assersion
-    assert list(results.keys()) == [
+    assert set(results.keys()) == set([
         "replier_accounts",
         "reacter_accounts",
         "mentioner_accounts",
         "all_interaction_accounts",
-    ]
+    ])
 
     # mentioner_accounts assersions
     action_type = "mentioner_accounts"
@@ -126,37 +147,37 @@ def test_per_account_interaction_numbers():
         {
             "user": "acc1",
             "channel_id": "1234",
-            "mentioner_accounts": [[{"account": "Ene SS Rawa#0855", "count": 1}]],
-            "reacter_accounts": [[{"account": "ahmadyazdanii#7517", "count": 1}]],
-            "replier_accounts": [[{"account": "ahmadyazdanii#7517", "count": 5}]],
+            "mentioner_accounts": [{"account": "Ene SS Rawa#0855", "count": 1}],
+            "reacter_accounts": [{"account": "ahmadyazdanii#7517", "count": 1}],
+            "replier_accounts": [{"account": "ahmadyazdanii#7517", "count": 5}],
         },
         {
             "user": "acc1",
             "channel_id": "1234",
-            "mentioner_accounts": [[{"account": "Ene SS Rawa#0855", "count": 1}]],
-            "reacter_accounts": [[{"account": "Mehrdad", "count": 1}]],
-            "replier_accounts": [[{"account": "ahmadyazdanii#7517", "count": 5}]],
+            "mentioner_accounts": [{"account": "Ene SS Rawa#0855", "count": 1}],
+            "reacter_accounts": [{"account": "Mehrdad", "count": 1}],
+            "replier_accounts": [{"account": "ahmadyazdanii#7517", "count": 5}],
         },
         {
             "user": "acc1",
             "channel_id": "1234",
-            "mentioner_accounts": [[{"account": "Ene SS Rawa#0855", "count": 10}]],
-            "reacter_accounts": [[{"account": "ahmadyazdanii#7517", "count": 2}]],
-            "replier_accounts": [[{"account": "ahmadyazdanii#7517", "count": 5}]],
+            "mentioner_accounts": [{"account": "Ene SS Rawa#0855", "count": 10}],
+            "reacter_accounts": [{"account": "ahmadyazdanii#7517", "count": 2}],
+            "replier_accounts": [{"account": "ahmadyazdanii#7517", "count": 5}],
         },
         {
             "user": "acc1",
             "channel_id": "546",
-            "mentioner_accounts": [[{"account": "mramin22#1669", "count": 10}]],
-            "reacter_accounts": [[{"account": "ahmadyazdanii#7517", "count": 2}]],
-            "replier_accounts": [[{"account": "ahmadyazdanii#7517", "count": 5}]],
+            "mentioner_accounts": [{"account": "mramin22#1669", "count": 10}],
+            "reacter_accounts": [{"account": "ahmadyazdanii#7517", "count": 2}],
+            "replier_accounts": [{"account": "ahmadyazdanii#7517", "count": 5}],
         },
         {
             "user": "acc1",
             "channel_id": "000",
-            "mentioner_accounts": [[{"account": "mramin22#1669", "count": 10}]],
-            "reacter_accounts": [[{"account": "Behzad", "count": 6}]],
-            "replier_accounts": [[{"account": "Behzad", "count": 7}]],
+            "mentioner_accounts": [{"account": "mramin22#1669", "count": 10}],
+            "reacter_accounts": [{"account": "Behzad", "count": 6}],
+            "replier_accounts": [{"account": "Behzad", "count": 7}],
         },
     ]
 
@@ -168,7 +189,14 @@ def test_per_account_interaction_numbers():
         "Behzad": 13,
     }
 
-    results = per_account_interactions(sample_input)
+    results = per_account_interactions(
+        sample_input,
+        dict_keys=[
+            "mentioner_accounts",
+            "reacter_accounts",
+            "replier_accounts",
+        ]
+    )
 
     # 5 users we had
     assert len(results["all_interaction_accounts"].values()) == 5
@@ -181,7 +209,3 @@ def test_per_account_interaction_numbers():
         acc_interaction_count = account_res[i]["count"]
         assert acc_name in account_sum_interaction.keys()
         assert account_sum_interaction[acc_name] == acc_interaction_count
-
-
-if __name__ == "__main__":
-    test_per_account_interaction_accounts()

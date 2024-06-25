@@ -149,7 +149,8 @@ class TestHeatmapsAnalytics(TestCase):
                 self.assertEqual(sum(analytics[i]["lone_messages"]), 1)
                 self.assertEqual(sum(analytics[i]["replier"]), 1)
                 self.assertEqual(sum(analytics[i]["replied"]), 1)
-                self.assertEqual(sum(analytics[i]["mentioner"]), 1)
+                # 4 people
+                self.assertEqual(sum(analytics[i]["mentioner"]), 4)
                 self.assertEqual(sum(analytics[i]["mentioned"]), 2)
                 self.assertEqual(sum(analytics[i]["reacter"]), 0)
                 self.assertEqual(sum(analytics[i]["reacted"]), 1)

@@ -22,21 +22,18 @@ class TestMemberActivitiesActionsAllActive(TestCase):
 
         rawinfo_samples = []
         for i in range(35 * 24):
+            author = "user1"
             sample = {
-                "type": 0,
-                "author": "user1",
-                "content": f"test message {i}",
-                "user_mentions": [],
-                "role_mentions": [],
-                "reactions": [],
-                "replied_user": None,
-                "createdDate": (datetime.now() - timedelta(hours=i)),
-                "messageId": f"11188143219343360{i}",
-                "channelId": "1020707129214111827",
-                "channelName": "general",
-                "threadId": None,
-                "threadName": None,
-                "isGeneratedByWebhook": False,
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": author,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
             }
             rawinfo_samples.append(sample)
 
@@ -69,21 +66,18 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         rawinfo_samples = []
         active_users = ["user1", "user2"]
         for i in range(35 * 24):
+            author = active_users[i % len(active_users)]
             sample = {
-                "type": 0,
-                "author": active_users[i % len(active_users)],
-                "content": f"test message {i}",
-                "user_mentions": [],
-                "role_mentions": [],
-                "reactions": [],
-                "replied_user": None,
-                "createdDate": (datetime.now() - timedelta(hours=i)),
-                "messageId": f"11188143219343360{i}",
-                "channelId": "1020707129214111827",
-                "channelName": "general",
-                "threadId": None,
-                "threadName": None,
-                "isGeneratedByWebhook": False,
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": author,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
             }
             rawinfo_samples.append(sample)
 
@@ -115,21 +109,18 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         rawinfo_samples = []
         active_users = ["user1", "user2"]
         for i in range(35 * 24):
+            author = active_users[i % len(active_users)]
             sample = {
-                "type": 0,
-                "author": active_users[i % len(active_users)],
-                "content": f"test message {i}",
-                "user_mentions": [],
-                "role_mentions": [],
-                "reactions": [],
-                "replied_user": None,
-                "createdDate": (datetime.now() - timedelta(hours=i)),
-                "messageId": f"11188143219343360{i}",
-                "channelId": "1020707129214111827",
-                "channelName": "general",
-                "threadId": f"19191{i % 5}",
-                "threadName": f"Thread_test_{i % 5}",
-                "isGeneratedByWebhook": False,
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": author,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": f"19191{i % 5}",
+                },
+                "source_id": f"11188143219343360{i}",
             }
             rawinfo_samples.append(sample)
 

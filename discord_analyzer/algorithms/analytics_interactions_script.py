@@ -34,7 +34,6 @@ def per_account_interactions(
 
         # flatten the list
         samples_flattened = list(itertools.chain(*samples))
-        # print(samples_flattened)
 
         for sample in samples_flattened:
             account_name = sample["account"]

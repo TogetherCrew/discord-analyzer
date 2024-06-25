@@ -200,7 +200,7 @@ class TestHeatmapsProcessRawAnalyticsSingleDay(TestCase):
                 ],
             },
             {
-                "author_id": 9003,
+                "author_id": 9001,
                 "date": datetime(2023, 1, 1, 4),
                 "source_id": "10001",
                 "metadata": {"thread_id": None, "channel_id": "124"},
@@ -208,7 +208,7 @@ class TestHeatmapsProcessRawAnalyticsSingleDay(TestCase):
                 "interactions": [
                     {
                         "name": "mention",
-                        "users_engaged_id": [9003, 9002],
+                        "users_engaged_id": [9003, 9005],
                         "type": "emitter",
                     }
                 ],

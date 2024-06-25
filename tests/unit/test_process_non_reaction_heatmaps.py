@@ -9,7 +9,7 @@ from discord_analyzer.algorithms.compute_interaction_matrix_discord import (
 class TestProcessNonReactions(TestCase):
     def test_empty_inputs(self):
         intput_data = {}
-        results = process_actions(heatmaps_data_per_acc=intput_data)
+        results = process_actions(heatmaps_data_per_acc=intput_data, skip_fields=[])
         self.assertEqual(results, {})
 
     def test_single_account_no_action(self):
@@ -29,7 +29,7 @@ class TestProcessNonReactions(TestCase):
                 }
             ]
         }
-        results = process_actions(input_data)
+        results = process_actions(input_data, skip_fields=["date", "reacted_per_acc", "replied_per_acc"])
 
         expected_results = {
             "acc1": [
@@ -62,24 +62,24 @@ class TestProcessNonReactions(TestCase):
                     "lone_messages": lone_messages,
                     "thr_messages": thr_messages,
                     "reacted_per_acc": [
-                        [{"account": "acc2", "count": 1}],
-                        [{"account": "acc3", "count": 5}],
+                        {"account": "acc2", "count": 1},
+                        {"account": "acc3", "count": 5},
                     ],
                     "replied_per_acc": [],
                     "date": "2024-01-01",
                 }
             ]
         }
-        results = process_actions(input_data)
+        results = process_actions(input_data, skip_fields=["date", "replied_per_acc", "reacted_per_acc"])
         expected_results = {
             "acc1": [
                 {
-                    "lone_messages": [[{"account": "acc1", "count": 3}]],
-                    "thr_messages": [[{"account": "acc1", "count": 1}]],
+                    "lone_messages": [{"account": "acc1", "count": 3}],
+                    "thr_messages": [{"account": "acc1", "count": 1}],
                     # others same as before
                     "reacted_per_acc": [
-                        [{"account": "acc2", "count": 1}],
-                        [{"account": "acc3", "count": 5}],
+                        {"account": "acc2", "count": 1},
+                        {"account": "acc3", "count": 5},
                     ],
                     "replied_per_acc": [],
                     "date": "2024-01-01",
@@ -106,8 +106,8 @@ class TestProcessNonReactions(TestCase):
                     "lone_messages": user1_lone_messages,
                     "thr_messages": user1_thr_messages,
                     "reacted_per_acc": [
-                        [{"account": "acc2", "count": 1}],
-                        [{"account": "acc3", "count": 5}],
+                        {"account": "acc2", "count": 1},
+                        {"account": "acc3", "count": 5},
                     ],
                     "replied_per_acc": {},
                     "date": "2024-01-01",
@@ -118,24 +118,24 @@ class TestProcessNonReactions(TestCase):
                     "lone_messages": np.zeros(24),
                     "thr_messages": user2_thr_messages,
                     "reacted_per_acc": [
-                        [{"account": "acc5", "count": 3}],
+                        {"account": "acc5", "count": 3},
                     ],
                     "replied_per_acc": [],
                     "date": "2024-01-01",
                 }
             ],
         }
-        results = process_actions(input_data)
+        results = process_actions(input_data, skip_fields=["date", "replied_per_acc", "reacted_per_acc"])
 
         expected_results = {
             "acc1": [
                 {
-                    "lone_messages": [[{"account": "acc1", "count": 3}]],
-                    "thr_messages": [[{"account": "acc1", "count": 1}]],
+                    "lone_messages": [{"account": "acc1", "count": 3}],
+                    "thr_messages": [{"account": "acc1", "count": 1}],
                     # others same as before
                     "reacted_per_acc": [
-                        [{"account": "acc2", "count": 1}],
-                        [{"account": "acc3", "count": 5}],
+                        {"account": "acc2", "count": 1},
+                        {"account": "acc3", "count": 5},
                     ],
                     "replied_per_acc": {},
                     "date": "2024-01-01",
@@ -144,10 +144,10 @@ class TestProcessNonReactions(TestCase):
             "acc2": [
                 {
                     "lone_messages": [],
-                    "thr_messages": [[{"account": "acc2", "count": 7}]],
+                    "thr_messages": [{"account": "acc2", "count": 7}],
                     # others same as before
                     "reacted_per_acc": [
-                        [{"account": "acc5", "count": 3}],
+                        {"account": "acc5", "count": 3},
                     ],
                     "replied_per_acc": [],
                     "date": "2024-01-01",
@@ -174,8 +174,8 @@ class TestProcessNonReactions(TestCase):
                     "lone_messages": user1_lone_messages,
                     "thr_messages": user1_thr_messages,
                     "reacted_per_acc": [
-                        [{"account": "acc2", "count": 1}],
-                        [{"account": "acc3", "count": 5}],
+                        {"account": "acc2", "count": 1},
+                        {"account": "acc3", "count": 5},
                     ],
                     "replied_per_acc": {},
                     "date": "2024-01-01",
@@ -184,8 +184,8 @@ class TestProcessNonReactions(TestCase):
                     "lone_messages": np.zeros(24),
                     "thr_messages": user1_lone_messages,
                     "reacted_per_acc": [
-                        [{"account": "acc2", "count": 1}],
-                        [{"account": "acc3", "count": 5}],
+                        {"account": "acc2", "count": 1},
+                        {"account": "acc3", "count": 5},
                     ],
                     "replied_per_acc": {},
                     "date": "2024-01-02",
@@ -196,35 +196,35 @@ class TestProcessNonReactions(TestCase):
                     "lone_messages": np.zeros(24),
                     "thr_messages": user2_thr_messages,
                     "reacted_per_acc": [
-                        [{"account": "acc5", "count": 3}],
+                        {"account": "acc5", "count": 3},
                     ],
                     "replied_per_acc": [],
                     "date": "2024-01-01",
                 }
             ],
         }
-        results = process_actions(input_data)
+        results = process_actions(input_data, skip_fields=["date", "reacted_per_acc", "replied_per_acc"])
 
         expected_results = {
             "acc1": [
                 {
-                    "lone_messages": [[{"account": "acc1", "count": 3}]],
-                    "thr_messages": [[{"account": "acc1", "count": 1}]],
+                    "lone_messages": [{"account": "acc1", "count": 3}],
+                    "thr_messages": [{"account": "acc1", "count": 1}],
                     # others same as before
                     "reacted_per_acc": [
-                        [{"account": "acc2", "count": 1}],
-                        [{"account": "acc3", "count": 5}],
+                        {"account": "acc2", "count": 1},
+                        {"account": "acc3", "count": 5},
                     ],
                     "replied_per_acc": {},
                     "date": "2024-01-01",
                 },
                 {
                     "lone_messages": [],
-                    "thr_messages": [[{"account": "acc1", "count": 3}]],
+                    "thr_messages": [{"account": "acc1", "count": 3}],
                     # others same as before
                     "reacted_per_acc": [
-                        [{"account": "acc2", "count": 1}],
-                        [{"account": "acc3", "count": 5}],
+                        {"account": "acc2", "count": 1},
+                        {"account": "acc3", "count": 5},
                     ],
                     "replied_per_acc": {},
                     "date": "2024-01-02",
@@ -233,10 +233,10 @@ class TestProcessNonReactions(TestCase):
             "acc2": [
                 {
                     "lone_messages": [],
-                    "thr_messages": [[{"account": "acc2", "count": 7}]],
+                    "thr_messages": [{"account": "acc2", "count": 7}],
                     # others same as before
                     "reacted_per_acc": [
-                        [{"account": "acc5", "count": 3}],
+                        {"account": "acc5", "count": 3},
                     ],
                     "replied_per_acc": [],
                     "date": "2024-01-01",

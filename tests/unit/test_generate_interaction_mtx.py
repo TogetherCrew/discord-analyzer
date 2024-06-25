@@ -9,32 +9,32 @@ def test_empty_inputs():
     int_mtx = generate_interaction_matrix(
         per_acc_interactions,
         acc_names=[],
-        activities=[Activity.Mention, Activity.Reply, Activity.Reaction],
+        activities=["reacted_per_acc", "mentioner_per_acc", "replied_per_acc"],
     )
     assert int_mtx.shape == (0, 0)
 
 
 def test_single_account():
     per_acc_interactions = {
-        "968122690118512720": [
+        "user0": [
             {
-                "user": "968122690118512720",
-                "reacted_per_acc": [[{"account": "968122690118512720", "count": 1}]],
-                "mentioner_per_acc": [[{"account": "968122690118512720", "count": 1}]],
+                "user": "user0",
+                "reacted_per_acc": [{"account": "user0", "count": 1}],
+                "mentioner_per_acc": [{"account": "user0", "count": 1}],
                 "replied_per_acc": [],
             },
             {
-                "user": "968122690118512720",
-                "reacted_per_acc": [[{"account": "968122690118512720", "count": 1}]],
-                "mentioner_per_acc": [[{"account": "968122690118512720", "count": 1}]],
+                "user": "user0",
+                "reacted_per_acc": [{"account": "user0", "count": 1}],
+                "mentioner_per_acc": [{"account": "user0", "count": 1}],
                 "replied_per_acc": [],
             },
         ]
     }
     int_mtx = generate_interaction_matrix(
         per_acc_interactions,
-        acc_names=["968122690118512720"],
-        activities=[Activity.Mention, Activity.Reply, Activity.Reaction],
+        acc_names=["user0"],
+        activities=["reacted_per_acc", "mentioner_per_acc", "replied_per_acc"],
     )
 
     # converting `numpy.bool_` to python `bool`
@@ -43,19 +43,19 @@ def test_single_account():
 
 
 def test_two_accounts():
-    acc_names = ["968122690118512720", "968122690118512799"]
+    acc_names = ["user0", "user1"]
     per_acc_interactions = {
-        "968122690118512720": [
+        "user0": [
             {
-                "user": "968122690118512720",
-                "reacted_per_acc": [[{"account": "968122690118512799", "count": 1}]],
-                "mentioner_per_acc": [[{"account": "968122690118512799", "count": 1}]],
+                "user": "user0",
+                "reacted_per_acc": [{"account": "user1", "count": 1}],
+                "mentioner_per_acc": [{"account": "user1", "count": 1}],
                 "replied_per_acc": [],
             },
             {
-                "user": "968122690118512720",
-                "reacted_per_acc": [[{"account": "968122690118512720", "count": 2}]],
-                "mentioner_per_acc": [[{"account": "968122690118512720", "count": 1}]],
+                "user": "user0",
+                "reacted_per_acc": [{"account": "user0", "count": 2}],
+                "mentioner_per_acc": [{"account": "user0", "count": 1}],
                 "replied_per_acc": [],
             },
         ]
@@ -64,7 +64,7 @@ def test_two_accounts():
     int_mtx = generate_interaction_matrix(
         per_acc_interactions,
         acc_names=acc_names,
-        activities=[Activity.Mention, Activity.Reply, Activity.Reaction],
+        activities=["reacted_per_acc", "mentioner_per_acc", "replied_per_acc"],
     )
 
     # converting `numpy.bool_` to python `bool`
@@ -84,8 +84,8 @@ def test_multiple_interactions():
         "968122690118512720": [
             {
                 "user": "968122690118512720",
-                "reacted_per_acc": [[{"account": "795295822534148096", "count": 9}]],
-                "mentioner_per_acc": [[{"account": "795295822534148096", "count": 2}]],
+                "reacted_per_acc": [{"account": "795295822534148096", "count": 9}],
+                "mentioner_per_acc": [{"account": "795295822534148096", "count": 2}],
                 "replied_per_acc": [],
             },
             {
@@ -98,8 +98,8 @@ def test_multiple_interactions():
                 "user": "968122690118512720",
                 "reacted_per_acc": [],
                 "mentioner_per_acc": [
-                    [{"account": "7952958225341480444", "count": 5}],
-                    [{"account": "7952958225341480433", "count": 2}],
+                    {"account": "7952958225341480444", "count": 5},
+                    {"account": "7952958225341480433", "count": 2},
                 ],
                 "replied_per_acc": [],
             },
@@ -107,15 +107,15 @@ def test_multiple_interactions():
         "968122690118512721": [
             {
                 "user": "968122690118512721",
-                "reacted_per_acc": [[{"account": "795295822534148096", "count": 3}]],
-                "mentioner_per_acc": [[{"account": "795295822534148096", "count": 4}]],
+                "reacted_per_acc": [{"account": "795295822534148096", "count": 3}],
+                "mentioner_per_acc": [{"account": "795295822534148096", "count": 4}],
                 "replied_per_acc": [],
             },
             {
                 "user": "968122690118512721",
                 "reacted_per_acc": [],
                 "mentioner_per_acc": [],
-                "replied_per_acc": [[{"account": "7952958225341480444", "count": 8}]],
+                "replied_per_acc": [{"account": "7952958225341480444", "count": 8}],
             },
         ],
     }
@@ -123,7 +123,7 @@ def test_multiple_interactions():
     int_mtx = generate_interaction_matrix(
         per_acc_interactions,
         acc_names=acc_names,
-        activities=[Activity.Mention, Activity.Reply, Activity.Reaction],
+        activities=["reacted_per_acc", "mentioner_per_acc", "replied_per_acc"],
     )
 
     assert int_mtx.shape == (5, 5)
