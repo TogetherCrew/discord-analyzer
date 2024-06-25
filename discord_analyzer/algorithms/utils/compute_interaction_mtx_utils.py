@@ -5,7 +5,6 @@ import numpy as np
 from discord_analyzer.algorithms.analytics_interactions_script import (
     per_account_interactions,
 )
-from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
 
 def prepare_per_account(db_results: list) -> dict[str, list[dict]]:
@@ -54,7 +53,7 @@ def generate_interaction_matrix(
         list of all account names to be considered for analysis
     activities : list[str]
         the activities to include for generating interaction matrix
-        min length is 1
+        it should be the heatmaps analytics fields
 
     Returns:
     ---------
@@ -67,19 +66,18 @@ def generate_interaction_matrix(
     for acc in per_acc_interactions.keys():
         db_res_per_acc = per_acc_interactions[acc]
 
-        dict_keys = prepare_interaction_field_names(activities=activities)
         # get results from db
         db_results = per_account_interactions(
             cursor_list=db_res_per_acc,
-            dict_keys=dict_keys,
+            dict_keys=activities,
         )
 
         # obtain results for all interactions summed together
         acc_out_int = db_results["all_interaction_accounts"]
 
-        # for each interacting account
+        # for each interacting user
         for int_acc in acc_out_int.values():
-            # if the interacting account is in acc_names
+            # if the interacting user is in acc_names
             if int_acc["account"] in acc_names:
                 # store data in int_network
                 int_matrix[
@@ -88,41 +86,3 @@ def generate_interaction_matrix(
                 ] = int_acc["count"]
 
     return int_matrix
-
-
-def prepare_interaction_field_names(activities: list[str]) -> list[str]:
-    """
-    convert activity names to the field names
-    as are saved under the heatmaps collection
-
-
-    Parameters:
-    ------------
-    activities : list[str]
-        the activities to be converted to db field names
-        could be the items below
-        - `mention`
-        - `reply`
-        - `reaction`
-
-    Returns:
-    ---------
-    field_names : list[str]
-        the field names from database to use
-    """
-    field_names = []
-    for activity in activities:
-        if activity == DiscordActivity.Mention:
-            field_names.append("mentioner_per_acc")
-        elif activity == DiscordActivity.Reply:
-            field_names.append("replied_per_acc")
-        elif activity == DiscordActivity.Reaction:
-            field_names.append("reacted_per_acc")
-        elif activity == DiscordActivity.Thread_msg:
-            field_names.append("thr_messages")
-        elif activity == DiscordActivity.Lone_msg:
-            field_names.append("lone_messages")
-        else:
-            logging.warning("prepare_interaction_field_names: Wrong activity given!")
-
-    return field_names

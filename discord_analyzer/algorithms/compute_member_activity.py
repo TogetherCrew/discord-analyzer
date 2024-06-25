@@ -25,6 +25,7 @@ from discord_analyzer.algorithms.utils.member_activity_utils import (
     update_activities,
 )
 from discord_analyzer.DB_operations.mongodb_access import DB_access
+from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
 
 
 def compute_member_activity(
@@ -33,6 +34,7 @@ def compute_member_activity(
     resource_identifier: str,
     acc_names: list[str],
     date_range: list[datetime],
+    analyzer_config: PlatformConfigBase,
     window_param: dict[str, int],
     act_param: dict[str, int],
     load_past_data=True,
@@ -46,6 +48,9 @@ def compute_member_activity(
     resources: [str] - list of all resource ids that should be analysed
     acc_names: [str] - list of all account names that should be analysed
     date_range: tuple[datetime, datetime] - tuple of first and last date to be analysed (one output per date)
+    analyzer_config : PlatformConfigBase
+        the config for the analyzer to use.
+        representing which analytics to compute
     window_param: dict[str, int] -
         "period_size": window size in days. default = 7
         "step_size": step size of sliding window in days. default = 1
@@ -275,6 +280,7 @@ def compute_member_activity(
                     ),
                     activities_name=activities_name,
                     activity_dict=activity_dict,
+                    analyzer_config=analyzer_config,
                 )
 
                 # make empty dict for node attributes

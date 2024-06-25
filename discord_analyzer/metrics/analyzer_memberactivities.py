@@ -133,6 +133,7 @@ class MemberActivities:
             window_param=self.window_config,
             act_param=self.action_config,
             load_past_data=load_past_data,
+            analyzer_config=self.analyzer_config,
         )
 
         if not from_start:

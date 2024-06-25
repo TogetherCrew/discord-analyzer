@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -7,9 +8,10 @@ from discord_analyzer.algorithms.compute_interaction_matrix_discord import (
     compute_interaction_matrix_discord,
 )
 from discord_analyzer.DB_operations.mongodb_access import DB_access
+from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
 from networkx import DiGraph
 from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
-from tc_core_analyzer_lib.utils.activity import DiscordActivity
+from discord_analyzer.schemas import ActivityDirection
 
 
 def get_joined_accounts(db_access: DB_access, date_range: tuple[datetime, datetime]):
@@ -268,39 +270,43 @@ def assess_engagement(
     analyze_dates: tuple[datetime, datetime],
     activities_name: list[str],
     activity_dict: dict[str, dict],
-    **kwargs,
+    analyzer_config: PlatformConfigBase,
 ) -> tuple[DiGraph, dict[str, dict]]:
     """
     assess engagement of a window index for users
     """
-    activities_to_analyze = kwargs.get(
-        "activities_to_analyze",
-        [
-            DiscordActivity.Mention,
-            DiscordActivity.Reply,
-            DiscordActivity.Reaction,
-            DiscordActivity.Lone_msg,
-            DiscordActivity.Thread_msg,
-        ],
-    )
-    ignore_axis0 = kwargs.get(
-        "ignore_axis0",
-        [
-            DiscordActivity.Mention,
-        ],
-    )
-    ignore_axis1 = kwargs.get(
-        "ignore_axis1",
-        [
-            DiscordActivity.Reply,
-            DiscordActivity.Reaction,
-        ],
-    )
+
+    hourly_analytics_using: list[str] = []
+    raw_analytics_using: list[str] = []
+
+    ignore_axis0: list[str] = []
+
+    for config in analyzer_config.hourly_analytics:
+        if config.member_activities_used:
+            if config.type.value == "interactions":
+                logging.warning(
+                    f"including hourly_analytics {config.name} as interaction! "
+                    "Consider setting the `member_activities_used` of it to False."
+                    " As the interacting user in "
+                    "hourly_analytics interactions is not possible to identify"
+                )
+            hourly_analytics_using.append(config.name)
+
+    
+    for config in analyzer_config.raw_analytics:
+        if config.member_activities_used:
+            raw_analytics_using.append(config.name)
+
+            # in all cases of receiver and emitter
+            # the author of a message is the person
+            # receiving or emitting the activity
+            # ignore0 is for author
+            ignore_axis0.append(config.name)
 
     assess_engagment = EngagementAssessment(
-        activities=activities_to_analyze,
+        activities=hourly_analytics_using + raw_analytics_using,
         activities_ignore_0_axis=ignore_axis0,
-        activities_ignore_1_axis=ignore_axis1,
+        activities_ignore_1_axis=[],
     )
     # obtain interaction matrix
     int_mat = compute_interaction_matrix_discord(
@@ -309,7 +315,8 @@ def assess_engagement(
         resources=resources,
         resource_identifier=resource_identifier,
         platform_id=platform_id,
-        activities=activities_to_analyze,
+        actions=hourly_analytics_using,
+        interactions=raw_analytics_using,
     )
 
     # assess engagement

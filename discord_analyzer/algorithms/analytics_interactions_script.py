@@ -5,11 +5,10 @@ from warnings import warn
 
 def per_account_interactions(
     cursor_list,
-    dict_keys=["replier_accounts", "reacter_accounts", "mentioner_accounts"],
+    dict_keys,
 ):
     """
-    get per account interactions as `mentioner_accounts`,
-    `reacter_accounts`, and `replier_accounts` (summing)
+    get per account interactions for each heatmaps fields
 
     Parameters:
     ------------
@@ -24,7 +23,6 @@ def per_account_interactions(
         the dictionary of each feature having summed the counts per hour,
           the dictionary of features is returned
     """
-
     data_processed = {}
     all_interaction_accounts = {}
 
