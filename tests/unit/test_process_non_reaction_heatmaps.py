@@ -2,14 +2,14 @@ from unittest import TestCase
 
 import numpy as np
 from discord_analyzer.algorithms.compute_interaction_matrix_discord import (
-    process_non_reactions,
+    process_actions,
 )
 
 
 class TestProcessNonReactions(TestCase):
     def test_empty_inputs(self):
         intput_data = {}
-        results = process_non_reactions(heatmaps_data_per_acc=intput_data)
+        results = process_actions(heatmaps_data_per_acc=intput_data)
         self.assertEqual(results, {})
 
     def test_single_account_no_action(self):
@@ -29,7 +29,7 @@ class TestProcessNonReactions(TestCase):
                 }
             ]
         }
-        results = process_non_reactions(input_data)
+        results = process_actions(input_data)
 
         expected_results = {
             "acc1": [
@@ -70,7 +70,7 @@ class TestProcessNonReactions(TestCase):
                 }
             ]
         }
-        results = process_non_reactions(input_data)
+        results = process_actions(input_data)
         expected_results = {
             "acc1": [
                 {
@@ -125,7 +125,7 @@ class TestProcessNonReactions(TestCase):
                 }
             ],
         }
-        results = process_non_reactions(input_data)
+        results = process_actions(input_data)
 
         expected_results = {
             "acc1": [
@@ -203,7 +203,7 @@ class TestProcessNonReactions(TestCase):
                 }
             ],
         }
-        results = process_non_reactions(input_data)
+        results = process_actions(input_data)
 
         expected_results = {
             "acc1": [
