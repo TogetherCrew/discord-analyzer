@@ -51,14 +51,12 @@ def test_automation_base_get_users_empty_new_disengaged():
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
     db_access.db_mongo_client[platform_id]["memberactivities"].delete_many({})
 
-    date_yesterday = (
-        (datetime.now() - timedelta(days=1))
-        .replace(hour=0, minute=0, second=0, microsecond=0)
+    date_yesterday = (datetime.now() - timedelta(days=1)).replace(
+        hour=0, minute=0, second=0, microsecond=0
     )
 
-    date_two_past_days = (
-        (datetime.now() - timedelta(days=2))
-        .replace(hour=0, minute=0, second=0, microsecond=0)
+    date_two_past_days = (datetime.now() - timedelta(days=2)).replace(
+        hour=0, minute=0, second=0, microsecond=0
     )
 
     db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(
@@ -131,14 +129,12 @@ def test_automation_base_get_users_empty_new_active():
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
     db_access.db_mongo_client[platform_id]["memberactivities"].delete_many({})
 
-    date_yesterday = (
-        (datetime.now() - timedelta(days=1))
-        .replace(hour=0, minute=0, second=0, microsecond=0)
+    date_yesterday = (datetime.now() - timedelta(days=1)).replace(
+        hour=0, minute=0, second=0, microsecond=0
     )
 
-    date_two_past_days = (
-        (datetime.now() - timedelta(days=2))
-        .replace(hour=0, minute=0, second=0, microsecond=0)
+    date_two_past_days = (datetime.now() - timedelta(days=2)).replace(
+        hour=0, minute=0, second=0, microsecond=0
     )
 
     db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(

@@ -134,9 +134,7 @@ def store_based_date(
     # if there was no data just save empty date records
     if max_days_after == 0:
         data_record = {}
-        data_record["date"] = (
-            start_date + timedelta(days=analytics_day_range)
-        )
+        data_record["date"] = start_date + timedelta(days=analytics_day_range)
 
         for activity in all_activities.keys():
             data_record[activity] = []
@@ -292,7 +290,6 @@ def assess_engagement(
                 )
             hourly_analytics_using.append(config.name)
 
-    
     for config in analyzer_config.raw_analytics:
         if config.member_activities_used:
             raw_analytics_using.append(config.name)

@@ -11,7 +11,7 @@ class TestHeatmapsAnalyticsBaseWithFilter(TestCase):
         self.raw_data_model = AnalyticsHourly(self.platform_id)
         self.mongo_client = MongoSingleton.get_instance().get_client()
         self.mongo_client[self.platform_id].drop_collection("rawmemberactivities")
-    
+
     def tearDown(self) -> None:
         # cleanup
         self.mongo_client.drop_database(self.platform_id)

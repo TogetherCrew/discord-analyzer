@@ -86,7 +86,9 @@ class MemberActivities:
 
         load_past_data = load_past_data and not from_start
 
-        first_date = self.analyzer_period.replace(hour=0, minute=0, second=0, microsecond=0)
+        first_date = self.analyzer_period.replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
         if first_date is None:
             logging.error(
                 f"No platform: {self.platform_id} available in platforms.core!"

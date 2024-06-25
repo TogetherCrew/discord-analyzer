@@ -55,7 +55,7 @@ def test_mention_active_members_from_rawinfo():
                 },
                 "source_id": f"11188143219343360{i}",
             },
-           {
+            {
                 "actions": [],
                 "author_id": mentioned_user,
                 "date": datetime.now() - timedelta(hours=i),

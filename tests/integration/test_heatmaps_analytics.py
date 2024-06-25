@@ -28,7 +28,9 @@ class TestHeatmapsAnalytics(TestCase):
         self.mongo_client[platform_id].drop_collection("rawmembers")
 
     def tearDown(self) -> None:
-        self.mongo_client[self.heatmaps.platform_id].drop_collection("rawmemberactivities")
+        self.mongo_client[self.heatmaps.platform_id].drop_collection(
+            "rawmemberactivities"
+        )
         self.mongo_client[self.heatmaps.platform_id].drop_collection("rawmembers")
 
     def test_heatmaps_single_day_from_start(self):

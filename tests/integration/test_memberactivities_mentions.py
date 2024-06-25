@@ -66,7 +66,11 @@ class TestMemberActivitiesReply(TestCase):
                     "author_id": mentioned_user,
                     "date": datetime.now() - timedelta(hours=i),
                     "interactions": [
-                        {"name": "mention", "type": "receiver", "users_engaged_id": [author]}
+                        {
+                            "name": "mention",
+                            "type": "receiver",
+                            "users_engaged_id": [author],
+                        }
                     ],
                     "metadata": {
                         "bot_activity": False,
@@ -78,12 +82,14 @@ class TestMemberActivitiesReply(TestCase):
             ]
             rawinfo_samples.extend(samples)
 
-        self.db_access.db_mongo_client[self.platform_id]["rawmemberactivities"].insert_many(
-            rawinfo_samples
-        )
+        self.db_access.db_mongo_client[self.platform_id][
+            "rawmemberactivities"
+        ].insert_many(rawinfo_samples)
         analyzer = setup_analyzer(self.platform_id)
         analyzer.recompute_analytics()
-        cursor = self.db_access.db_mongo_client[self.platform_id]["memberactivities"].find(
+        cursor = self.db_access.db_mongo_client[self.platform_id][
+            "memberactivities"
+        ].find(
             {},
             {
                 "_id": 0,

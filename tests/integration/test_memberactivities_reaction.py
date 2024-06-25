@@ -39,7 +39,9 @@ class TestMemberActivitiesReactions(TestCase):
             action=action,
         )
         self.db_access.db_mongo_client[self.platform_id].drop_collection("heatmaps")
-        self.db_access.db_mongo_client[self.platform_id].drop_collection("rawmemberactivities")
+        self.db_access.db_mongo_client[self.platform_id].drop_collection(
+            "rawmemberactivities"
+        )
 
         rawinfo_samples = []
         for i in range(35 * 24):
@@ -69,7 +71,11 @@ class TestMemberActivitiesReactions(TestCase):
                     "author_id": reacted_user,
                     "date": datetime.now() - timedelta(hours=i),
                     "interactions": [
-                        {"name": "reaction", "type": "emitter", "users_engaged_id": [author]}
+                        {
+                            "name": "reaction",
+                            "type": "emitter",
+                            "users_engaged_id": [author],
+                        }
                     ],
                     "metadata": {
                         "bot_activity": False,
