@@ -11,7 +11,6 @@ from discord_analyzer.DB_operations.mongodb_access import DB_access
 from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
 from networkx import DiGraph
 from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
-from discord_analyzer.schemas import ActivityDirection
 
 
 def get_joined_accounts(db_access: DB_access, date_range: tuple[datetime, datetime]):
