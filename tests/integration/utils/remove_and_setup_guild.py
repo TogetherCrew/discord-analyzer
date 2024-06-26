@@ -24,6 +24,7 @@ def setup_db_guild(
     `community_id` can be passed in kwargs. default is `aabbccddeeff001122334455`
     """
     community_id = kwargs.get("community_id", "aabbccddeeff001122334455")
+    resources = kwargs.get("resources", ["1020707129214111827"])
     db_access.db_mongo_client["Core"]["platforms"].delete_one(
         {"_id": ObjectId(platform_id)}
     )
@@ -57,7 +58,7 @@ def setup_db_guild(
                 "id": guildId,
                 "icon": "111111111111111111111111",
                 "name": "A guild",
-                "resources": ["1020707129214111827"],
+                "resources": resources,
                 "window": {"period_size": 7, "step_size": 1},
                 "action": action,
                 "period": (datetime.now() - timedelta(days=days_ago_period)).replace(

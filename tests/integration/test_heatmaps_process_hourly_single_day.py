@@ -23,6 +23,7 @@ class TestHeatmapsProcessHourlySingleDay(TestCase):
         )
         self.mongo_client = MongoSingleton.get_instance().get_client()
         self.mongo_client[platform_id].drop_collection("rawmemberactivities")
+        self.mongo_client[platform_id].drop_collection("heatmaps")
 
     def test_process_hourly_check_return_type(self):
         day = datetime(2023, 1, 1)
@@ -143,10 +144,10 @@ class TestHeatmapsProcessHourlySingleDay(TestCase):
             author_id=9001,
         )
 
-        self.assertEqual(hourly_analytics["mentioned"][0], 1)
-        self.assertEqual(hourly_analytics["mentioned"][4], 1)
-        self.assertEqual(sum(hourly_analytics["mentioned"]), 2)
-        self.assertEqual(sum(hourly_analytics["mentioner"]), 0)
+        self.assertEqual(hourly_analytics["mentioner"][0], 2)
+        self.assertEqual(hourly_analytics["mentioner"][4], 2)
+        self.assertEqual(sum(hourly_analytics["mentioner"]), 4)
+        self.assertEqual(sum(hourly_analytics["mentioned"]), 0)
         self.assertEqual(sum(hourly_analytics["reacter"]), 0)
         self.assertEqual(sum(hourly_analytics["reacted"]), 0)
 
