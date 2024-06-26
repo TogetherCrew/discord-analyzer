@@ -26,9 +26,9 @@ def test_get_past_7_days_heatmap_users_available_users():
     acc_names = []
     for i in range(250):
         date = start_date + timedelta(days=i)
-        account = f"9739932992810762{i}"
+        account = f"user{i}"
         document = {
-            "date": date.strftime("%Y-%m-%d"),
+            "date": date,
             "channel_id": "1020707129214111827",
             "thr_messages": list(np.zeros(24)),
             "lone_messages": list(np.zeros(24)),
@@ -52,8 +52,8 @@ def test_get_past_7_days_heatmap_users_available_users():
     start_date = datetime(2023, 1, 1) + timedelta(days=243)
 
     user_names = get_users_past_window(
-        start_date.strftime("%Y-%m-%d"),
-        (start_date + timedelta(days=250)).strftime("%Y-%m-%d"),
+        start_date,
+        start_date + timedelta(days=250),
         db_access.db_mongo_client[platform_id]["heatmaps"],
     )
 
@@ -78,9 +78,9 @@ def test_get_all_days_heatmap_users_available_users():
     acc_names = []
     for i in range(250):
         date = start_date + timedelta(days=i)
-        account = f"9739932992810762{i}"
+        account = f"user{i}"
         document = {
-            "date": date.strftime("%Y-%m-%d"),
+            "date": date,
             "channel_id": "1020707129214111827",
             "thr_messages": list(np.zeros(24)),
             "lone_messages": list(np.zeros(24)),
@@ -102,8 +102,8 @@ def test_get_all_days_heatmap_users_available_users():
     db_access.db_mongo_client[platform_id]["heatmaps"].insert_many(heatmaps_data)
 
     user_names = get_users_past_window(
-        window_start_date=datetime(2023, 1, 1).strftime("%Y-%m-%d"),
-        window_end_date=(start_date + timedelta(days=250)).strftime("%Y-%m-%d"),
+        window_start_date=datetime(2023, 1, 1),
+        window_end_date=(start_date + timedelta(days=250)),
         collection=db_access.db_mongo_client[platform_id]["heatmaps"],
     )
 
@@ -122,15 +122,13 @@ def test_get_just_7_days_heatmap_users_available_users():
 
     db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
 
-    db_access.db_mongo_client[platform_id].create_collection("heatmaps")
-
     heatmaps_data = []
     acc_names = []
     for i in range(250):
         date = start_date + timedelta(days=i)
-        account = f"9739932992810762{i}"
+        account = f"user{i}"
         document = {
-            "date": date.strftime("%Y-%m-%d"),
+            "date": date,
             "channel_id": "1020707129214111827",
             "thr_messages": list(np.zeros(24)),
             "lone_messages": list(np.zeros(24)),
@@ -155,21 +153,21 @@ def test_get_just_7_days_heatmap_users_available_users():
     end_date = start_date + timedelta(days=7)
 
     user_names = get_users_past_window(
-        start_date.strftime("%Y-%m-%d"),
-        end_date.strftime("%Y-%m-%d"),
+        start_date,
+        end_date,
         db_access.db_mongo_client[platform_id]["heatmaps"],
     )
+    print("user_names", user_names)
 
     assert set(user_names) == set(
         [
-            "97399329928107620",
-            "97399329928107621",
-            "97399329928107622",
-            "97399329928107623",
-            "97399329928107624",
-            "97399329928107625",
-            "97399329928107626",
-            "97399329928107627",
+            "user0",
+            "user1",
+            "user2",
+            "user3",
+            "user4",
+            "user5",
+            "user6",
         ]
     )
 
@@ -192,8 +190,8 @@ def test_get_past_7_days_heatmap_users_no_users():
     end_date = start_date + timedelta(days=243)
 
     user_names = get_users_past_window(
-        window_start_date=start_date.strftime("%Y-%m-%d"),
-        window_end_date=end_date.strftime("%Y-%m-%d"),
+        window_start_date=start_date,
+        window_end_date=end_date,
         collection=db_access.db_mongo_client[platform_id]["heatmaps"],
     )
 

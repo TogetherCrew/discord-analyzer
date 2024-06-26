@@ -180,8 +180,8 @@ def convert_to_dict(data: list[Any], dict_keys: list[str]) -> dict[str, dict]:
 
 
 def get_users_past_window(
-    window_start_date: str,
-    window_end_date: str,
+    window_start_date: datetime,
+    window_end_date: datetime,
     collection: pymongo.collection.Collection,
 ) -> list[str]:
     """
@@ -189,10 +189,10 @@ def get_users_past_window(
 
     Parameters:
     ------------
-    window_start_date : str
+    window_start_date : datetime
         the starting point of the window
         must be in format of the database which for now is %Y-%m-%d
-    window_end_date : str
+    window_end_date : datetime
             the ending point of the window
             must be in format of the database which for now is %Y-%m-%d
     collection : pymongo.collection.Collection
