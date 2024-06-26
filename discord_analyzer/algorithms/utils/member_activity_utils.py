@@ -205,7 +205,7 @@ def get_users_past_window(
     """
     pipeline = [
         # Filter documents based on date
-        {"$match": {"date": {"$gte": window_start_date, "$lte": window_end_date}}},
+        {"$match": {"date": {"$gte": window_start_date, "$lt": window_end_date}}},
         {"$group": {"_id": "$user"}},
         {
             "$group": {

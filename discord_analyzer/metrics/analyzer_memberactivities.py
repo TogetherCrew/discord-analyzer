@@ -123,8 +123,6 @@ class MemberActivities:
 
         # get all users during date_range
         all_users = self.utils.get_all_users(self.platform_id)
-        # change format like 23/03/27
-        # date_range = [dt.strftime("%y/%m/%d") for dt in date_range]
 
         networkx_objects, activities = compute_member_activity(
             platform_id=self.platform_id,

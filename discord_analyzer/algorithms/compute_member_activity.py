@@ -225,20 +225,8 @@ def compute_member_activity(
                 last_date = (
                     new_date_range[0]
                     + relativedelta(days=window_param["step_size"] * w_i)
-                    + relativedelta(days=window_param["period_size"] - 1)
+                    + relativedelta(days=window_param["period_size"])
                 )
-
-                # # make list of all dates in window
-                # date_list_w = []
-                # for x in range(window_param["period_size"]):
-                #     date_list_w.append(last_date - relativedelta(days=x))
-
-                # # make empty array for date string values
-                # date_list_w_str = np.zeros_like(date_list_w)
-
-                # # turn date time values into string
-                # for i in range(len(date_list_w_str)):
-                #     date_list_w_str[i] = date_list_w[i].strftime("%Y-%m-%d")
 
                 window_start = last_date - relativedelta(
                     days=window_param["period_size"]
@@ -246,8 +234,8 @@ def compute_member_activity(
 
                 # updating account names for past 7 days
                 acc_names = get_users_past_window(
-                    window_start_date=window_start.strftime("%Y-%m-%d"),
-                    window_end_date=last_date.strftime("%Y-%m-%d"),
+                    window_start_date=window_start,
+                    window_end_date=last_date,
                     collection=db_access.db_mongo_client[platform_id]["heatmaps"],
                 )
 

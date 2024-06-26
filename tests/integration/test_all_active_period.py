@@ -25,10 +25,12 @@ def test_two_weeks_period_active_members():
         platform_id,
         discordId_list=acc_id,
         days_ago_period=connected_days_before,
+        resources=["1020707129214111827", "general_id"],
     )
 
     db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("rawmemberactivities")
 
     # generating rawinfo samples
     rawinfo_samples = []
@@ -134,22 +136,6 @@ def test_two_weeks_period_active_members():
 
     # A message from user3 to user2 on day 3 of past two weeks
     sample = {
-        "type": 19,
-        "author": acc_id[3],
-        "content": "test_message_1",
-        "user_mentions": [],
-        "role_mentions": [],
-        "reactions": [],
-        "replied_user": acc_id[2],
-        "createdDate": (datetime.now() - timedelta(days=(14 - 3))),
-        "messageId": "111881432193433604",
-        "channelId": "1020707129214111827",
-        "channelName": "general",
-        "threadId": None,
-        "threadName": None,
-        "isGeneratedByWebhook": False,
-    }
-    sample = {
         "actions": [{"name": "message", "type": "emitter"}],
         "author_id": acc_id[3],
         "date": datetime.now() - timedelta(days=(14 - 3)),
@@ -199,7 +185,7 @@ def test_two_weeks_period_active_members():
     date_now = datetime.now()
 
     for activities in memberactivities:
-        date = datetime.fromisoformat(activities["date"]).date()
+        date = activities["date"].date()
         # print("date: ", date)
         # 14 days minues 7
         if date == (date_now - timedelta(days=14)).date():

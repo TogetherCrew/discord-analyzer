@@ -108,11 +108,11 @@ def test_analyzer_one_year_period_recompute_available_analytics():
     )
 
     assert len(memberactivities_data) == 354
-    assert memberactivities_data[0]["date"] == yesterday.isoformat()
+    assert memberactivities_data[0]["date"] == yesterday
     # yesterday is `-1` day and so
     # we would use 353 days ago rather than 354
     document_start_date = yesterday - timedelta(days=353)
-    assert memberactivities_data[-1]["date"] == (document_start_date).isoformat()
+    assert memberactivities_data[-1]["date"] == (document_start_date)
 
     heatmaps_cursor = db_access.query_db_find("heatmaps", {}, sorting=("date", -1))
     heatmaps_data = list(heatmaps_cursor)
