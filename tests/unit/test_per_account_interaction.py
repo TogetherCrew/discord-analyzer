@@ -12,7 +12,7 @@ def test_per_account_interaction_no_inputs():
             "mentioner_accounts",
             "reacter_accounts",
             "replier_accounts",
-        ]
+        ],
     )
 
     assert results["mentioner_accounts"] == {}
@@ -52,7 +52,7 @@ def test_per_account_interaction_empty_inputs():
             "mentioner_accounts",
             "reacter_accounts",
             "replier_accounts",
-        ]
+        ],
     )
 
     assert results["mentioner_accounts"] == {}
@@ -111,16 +111,18 @@ def test_per_account_interaction_accounts():
             "mentioner_accounts",
             "reacter_accounts",
             "replier_accounts",
-        ]
+        ],
     )
 
     # the whole results assersion
-    assert set(results.keys()) == set([
-        "replier_accounts",
-        "reacter_accounts",
-        "mentioner_accounts",
-        "all_interaction_accounts",
-    ])
+    assert set(results.keys()) == set(
+        [
+            "replier_accounts",
+            "reacter_accounts",
+            "mentioner_accounts",
+            "all_interaction_accounts",
+        ]
+    )
 
     # mentioner_accounts assersions
     action_type = "mentioner_accounts"
@@ -195,7 +197,7 @@ def test_per_account_interaction_numbers():
             "mentioner_accounts",
             "reacter_accounts",
             "replier_accounts",
-        ]
+        ],
     )
 
     # 5 users we had

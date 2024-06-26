@@ -39,7 +39,7 @@ class TestAssessEngagementReplies(TestCase):
         heatmaps are the input for assess_engagement's interaction matrix
         """
         heatmaps_data = self.heatmaps.start(from_start=True)
-        
+
         analytics_data = {}
         analytics_data["heatmaps"] = heatmaps_data
         analytics_data["memberactivities"] = (None, None)
@@ -78,14 +78,15 @@ class TestAssessEngagementReplies(TestCase):
             days_ago_period=35,
             action=action,
         )
-        self.db_access.db_mongo_client[self.heatmaps.platform_id].drop_collection("heatmaps")
-        self.db_access.db_mongo_client[self.heatmaps.platform_id].drop_collection("rawmemberactivities")
+        self.db_access.db_mongo_client[self.heatmaps.platform_id].drop_collection(
+            "heatmaps"
+        )
+        self.db_access.db_mongo_client[self.heatmaps.platform_id].drop_collection(
+            "rawmemberactivities"
+        )
 
         rawinfo_samples = []
-        analyze_dates = [
-            datetime.now() - timedelta(hours= 35 * 24),
-            datetime.now()
-        ]
+        analyze_dates = [datetime.now() - timedelta(hours=35 * 24), datetime.now()]
         for i in range(35 * 24):
             raw_data_date = datetime.now() - timedelta(hours=i)
             author = "user1"
@@ -114,7 +115,11 @@ class TestAssessEngagementReplies(TestCase):
                     "author_id": replied_user,
                     "date": raw_data_date,
                     "interactions": [
-                        {"name": "reply", "type": "receiver", "users_engaged_id": [author]}
+                        {
+                            "name": "reply",
+                            "type": "receiver",
+                            "users_engaged_id": [author],
+                        }
                     ],
                     "metadata": {
                         "bot_activity": False,
@@ -126,9 +131,9 @@ class TestAssessEngagementReplies(TestCase):
             ]
             rawinfo_samples.extend(samples)
 
-        self.db_access.db_mongo_client[self.heatmaps.platform_id]["rawmemberactivities"].insert_many(
-            rawinfo_samples
-        )
+        self.db_access.db_mongo_client[self.heatmaps.platform_id][
+            "rawmemberactivities"
+        ].insert_many(rawinfo_samples)
         self.heatmaps_analytics()
 
         activity_dict: dict[str, dict] = {

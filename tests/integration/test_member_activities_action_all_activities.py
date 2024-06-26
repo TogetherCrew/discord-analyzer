@@ -38,7 +38,7 @@ class TestMemberActivitiesActionsAllActivities(TestCase):
             discordId_list=users_id_list,
             days_ago_period=35,
             action=action,
-            resources = ["123"],
+            resources=["123"],
         )
         self.db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
 

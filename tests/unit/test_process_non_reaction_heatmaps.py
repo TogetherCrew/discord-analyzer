@@ -29,7 +29,9 @@ class TestProcessNonReactions(TestCase):
                 }
             ]
         }
-        results = process_actions(input_data, skip_fields=["date", "reacted_per_acc", "replied_per_acc"])
+        results = process_actions(
+            input_data, skip_fields=["date", "reacted_per_acc", "replied_per_acc"]
+        )
 
         expected_results = {
             "acc1": [
@@ -70,7 +72,9 @@ class TestProcessNonReactions(TestCase):
                 }
             ]
         }
-        results = process_actions(input_data, skip_fields=["date", "replied_per_acc", "reacted_per_acc"])
+        results = process_actions(
+            input_data, skip_fields=["date", "replied_per_acc", "reacted_per_acc"]
+        )
         expected_results = {
             "acc1": [
                 {
@@ -125,7 +129,9 @@ class TestProcessNonReactions(TestCase):
                 }
             ],
         }
-        results = process_actions(input_data, skip_fields=["date", "replied_per_acc", "reacted_per_acc"])
+        results = process_actions(
+            input_data, skip_fields=["date", "replied_per_acc", "reacted_per_acc"]
+        )
 
         expected_results = {
             "acc1": [
@@ -203,7 +209,9 @@ class TestProcessNonReactions(TestCase):
                 }
             ],
         }
-        results = process_actions(input_data, skip_fields=["date", "reacted_per_acc", "replied_per_acc"])
+        results = process_actions(
+            input_data, skip_fields=["date", "reacted_per_acc", "replied_per_acc"]
+        )
 
         expected_results = {
             "acc1": [

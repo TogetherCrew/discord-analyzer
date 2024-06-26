@@ -40,7 +40,7 @@ class TestAssessEngagementMentions(TestCase):
         heatmaps are the input for assess_engagement's interaction matrix
         """
         heatmaps_data = self.heatmaps.start(from_start=True)
-        
+
         analytics_data = {}
         analytics_data["heatmaps"] = heatmaps_data
         analytics_data["memberactivities"] = (None, None)
@@ -84,10 +84,7 @@ class TestAssessEngagementMentions(TestCase):
         self.db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
 
         rawinfo_samples = []
-        analyze_dates = [
-            datetime.now() - timedelta(hours= 35 * 24),
-            datetime.now()
-        ]
+        analyze_dates = [datetime.now() - timedelta(hours=35 * 24), datetime.now()]
         for i in range(35 * 24):
             raw_data_date = datetime.now() - timedelta(hours=i)
             author = "user1"
@@ -116,7 +113,11 @@ class TestAssessEngagementMentions(TestCase):
                     "author_id": mentioned_user,
                     "date": raw_data_date,
                     "interactions": [
-                        {"name": "mention", "type": "receiver", "users_engaged_id": [author]}
+                        {
+                            "name": "mention",
+                            "type": "receiver",
+                            "users_engaged_id": [author],
+                        }
                     ],
                     "metadata": {
                         "bot_activity": False,
@@ -128,9 +129,9 @@ class TestAssessEngagementMentions(TestCase):
             ]
             rawinfo_samples.extend(samples)
 
-        self.db_access.db_mongo_client[self.heatmaps.platform_id]["rawmemberactivities"].insert_many(
-            rawinfo_samples
-        )
+        self.db_access.db_mongo_client[self.heatmaps.platform_id][
+            "rawmemberactivities"
+        ].insert_many(rawinfo_samples)
         self.heatmaps_analytics()
 
         activity_dict: dict[str, dict] = {
