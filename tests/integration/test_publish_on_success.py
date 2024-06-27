@@ -33,7 +33,7 @@ def test_publish_on_success_check_notification_choreographies():
         {"_id": ObjectId(platform_id)}
     )
 
-    db_access.db_mongo_client[guild_id].drop_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
     db_access.db_mongo_client["Saga"].drop_collection("sagas")
     db_access.db_mongo_client[guild_id].drop_collection("guildmembers")
     db_access.db_mongo_client[at_db].drop_collection(at_collection)
@@ -78,19 +78,6 @@ def test_publish_on_success_check_notification_choreographies():
             "createdAt": datetime(2023, 11, 1),
             "updatedAt": datetime(2023, 11, 1),
         }
-    )
-
-    # Adding sample memberactivities
-    date_yesterday = (
-        (datetime.now() - timedelta(days=1))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
-    )
-
-    date_two_past_days = (
-        (datetime.now() - timedelta(days=2))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
     )
 
     db_access.db_mongo_client["Saga"]["sagas"].insert_one(
@@ -254,14 +241,12 @@ def test_publish_on_success_check_notification_choreographies():
 
     date_yesterday = (
         (datetime.now() - timedelta(days=1))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
+        .replace(hour=0, minute=0, second=0, microsecond=0)
     )
 
     date_two_past_days = (
         (datetime.now() - timedelta(days=2))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
+        .replace(hour=0, minute=0, second=0, microsecond=0)
     )
 
     db_access.db_mongo_client[guild_id]["memberactivities"].insert_many(
@@ -314,19 +299,6 @@ def test_publish_on_success_check_notification_choreographies():
             },
         ]
     )
-
-    # preparing the data for publish_on_success function
-    mongo_creds = get_mongo_credentials()
-    user = mongo_creds["user"]
-    password = mongo_creds["password"]
-    host = mongo_creds["host"]
-    port = mongo_creds["port"]
-    connection_uri = f"mongodb://{user}:{password}@{host}:{port}"
-    mongo_creds = {
-        "connection_str": connection_uri,
-        "db_name": "Saga",
-        "collection_name": "sagas",
-    }
 
     sample_args_data = saga_id
     publish_on_success(None, None, sample_args_data)
