@@ -1,8 +1,9 @@
 import logging
 
 from discord_analyzer.DB_operations.mongodb_interaction import MongoDBOps
-from discord_analyzer.DB_operations.network_graph import make_neo4j_networkx_query_dict
+from discord_analyzer.DB_operations.network_graph import NetworkGraph
 from tc_neo4j_lib.neo4j_ops import Neo4jOps, Query
+from discord_analyzer.schemas import GraphSchema
 
 
 class MongoNeo4jDB:
@@ -30,8 +31,8 @@ class MongoNeo4jDB:
     def store_analytics_data(
         self,
         analytics_data: dict,
-        guild_id: str,
-        community_id: str,
+        platform_id: str,
+        graph_schema: GraphSchema,
         remove_memberactivities: bool = False,
         remove_heatmaps: bool = False,
     ):
@@ -46,10 +47,10 @@ class MongoNeo4jDB:
             values of the heatmaps is a list of dictinoaries
             and memberactivities is a tuple of memberactivities dictionary list
             and memebractivities networkx object dictionary list
-        guild_id: str
+        platform_id: str
             what the data is related to
-        community_id : str
-            the community id to save the data for
+        graph_schema : GraphSchema
+            the schema for graph to be saved
         remove_memberactivities : bool
             remove the whole memberactivity data and insert
             default is `False` which means don't delete the existing data
@@ -69,7 +70,7 @@ class MongoNeo4jDB:
         if not self.testing:
             # mongodb transactions
             self.mongoOps._do_analytics_write_transaction(
-                guildId=guild_id,
+                platform_id=platform_id,
                 delete_heatmaps=remove_heatmaps,
                 delete_member_acitivities=remove_memberactivities,
                 acitivties_list=memberactivities_data,
@@ -81,13 +82,12 @@ class MongoNeo4jDB:
                 memberactivities_networkx_data is not None
                 and memberactivities_networkx_data != []
             ):
-                queries_list = make_neo4j_networkx_query_dict(
+                network_graph = NetworkGraph(graph_schema, platform_id)
+                queries_list = network_graph.make_neo4j_networkx_query_dict(
                     networkx_graphs=memberactivities_networkx_data,
-                    guildId=guild_id,
-                    community_id=community_id,
                 )
                 self.run_operations_transaction(
-                    guildId=guild_id,
+                    platform_id=platform_id,
                     queries_list=queries_list,
                     remove_memberactivities=remove_memberactivities,
                 )
@@ -95,14 +95,14 @@ class MongoNeo4jDB:
             logging.warning("Testing mode enabled! Not saving any data")
 
     def run_operations_transaction(
-        self, guildId: str, queries_list: list[Query], remove_memberactivities: bool
+        self, platform_id: str, queries_list: list[Query], remove_memberactivities: bool
     ) -> None:
         """
         do the deletion and insertion operations inside a transaction
 
         Parameters:
         ------------
-        guildId : str
+        platform_id : str
             the guild id that the users are connected to it
             which we're going to delete the relations of it
         queries_list : list
@@ -111,15 +111,15 @@ class MongoNeo4jDB:
         remove_memberactivities : bool
             if True, remove the old data specified in that guild
         """
-        self.guild_msg = f"GUILDID: {guildId}:"
+        self.guild_msg = f"platform_id: {platform_id}:"
 
         transaction_queries: list[Query] = []
         if remove_memberactivities:
             logging.info(
-                f"{self.guild_msg} Neo4J GuildId accounts relation will be removed!"
+                f"{self.guild_msg} Neo4J platform_id accounts relation will be removed!"
             )
             delete_relationship_query = self._create_guild_rel_deletion_query(
-                guildId=guildId
+                platform_id=platform_id
             )
             transaction_queries.append(delete_relationship_query)
 
@@ -128,7 +128,7 @@ class MongoNeo4jDB:
         self.neo4j_ops.run_queries_in_batch(transaction_queries, message=self.guild_msg)
 
     def _create_guild_rel_deletion_query(
-        self, guildId: str, relation_name: str = "INTERACTED_WITH"
+        self, platform_id: str, relation_name: str = "INTERACTED_WITH"
     ) -> Query:
         """
         create a query to delete the relationships
@@ -136,7 +136,7 @@ class MongoNeo4jDB:
 
         Parameters:
         -------------
-        guildId : str
+        platform_id : str
             the guild id that the users are connected to it
         relation_name : str
             the relation we want to delete
@@ -149,12 +149,12 @@ class MongoNeo4jDB:
         query_str = f"""
           MATCH
             (:DiscordAccount)
-                -[r:{relation_name} {{guildId: '{guildId}'}}]-(:DiscordAccount)
+                -[r:{relation_name} {{platformId: '{platform_id}'}}]-(:DiscordAccount)
             DETACH DELETE r"""
 
         parameters = {
             "relation_name": relation_name,
-            "guild_id": guildId,
+            "platform_id": platform_id,
         }
 
         query = Query(

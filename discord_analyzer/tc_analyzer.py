@@ -5,8 +5,8 @@ from discord_analyzer.metrics.heatmaps import Heatmaps
 from discord_analyzer.metrics.neo4j_analytics import Neo4JAnalytics
 from discord_analyzer.metrics.utils.analyzer_db_manager import AnalyzerDBManager
 from discord_analyzer.metrics.utils.platform import Platform
+from discord_analyzer.schemas import GraphSchema
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
-
 
 class TCAnalyzer(AnalyzerDBManager):
     """
@@ -27,6 +27,8 @@ class TCAnalyzer(AnalyzerDBManager):
         # hard-coded for now
         # TODO: define a structure and make it read from db
         self.analyzer_config = DiscordAnalyzerConfig()
+
+        self.graph_schema = GraphSchema(platform=self.analyzer_config.platform)
 
         self.neo4j_analytics = Neo4JAnalytics()
         self.platform_utils = Platform(platform_id)
@@ -56,8 +58,8 @@ class TCAnalyzer(AnalyzerDBManager):
 
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
-            guild_id=self.platform_id,
-            community_id=self.community_id,
+            platform_id=self.platform_id,
+            graph_schema=self.graph_schema,
             remove_memberactivities=False,
             remove_heatmaps=False,
         )
@@ -86,8 +88,8 @@ class TCAnalyzer(AnalyzerDBManager):
 
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
-            guild_id=self.platform_id,
-            community_id=self.community_id,
+            platform_id=self.platform_id,
+            graph_schema=self.graph_schema,
             remove_heatmaps=False,
             remove_memberactivities=False,
         )
@@ -135,8 +137,8 @@ class TCAnalyzer(AnalyzerDBManager):
 
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
-            guild_id=self.platform_id,
-            community_id=self.community_id,
+            platform_id=self.platform_id,
+            graph_schema=self.graph_schema,
             remove_memberactivities=False,
             remove_heatmaps=True,
         )
@@ -171,8 +173,8 @@ class TCAnalyzer(AnalyzerDBManager):
         logging.info(f"Storing analytics data for platform: {self.platform_id}!")
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
-            guild_id=self.platform_id,
-            community_id=self.community_id,
+            platform_id=self.platform_id,
+            graph_schema=self.graph_schema,
             remove_memberactivities=True,
             remove_heatmaps=False,
         )
