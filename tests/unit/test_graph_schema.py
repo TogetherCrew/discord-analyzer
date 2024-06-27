@@ -13,7 +13,8 @@ class TestGraphSchema(TestCase):
             platform="discord",
         )
 
-        self.assertEqual(graph.platform, "Discord")
+        self.assertEqual(graph.platform_label, "DiscordPlatform")
+        self.assertEqual(graph.user_label, "DiscordMember")
         self.assertEqual(graph.interacted_in_rel, "INTERACTED_IN")
         self.assertEqual(graph.interacted_with_rel, "INTERACTED_WITH")
         self.assertEqual(graph.member_relation, "IS_MEMBER")
@@ -38,7 +39,8 @@ class TestGraphSchema(TestCase):
             member_relation="IS_MEMBER_3",
         )
         
-        self.assertEqual(graph.platform, "Telegram")
+        self.assertEqual(graph.platform_label, "TelegramPlatform")
+        self.assertEqual(graph.user_label, "TelegramMember")
         self.assertEqual(graph.interacted_in_rel, "INTERACTED_IN_1")
         self.assertEqual(graph.interacted_with_rel, "INTERACTED_WITH_2")
         self.assertEqual(graph.member_relation, "IS_MEMBER_3")

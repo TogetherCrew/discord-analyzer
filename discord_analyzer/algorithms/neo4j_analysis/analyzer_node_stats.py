@@ -4,11 +4,17 @@ from uuid import uuid1
 
 import pandas as pd
 from discord_analyzer.algorithms.neo4j_analysis.utils import ProjectionUtils
+from discord_analyzer.schemas import GraphSchema
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 class NodeStats:
-    def __init__(self, threshold: int = 2) -> None:
+    def __init__(
+            self,
+            platform_id: str,
+            graph_schema : GraphSchema,
+            threshold: int = 2,
+        ) -> None:
         """
         initialize the Node status computations object
         the status could be either one of `Sender`, `Receiver`, `Balanced`
@@ -31,29 +37,32 @@ class NodeStats:
         self.gds = neo4j_ops.gds
         self.driver = neo4j_ops.neo4j_driver
         self.threshold = threshold
+        self.platform_id = platform_id
+        self.graph_schema = graph_schema
+        self.projection_utils = ProjectionUtils(self.platform_id, self.graph_schema)
 
-    def compute_stats(self, guildId: str, from_start: bool) -> None:
-        projection_utils = ProjectionUtils(guildId=guildId)
+
+    def compute_stats(self, from_start: bool) -> None:
 
         # possible dates to do the computations
-        possible_dates = projection_utils.get_dates(guildId=guildId)
+        possible_dates = self.projection_utils.get_dates()
 
         # if we didn't want to compute from the day start
         if not from_start:
-            computed_dates = self.get_computed_dates(projection_utils, guildId)
+            computed_dates = self.get_computed_dates()
             possible_dates = possible_dates - computed_dates
 
         for date in possible_dates:
             try:
-                self.compute_node_stats_wrapper(projection_utils, guildId, date)
+                self.compute_node_stats_wrapper(date)
             except Exception as exp:
-                msg = f"GUILDID: {guildId} "
+                msg = f"PLATFORMID: {self.platform_id} "
                 logging.error(
                     f"{msg} node stats computation for date: {date}, exp: {exp}"
                 )
 
     def compute_node_stats_wrapper(
-        self, projection_utils: ProjectionUtils, guildId: str, date: float
+        self, date: float
     ):
         """
         a wrapper for node stats computation process
@@ -73,8 +82,7 @@ class NodeStats:
         # NATURAL relations direction degreeCentrality computations
         graph_name = f"GraphStats_{uuid1()}"
 
-        projection_utils.project_temp_graph(
-            guildId=guildId,
+        self.projection_utils.project_temp_graph(
             graph_name=graph_name,
             weighted=True,
             relation_direction="NATURAL",
@@ -89,7 +97,7 @@ class NodeStats:
                 }
             )
             YIELD nodeId, score
-            RETURN gds.util.asNode(nodeId).userId AS userId, score
+            RETURN gds.util.asNode(nodeId).id AS userId, score
             """,
             {
                 "graph_name": graph_name,
@@ -106,7 +114,7 @@ class NodeStats:
                 }
             )
             YIELD nodeId, score
-            RETURN gds.util.asNode(nodeId).userId AS userId, score
+            RETURN gds.util.asNode(nodeId).id AS userId, score
             """,
             {
                 "graph_name": graph_name,
@@ -115,7 +123,7 @@ class NodeStats:
 
         df = self.get_date_stats(natural_dc, reverse_dc, threshold=self.threshold)
 
-        self.save_properties_db(guildId, df, date)
+        self.save_properties_db(df, date)
         _ = self.gds.run_cypher(
             "CALL gds.graph.drop($graph_name)",
             {
@@ -123,20 +131,19 @@ class NodeStats:
             },
         )
 
-    def get_computed_dates(
-        self, projection_utils: ProjectionUtils, guildId: str
-    ) -> set[float]:
+    def get_computed_dates(self) -> set[float]:
         """
         get the computed dates of our guild
         """
-        query = """
-            MATCH (:DiscordAccount)
-                -[r:INTERACTED_IN]->(g:Guild {guildId: $guild_id})
+        query = f"""
+            MATCH (:{self.graph_schema.platform_label})
+                -[r:{self.graph_schema.interacted_in_rel}]->
+                (g:{self.graph_schema.platform_label} {{id: $platform_id}})
             WHERE r.status IS NOT NULL
             RETURN r.date as computed_dates
             """
-        computed_dates = projection_utils.get_computed_dates(
-            query=query, guild_id=guildId
+        computed_dates = self.projection_utils.get_computed_dates(
+            query=query, platform_id=self.platform_id
         )
 
         return computed_dates
@@ -218,7 +225,7 @@ class NodeStats:
         return merged_df
 
     def save_properties_db(
-        self, guildId: str, user_status: pd.DataFrame, date: float
+        self, user_status: pd.DataFrame, date: float
     ) -> None:
         """
         save user stats to their nodes
@@ -237,16 +244,16 @@ class NodeStats:
                 userId = row["userId"]
                 status = row["stats"]
 
-                query = """
-                    MATCH (a:DiscordAccount {userId: $userId})
-                    MATCH (g:Guild {guildId: $guildId})
-                    MERGE (a) -[r:INTERACTED_IN {
+                query = f"""
+                    MATCH (a:{self.graph_schema.user_label} {{id: $userId}})
+                    MATCH (g:{self.graph_schema.platform_label} {{id: $platform_id}})
+                    MERGE (a) -[r:INTERACTED_IN {{
                         date: $date
-                    }] -> (g)
+                    }}] -> (g)
                     SET r.status = $status
                 """
                 session.run(
-                    query, userId=userId, guildId=guildId, status=status, date=date
+                    query, userId=userId, platform_id=self.platform_id, status=status, date=date
                 )
-        prefix = f"GUILDID: {guildId}: "
+        prefix = f"PLATFORMID: {self.platform_id}: "
         logging.info(f"{prefix}Node stats saved for the date: {date}")

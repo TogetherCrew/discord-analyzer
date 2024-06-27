@@ -2,53 +2,56 @@ import logging
 from uuid import uuid1
 
 from discord_analyzer.algorithms.neo4j_analysis.utils import ProjectionUtils
+from discord_analyzer.schemas import GraphSchema
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 class Louvain:
-    def __init__(self) -> None:
+    def __init__(self, platform_id: str, graph_schema: GraphSchema) -> None:
         """
         louvain algorithm wrapper to compute
         """
         self.neo4j_ops = Neo4jOps.get_instance()
+        self.platform_id = platform_id
+        self.graph_schema = graph_schema
 
-    def compute(self, guild_id: str, from_start: bool = False) -> None:
+        self.projection_utils = ProjectionUtils(
+            platform_id=platform_id, graph_schema=graph_schema
+        )
+        self.log_prefix = f"PLATFORMID: {platform_id} "
+
+    def compute(self, from_start: bool = False) -> None:
         """
         compute the louvain modularity score for a guild
 
         Parameters
         ------------
-        guild_id : str
-            the guild_id to compute the the algorithm for
         from_start : bool
             whether to compute the metric from the first day or not
             if True, then would compute from start
             default is False
         """
-        projection_utils = ProjectionUtils(guildId=guild_id)
 
-        computable_dates = projection_utils.get_dates(guildId=guild_id)
+        computable_dates = self.projection_utils.get_dates()
 
         # compute for each date
         to_compute: set[float]
         if from_start:
             to_compute = computable_dates
         else:
-            computed_dates = self.get_computed_dates(projection_utils, guild_id)
+            computed_dates = self.get_computed_dates()
             to_compute = computable_dates - computed_dates
 
         for date in to_compute:
             try:
-                self.louvain_computation_wrapper(projection_utils, guild_id, date)
+                self.louvain_computation_wrapper(date)
             except Exception as exp:
-                msg = f"GUILDID: {guild_id} "
                 logging.error(
-                    f"{msg}Louvain Modularity computation for date: {date}, exp: {exp}"
+                    f"Exception: {self.log_prefix}Louvain Modularity "
+                    f" computation for date: {date}, exp: {exp}"
                 )
 
-    def louvain_computation_wrapper(
-        self, projection_utils: ProjectionUtils, guild_id: str, date: float
-    ) -> None:
+    def louvain_computation_wrapper(self, date: float) -> None:
         """
         a wrapper for louvain modularity computation process
         we're doing the projection here and computing on that,
@@ -56,17 +59,11 @@ class Louvain:
 
         Parameters:
         ------------
-        projection_utils : ProjectionUtils
-            the utils needed to get the work done
-        guild_id : str
-            the guild we want the temp relationships
-            between its members
         date : float
             timestamp of the relation
         """
         graph_projected_name = f"GraphLouvain_{uuid1()}"
-        projection_utils.project_temp_graph(
-            guildId=guild_id,
+        self.projection_utils.project_temp_graph(
             graph_name=graph_projected_name,
             weighted=True,
             date=date,
@@ -75,7 +72,7 @@ class Louvain:
 
         # get the results as pandas dataframe
         self.compute_graph_louvain(
-            date=date, graph_name=graph_projected_name, guild_id=guild_id
+            date=date, graph_name=graph_projected_name
         )
 
         # dropping the computed date
@@ -88,19 +85,9 @@ class Louvain:
             },
         )
 
-    def get_computed_dates(
-        self, projection_utils: ProjectionUtils, guildId: str
-    ) -> set[float]:
+    def get_computed_dates(self) -> set[float]:
         """
         get localClusteringCoeff computed dates
-
-        Parameters:
-        ------------
-        guildId : str
-            the guild we want the temp relationships
-            between its members
-        projection_utils : ProjectionUtils
-            the utils needed to get the work done
 
         Returns:
         ----------
@@ -108,18 +95,18 @@ class Louvain:
             the computation dates
         """
         # getting the dates computed before
-        query = """
-            MATCH (g:Guild {guildId: $guild_id})
+        query = f"""
+            MATCH (g:{self.graph_schema.platform_label} {{id: $platform_id}})
                 -[r:HAVE_METRICS]->(g)
             WHERE r.louvainModularityScore IS NOT NULL
             RETURN r.date as computed_dates
             """
-        computed_dates = projection_utils.get_computed_dates(query, guild_id=guildId)
+        computed_dates = self.projection_utils.get_computed_dates(query, platform_id=self.platform_id)
 
         return computed_dates
 
     def compute_graph_louvain(
-        self, date: float, graph_name: str, guild_id: str
+        self, date: float, graph_name: str
     ) -> None:
         """
         compute louvain algorithm for the projected graph and
@@ -131,29 +118,27 @@ class Louvain:
             timestamp of the relation
         graph_name : str
             the operation would be done on the graph
-        guild_id : str
-            the guild_id to save the data for it
         """
-        msg = f"GUILDID: {guild_id}"
         try:
             _ = self.neo4j_ops.gds.run_cypher(
-                """
+                f"""
                     CALL gds.louvain.stats($graph_name)
                     YIELD modularity
                     WITH modularity
-                    MATCH (g:Guild {guildId: $guild_id})
-                    MERGE (g) -[r:HAVE_METRICS {
+                    MATCH (g:{self.graph_schema.platform_label} {{id: $platform_id}})
+                    MERGE (g) -[r:HAVE_METRICS {{
                         date: $date
-                    }]-> (g)
+                    }}]-> (g)
                     SET r.louvainModularityScore = modularity
                     """,
                 {
                     "graph_name": graph_name,
-                    "guild_id": guild_id,
+                    "platform_id": self.platform_id,
                     "date": date,
                 },
             )
         except Exception as exp:
             logging.error(
-                f"{msg} Error in computing louvain modularity algorithm, {exp}"
+                f"{self.log_prefix} Error in computing "
+                f"louvain modularity algorithm, {exp}"
             )

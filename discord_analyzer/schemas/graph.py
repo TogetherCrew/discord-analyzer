@@ -27,10 +27,13 @@ class GraphSchema:
             the membership relation label
             default is always to be `IS_MEMBER`
         """
-        self.platform = self._capitalize_first_letter(platform)
+        platform = self._capitalize_first_letter(platform)
         self.interacted_with_rel = interacted_with_rel
         self.interacted_in_rel = interacted_in_rel
         self.member_relation = member_relation
+
+        self.user_label = platform + "Member"
+        self.platform_label = platform + "Platform"
 
     def _capitalize_first_letter(self, platform: str):
         if "_" in platform or " " in platform:

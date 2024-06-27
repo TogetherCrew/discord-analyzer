@@ -1,16 +1,22 @@
 import logging
 
+from discord_analyzer.schemas import GraphSchema
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
 class ProjectionUtils:
-    def __init__(self, guildId: str) -> None:
+    def __init__(self, platform_id: str, graph_schema: GraphSchema) -> None:
         self.gds = Neo4jOps.get_instance().gds
-        self.guildId = guildId
+        self.platform_id = platform_id
+
+        self.user_label = graph_schema.user_label
+        self.platform_label = graph_schema.platform_label
+        self.between_user_label = graph_schema.interacted_with_rel
+        self.between_user_platform_label = graph_schema.interacted_in_rel
+        self.membership_label = graph_schema.member_relation
 
     def project_temp_graph(
         self,
-        guildId: str,
         graph_name: str,
         **kwargs,
     ) -> None:
@@ -19,8 +25,8 @@ class ProjectionUtils:
 
         Parameters:
         ------------
-        guildId : str
-            the guildId we want to do the projection
+        platform_id : str
+            the platform_id we want to do the projection
         graph_name : str
             the name we want to name the projected graph
         **kwargs :
@@ -40,6 +46,7 @@ class ProjectionUtils:
             date : float
                 if we want to include date in the graph projection query
         """
+
         # getting kwargs
         weighted = False
         if "weighted" in kwargs:
@@ -52,13 +59,13 @@ class ProjectionUtils:
         projection_query: str
         if "date" in kwargs:
             date = kwargs["date"]
-            projection_query = f"""MATCH (a:DiscordAccount)
-                   -[r:INTERACTED_WITH {{guildId: '{guildId}', date: {date}}}]->
-                   (b:DiscordAccount)  """
+            projection_query = f"""MATCH (a:{self.user_label})
+                   -[r:{self.between_user_label} {{id: '{self.platform_id}', date: {date}}}]->
+                   (b:{self.user_label})  """
         else:
-            projection_query = f"""MATCH (a:DiscordAccount)
-                   -[r:INTERACTED_WITH {{guildId: '{guildId}'}}]->
-                   (b:DiscordAccount)  """
+            projection_query = f"""MATCH (a:{self.user_label})
+                   -[r:{self.between_user_label} {{id: '{self.platform_id}'}}]->
+                   (b:{self.user_label})  """
 
         if "projection_query" in kwargs:
             projection_query = kwargs["projection_query"]
@@ -102,7 +109,7 @@ class ProjectionUtils:
             """
         )
 
-    def get_dates(self, guildId: str) -> set[float]:
+    def get_dates(self) -> set[float]:
         """
         get all the dates we do have on the INTERACTED_WITH relations
 
@@ -113,11 +120,11 @@ class ProjectionUtils:
         """
         dates = self.gds.run_cypher(
             f"""
-            MATCH (a:DiscordAccount)
-                -[r:INTERACTED_WITH {{guildId: '{guildId}'}}]-()
+            MATCH (a:{self.user_label})
+                -[r:{self.between_user_label} {{id: $platform_id}}]-()
             WITH DISTINCT(r.date) as dates
             RETURN dates
-            """
+            """, params={"platform_id": self.platform_id}
         )
         computable_dates_set = set(dates["dates"].values)
 

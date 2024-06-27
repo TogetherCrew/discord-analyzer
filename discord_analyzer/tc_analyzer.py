@@ -24,16 +24,17 @@ class TCAnalyzer(AnalyzerDBManager):
         logging.basicConfig()
         logging.getLogger().setLevel(logging.INFO)
 
+        self.platform_id = platform_id
+
         # hard-coded for now
         # TODO: define a structure and make it read from db
         self.analyzer_config = DiscordAnalyzerConfig()
 
-        self.graph_schema = GraphSchema(platform=self.analyzer_config.platform)
-
-        self.neo4j_analytics = Neo4JAnalytics()
         self.platform_utils = Platform(platform_id)
-        self.platform_id = platform_id
         self.community_id = self.platform_utils.get_community_id()
+        
+        self.graph_schema = GraphSchema(platform=self.analyzer_config.platform)
+        self.neo4j_analytics = Neo4JAnalytics(platform_id, self.graph_schema)
 
     def run_once(self):
         """Run analysis once (Wrapper)"""
@@ -94,7 +95,7 @@ class TCAnalyzer(AnalyzerDBManager):
             remove_memberactivities=False,
         )
 
-        self.neo4j_analytics.compute_metrics(guildId=self.platform_id, from_start=False)
+        self.neo4j_analytics.compute_metrics(from_start=False)
 
         self.platform_utils.update_isin_progress()
 
@@ -179,7 +180,7 @@ class TCAnalyzer(AnalyzerDBManager):
             remove_heatmaps=False,
         )
 
-        self.neo4j_analytics.compute_metrics(guildId=self.platform_id, from_start=True)
+        self.neo4j_analytics.compute_metrics(from_start=True)
         self.platform_utils.update_isin_progress()
 
     def check_platform(self):

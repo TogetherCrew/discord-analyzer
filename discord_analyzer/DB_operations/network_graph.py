@@ -6,6 +6,7 @@ import networkx
 from tc_neo4j_lib import Query
 from discord_analyzer.schemas import GraphSchema
 
+
 class NetworkGraph:
     def __init__(
             self,
@@ -122,9 +123,9 @@ class NetworkGraph:
 
         # labels to be saved in Neo4j
         # i.e.: DiscordMember
-        user_label = self.graph_schema.platform + "Member"
+        user_label = self.graph_schema.user_label
         # i.e.: DiscordPlatform
-        platform_label = self.graph_schema.platform + "Platform"
+        platform_label = self.graph_schema.platform_label
         member_rel_label = self.graph_schema.member_relation
         users_rel_label = self.graph_schema.interacted_with_rel
 
