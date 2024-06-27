@@ -11,7 +11,7 @@ from pymongo.database import Database
 class RawInfoModel(BaseModel):
     def __init__(self, database: Database):
         super().__init__(collection_name="rawmemberactivities", database=database)
-        self.guild_msg = f"GUILDID: {self.database.name}:"
+        self.guild_msg = f"PLATFORMID: {self.database.name}:"
 
     def get_first_date(self):
         """
@@ -38,7 +38,7 @@ class RawInfoModel(BaseModel):
 
         `msg` parameter is for additional info to be logged
         """
-        guild_msg = f"GUILDID: {self.database.name}:{msg}"
+        guild_msg = f"PLATFORMID: {self.database.name}:{msg}"
 
         start_day = day.replace(hour=0, minute=0, second=0)
         end_day = start_day + timedelta(days=1)
