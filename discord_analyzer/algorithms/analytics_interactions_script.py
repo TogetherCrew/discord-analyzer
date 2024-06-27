@@ -88,4 +88,3 @@ def refine_dictionary(interaction_dict):
         }
 
     return refined_dict
-

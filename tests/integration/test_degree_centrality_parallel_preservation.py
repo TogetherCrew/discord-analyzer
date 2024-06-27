@@ -28,7 +28,6 @@ def test_partially_connected_coeffs():
     interacted_with = graph_schema.interacted_with_rel
     is_member = graph_schema.member_relation
 
-
     # creating some nodes with data
     neo4j_ops.gds.run_cypher(
         f"""

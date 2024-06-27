@@ -71,9 +71,7 @@ def test_avg_clustering_coeff_from_start():
         """
     )
 
-    neo4j_analytics.compute_local_clustering_coefficient(
-        from_start=True
-    )
+    neo4j_analytics.compute_local_clustering_coefficient(from_start=True)
     fragmentation_score = neo4j_analytics.compute_fragmentation_score(
         past_window_date=past_window_date,
         scale_fragmentation_score=200,

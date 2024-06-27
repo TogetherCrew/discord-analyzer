@@ -10,6 +10,7 @@ from discord_analyzer.metrics.heatmaps import Heatmaps
 from discord_analyzer.schemas import GraphSchema
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
 
+
 class TestAssessEngagementMentions(TestCase):
     def setUp(self) -> None:
         platform_id = "515151515151515151515151"
