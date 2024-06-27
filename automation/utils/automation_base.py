@@ -62,7 +62,7 @@ class AutomationBase:
         return users_data
 
     def _get_users_from_memberactivities(
-        self, guild_id: str, category: str
+        self, db_name: str, category: str
     ) -> tuple[list[str], list[str]]:
         """
         get the users of memberactivities within a specific memberactivities
@@ -70,8 +70,8 @@ class AutomationBase:
 
         Parameters:
         -------------
-        guild_id : str
-            the guild id to get people's id
+        db_name : str
+            the database to get people's id
         category : str
             the category of memberactivities
 
@@ -91,13 +91,13 @@ class AutomationBase:
         )
 
         users = (
-            self.mongo_client[guild_id]["memberactivities"]
+            self.mongo_client[db_name]["memberactivities"]
             .find(
                 {
-                    "$or": [
-                        {"date": date_yesterday},
-                        {"date": date_two_past_days},
-                    ]
+                    "date": {
+                        "$gte": date_two_past_days,
+                        "$lte": date_yesterday,
+                    }
                 },
                 projection,
             )

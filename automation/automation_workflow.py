@@ -14,7 +14,7 @@ class AutomationWorkflow(AutomationBase):
         super().__init__()
         self.automation_db = AutomationDB()
 
-    def start(self, guild_id: str):
+    def start(self, platform_id: str, guild_id: str):
         """
         start the automation workflow for a guild
 
@@ -48,7 +48,7 @@ class AutomationWorkflow(AutomationBase):
                         members_by_category[category] = []
 
                         users1, users2 = self._get_users_from_memberactivities(
-                            guild_id, category
+                            platform_id, category
                         )
                         users = self._subtract_users(users1, users2)
 
@@ -81,7 +81,7 @@ class AutomationWorkflow(AutomationBase):
                                         compiled_message = action.template
 
                                     data = self._prepare_saga_data(
-                                        guild_id, user_id, compiled_message
+                                        platform_id, user_id, compiled_message
                                     )
                                     saga_id = self._create_manual_saga(data)
                                     logging.info(
@@ -111,7 +111,7 @@ class AutomationWorkflow(AutomationBase):
 
                     for recipent in at.report.recipientIds:
                         data = self._prepare_saga_data(
-                            guild_id, recipent, compiled_message
+                            platform_id, recipent, compiled_message
                         )
                         saga_id = self._create_manual_saga(data)
 
@@ -181,21 +181,20 @@ class AutomationWorkflow(AutomationBase):
         return compiled_message
 
     def _prepare_saga_data(
-        self, guild_id: str, user_id: str, message: str
+        self, platform_id: str, user_id: str, message: str
     ) -> dict[str, Any]:
         """
         prepare the data needed for the saga
 
         Parameters:
         ------------
-        guild_id : str
-            the guild_id having the user
+        platform_id : str
+            the platform_id having the user
         user_id : str
             the user_id to send message
         message : str
             the message to send the user
         """
-        platform_id = get_guild_platform_id(guild_id)
         data = {
             "platformId": platform_id,
             "created": False,
