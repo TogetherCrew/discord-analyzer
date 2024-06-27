@@ -1,6 +1,4 @@
 import itertools
-from datetime import datetime
-from warnings import warn
 
 
 def per_account_interactions(
