@@ -71,9 +71,7 @@ class Louvain:
         )
 
         # get the results as pandas dataframe
-        self.compute_graph_louvain(
-            date=date, graph_name=graph_projected_name
-        )
+        self.compute_graph_louvain(date=date, graph_name=graph_projected_name)
 
         # dropping the computed date
         _ = self.neo4j_ops.gds.run_cypher(
@@ -101,13 +99,13 @@ class Louvain:
             WHERE r.louvainModularityScore IS NOT NULL
             RETURN r.date as computed_dates
             """
-        computed_dates = self.projection_utils.get_computed_dates(query, platform_id=self.platform_id)
+        computed_dates = self.projection_utils.get_computed_dates(
+            query, platform_id=self.platform_id
+        )
 
         return computed_dates
 
-    def compute_graph_louvain(
-        self, date: float, graph_name: str
-    ) -> None:
+    def compute_graph_louvain(self, date: float, graph_name: str) -> None:
         """
         compute louvain algorithm for the projected graph and
         save the results back into db

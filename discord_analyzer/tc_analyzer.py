@@ -8,6 +8,7 @@ from discord_analyzer.metrics.utils.platform import Platform
 from discord_analyzer.schemas import GraphSchema
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
 
+
 class TCAnalyzer(AnalyzerDBManager):
     """
     TCAnalyzer
@@ -32,7 +33,7 @@ class TCAnalyzer(AnalyzerDBManager):
 
         self.platform_utils = Platform(platform_id)
         self.community_id = self.platform_utils.get_community_id()
-        
+
         self.graph_schema = GraphSchema(platform=self.analyzer_config.platform)
         self.neo4j_analytics = Neo4JAnalytics(platform_id, self.graph_schema)
 

@@ -88,7 +88,9 @@ class MongoDBOps:
 
         if delete_heatmaps:
             logging.info(f"{self.guild_msg} Removing Heatmaps data!")
-            self.empty_collection(session=session, platform_id=platform_id, activity="heatmaps")
+            self.empty_collection(
+                session=session, platform_id=platform_id, activity="heatmaps"
+            )
         if delete_member_acitivities:
             logging.info(f"{self.guild_msg} Removing MemberActivities MongoDB data!")
             self.empty_collection(

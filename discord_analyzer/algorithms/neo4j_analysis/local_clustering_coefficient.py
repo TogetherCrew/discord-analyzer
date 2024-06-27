@@ -5,6 +5,7 @@ from discord_analyzer.algorithms.neo4j_analysis.utils import ProjectionUtils
 from discord_analyzer.schemas import GraphSchema
 from tc_neo4j_lib import Neo4jOps
 
+
 class LocalClusteringCoeff:
     def __init__(self, platform_id: str, graph_schema: GraphSchema) -> None:
         self.gds = Neo4jOps.get_instance().gds
@@ -75,9 +76,7 @@ class LocalClusteringCoeff:
         )
 
         # get the results as pandas dataframe
-        self.compute_graph_lcc(
-            date=date, graph_name=graph_projected_name
-        )
+        self.compute_graph_lcc(date=date, graph_name=graph_projected_name)
 
         # dropping the computed date
         _ = self.gds.run_cypher(
@@ -98,7 +97,7 @@ class LocalClusteringCoeff:
         computed_dates : set[float]
             the computation dates
         """
-        
+
         # getting the dates computed before
         query = f"""
             MATCH (:{self.graph_schema.user_label})
@@ -107,7 +106,9 @@ class LocalClusteringCoeff:
             WHERE r.localClusteringCoefficient IS NOT NULL
             RETURN r.date as computed_dates
             """
-        computed_dates = self.projection_utils.get_computed_dates(query, platform_id=self.platform_id)
+        computed_dates = self.projection_utils.get_computed_dates(
+            query, platform_id=self.platform_id
+        )
 
         return computed_dates
 

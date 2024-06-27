@@ -10,11 +10,11 @@ from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 class NodeStats:
     def __init__(
-            self,
-            platform_id: str,
-            graph_schema : GraphSchema,
-            threshold: int = 2,
-        ) -> None:
+        self,
+        platform_id: str,
+        graph_schema: GraphSchema,
+        threshold: int = 2,
+    ) -> None:
         """
         initialize the Node status computations object
         the status could be either one of `Sender`, `Receiver`, `Balanced`
@@ -41,7 +41,6 @@ class NodeStats:
         self.graph_schema = graph_schema
         self.projection_utils = ProjectionUtils(self.platform_id, self.graph_schema)
 
-
     def compute_stats(self, from_start: bool) -> None:
 
         # possible dates to do the computations
@@ -61,9 +60,7 @@ class NodeStats:
                     f"{msg} node stats computation for date: {date}, exp: {exp}"
                 )
 
-    def compute_node_stats_wrapper(
-        self, date: float
-    ):
+    def compute_node_stats_wrapper(self, date: float):
         """
         a wrapper for node stats computation process
         we're doing the projection here and computing on that,
@@ -224,9 +221,7 @@ class NodeStats:
 
         return merged_df
 
-    def save_properties_db(
-        self, user_status: pd.DataFrame, date: float
-    ) -> None:
+    def save_properties_db(self, user_status: pd.DataFrame, date: float) -> None:
         """
         save user stats to their nodes
 
@@ -253,7 +248,11 @@ class NodeStats:
                     SET r.status = $status
                 """
                 session.run(
-                    query, userId=userId, platform_id=self.platform_id, status=status, date=date
+                    query,
+                    userId=userId,
+                    platform_id=self.platform_id,
+                    status=status,
+                    date=date,
                 )
         prefix = f"PLATFORMID: {self.platform_id}: "
         logging.info(f"{prefix}Node stats saved for the date: {date}")

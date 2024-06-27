@@ -1,11 +1,11 @@
 class GraphSchema:
     def __init__(
-            self,
-            platform: str,
-            interacted_with_rel: str = "INTERACTED_WITH",
-            interacted_in_rel: str = "INTERACTED_IN",
-            member_relation: str = "IS_MEMBER",
-        ) -> None:
+        self,
+        platform: str,
+        interacted_with_rel: str = "INTERACTED_WITH",
+        interacted_in_rel: str = "INTERACTED_IN",
+        member_relation: str = "IS_MEMBER",
+    ) -> None:
         """
         the graph schema
 

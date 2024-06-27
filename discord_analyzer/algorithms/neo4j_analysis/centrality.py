@@ -147,7 +147,9 @@ class Centerality:
             WHERE r.decentralizationScore IS NOT NULL
             RETURN r.date as computed_dates
             """
-        computed_dates = projection_utils.get_computed_dates(query, platform_id=self.platform_id)
+        computed_dates = projection_utils.get_computed_dates(
+            query, platform_id=self.platform_id
+        )
 
         dates_to_compute = user_interaction_dates - computed_dates
 

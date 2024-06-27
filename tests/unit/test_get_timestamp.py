@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from discord_analyzer.DB_operations.network_graph import NetworkGraph
 from discord_analyzer.schemas import GraphSchema
 
+
 class TestGetTimestamp(unittest.TestCase):
     def setUp(self) -> None:
         platform_id = "51515151515151515151"

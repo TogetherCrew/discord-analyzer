@@ -124,7 +124,8 @@ class ProjectionUtils:
                 -[r:{self.between_user_label} {{id: $platform_id}}]-()
             WITH DISTINCT(r.date) as dates
             RETURN dates
-            """, params={"platform_id": self.platform_id}
+            """,
+            params={"platform_id": self.platform_id},
         )
         computable_dates_set = set(dates["dates"].values)
 

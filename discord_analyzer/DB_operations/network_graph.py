@@ -9,10 +9,10 @@ from discord_analyzer.schemas import GraphSchema
 
 class NetworkGraph:
     def __init__(
-            self,
-            graph_schema: GraphSchema,
-            platform_id: str,
-        ) -> None:
+        self,
+        graph_schema: GraphSchema,
+        platform_id: str,
+    ) -> None:
         self.graph_schema = graph_schema
         self.platform_id = platform_id
 
@@ -48,12 +48,11 @@ class NetworkGraph:
 
         return queries_list
 
-
     def make_graph_list_query(
-            self,
-            networkx_graphs: networkx.classes.graph.Graph,
-            networkx_dates: list[datetime.datetime],
-        ) -> list[Query]:
+        self,
+        networkx_graphs: networkx.classes.graph.Graph,
+        networkx_dates: list[datetime.datetime],
+    ) -> list[Query]:
         """
         Make a list of queries for each graph to save their results
 
@@ -89,11 +88,11 @@ class NetworkGraph:
         return final_queries
 
     def create_network_query(
-            self,
-            nodes_dict: networkx.classes.reportviews.NodeDataView,
-            edge_dict: networkx.classes.reportviews.EdgeDataView,
-            graph_date: datetime.datetime,
-        ) -> tuple[list[Query], list[Query]]:
+        self,
+        nodes_dict: networkx.classes.reportviews.NodeDataView,
+        edge_dict: networkx.classes.reportviews.EdgeDataView,
+        graph_date: datetime.datetime,
+    ) -> tuple[list[Query], list[Query]]:
         """
         make string query to save the accounts with their
         account_name and relationships with their relation from **a graph**.
@@ -209,7 +208,6 @@ class NetworkGraph:
             rel_queries.append(Query(query_str, parameters))
 
         return node_queries, rel_queries
-
 
     def get_timestamp(self, time: datetime.datetime | None = None) -> float:
         """

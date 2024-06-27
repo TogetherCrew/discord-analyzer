@@ -15,7 +15,7 @@ class Neo4JAnalytics:
     def __init__(self, platform_id: str, graph_schema: GraphSchema) -> None:
         """
         neo4j metrics to be compute
-        
+
         Parameters
         ------------
         platform_id : str
@@ -119,9 +119,7 @@ class Neo4JAnalytics:
         try:
             centrality = Centerality(self.platform_id, self.graph_schema)
             # degree decentrality
-            _ = centrality.compute_network_decentrality(
-                from_start=from_start
-            )
+            _ = centrality.compute_network_decentrality(from_start=from_start)
         except Exception as exp:
             logging.error(
                 f"{self.log_prefix}Exception occured in computing Network decentrality, {exp}!"
@@ -144,7 +142,9 @@ class Neo4JAnalytics:
             )
             node_stats.compute_stats(from_start)
         except Exception as exp:
-            logging.error(f"{self.log_prefix}Exception occured in node stats computation, {exp}")
+            logging.error(
+                f"{self.log_prefix}Exception occured in node stats computation, {exp}"
+            )
 
     def _remove_analytics_interacted_in(self) -> None:
         """
