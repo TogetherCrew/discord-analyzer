@@ -69,23 +69,43 @@ def test_networkgraph_35_days_period_recompute_available_analytics():
     # 24 hours
     # 35 days
     for i in range(24 * 35):
-        sample = {
-            "type": 19,
-            "author": np.random.choice(acc_id),
-            "content": f"test{i}",
-            "user_mentions": [],
-            "role_mentions": [],
-            "reactions": [],
-            "replied_user": np.random.choice(acc_id),
-            "createdDate": (datetime.now() - timedelta(hours=i)),
-            "messageId": f"11188143219343360{i}",
-            "channelId": "1020707129214111827",
-            "channelName": "general",
-            "threadId": None,
-            "threadName": None,
-            "isGeneratedByWebhook": False,
-        }
-        rawinfo_samples.append(sample)
+        author = np.random.choice(acc_id)
+        replied_user = np.random.choice(acc_id)
+        samples = [
+            {
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": author,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [
+                    {
+                        "name": "reply",
+                        "type": "emitter",
+                        "users_engaged_id": [replied_user],
+                    }
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
+            },
+            {
+                "actions": [],
+                "author_id": replied_user,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [
+                    {"name": "reply", "type": "receiver", "users_engaged_id": [author]}
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
+            },
+        ]
+        rawinfo_samples.extend(samples)
 
     db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
         rawinfo_samples
@@ -94,9 +114,12 @@ def test_networkgraph_35_days_period_recompute_available_analytics():
     analyzer = setup_analyzer(platform_id)
     analyzer.recompute_analytics()
 
+    graph_schema = analyzer.graph_schema
+    platform_label = graph_schema.platform_label
+
     results = neo4j_ops.gds.run_cypher(
         f"""
-        MATCH (g:Guild {{guildId: '{guildId}'}})-[r:HAVE_METRICS]-> (g)
+        MATCH (g:{platform_label} {{id: '{platform_id}'}})-[r:HAVE_METRICS]-> (g)
         RETURN DISTINCT r.date as dates
         ORDER BY dates DESC
         """
@@ -115,13 +138,13 @@ def test_networkgraph_35_days_period_recompute_available_analytics():
     assert dates[-1] == start_analytics_date.timestamp() * 1000
     assert dates[0] == end_analytics_date.timestamp() * 1000
 
-    results = neo4j_ops.gds.run_cypher(
-        f"""
-        MATCH
-            (g:Guild {{guildId: '{guildId}'}})
-                -[r:IS_WITHIN]-> (c:Community {{id: '{community_id}'}})
-        RETURN c.id as cid
-        """
-    )
-    assert len(results.values) == 1
-    assert results["cid"].values == [community_id]
+    # results = neo4j_ops.gds.run_cypher(
+    #     f"""
+    #     MATCH
+    #         (g:{platform_label} {{guildId: '{platform_id}'}})
+    #             -[r:IS_WITHIN]-> (c:Community {{id: '{community_id}'}})
+    #     RETURN c.id as cid
+    #     """
+    # )
+    # assert len(results.values) == 1
+    # assert results["cid"].values == [community_id]

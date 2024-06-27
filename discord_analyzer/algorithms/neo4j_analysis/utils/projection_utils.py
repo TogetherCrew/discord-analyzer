@@ -60,11 +60,11 @@ class ProjectionUtils:
         if "date" in kwargs:
             date = kwargs["date"]
             projection_query = f"""MATCH (a:{self.user_label})
-                   -[r:{self.between_user_label} {{id: '{self.platform_id}', date: {date}}}]->
+                   -[r:{self.between_user_label} {{platformId: '{self.platform_id}', date: {date}}}]->
                    (b:{self.user_label})  """
         else:
             projection_query = f"""MATCH (a:{self.user_label})
-                   -[r:{self.between_user_label} {{id: '{self.platform_id}'}}]->
+                   -[r:{self.between_user_label} {{platformId: '{self.platform_id}'}}]->
                    (b:{self.user_label})  """
 
         if "projection_query" in kwargs:
@@ -121,7 +121,7 @@ class ProjectionUtils:
         dates = self.gds.run_cypher(
             f"""
             MATCH (a:{self.user_label})
-                -[r:{self.between_user_label} {{id: $platform_id}}]-()
+                -[r:{self.between_user_label} {{platformId: $platform_id}}]-()
             WITH DISTINCT(r.date) as dates
             RETURN dates
             """,
