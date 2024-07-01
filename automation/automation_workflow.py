@@ -6,7 +6,6 @@ from automation.utils.model import AutomationDB
 from pybars import Compiler
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
-from utils.get_guild_utils import get_guild_platform_id
 
 
 class AutomationWorkflow(AutomationBase):

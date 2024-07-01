@@ -2,7 +2,7 @@ from bson.objectid import ObjectId
 from utils.mongo import MongoSingleton
 
 
-def get_guild_community_ids(platform_id: str) -> str:
+def get_platform_guild_id(platform_id: str) -> str:
     """
     get both the guild id and community from the platform id
 
@@ -55,3 +55,22 @@ def get_guild_platform_id(guild_id: str) -> str:
         raise ValueError(f"No available guild with id {guild_id}")
 
     return platform_id
+
+def get_platform_name(platform_id: str) -> str:
+    """
+    get the platform name
+
+    Parameters
+    -------------
+    platform_id : str
+        the platform id related to a platform
+    """
+    client = MongoSingleton.get_instance().client
+
+    platform = client["Core"]["platforms"].find_one(
+        {"_id": ObjectId(platform_id)}, {"name": True}
+    )
+    if platform is None:
+        raise AttributeError(f"platform with given platform_id: {platform_id} not found!")
+
+    return platform["name"]

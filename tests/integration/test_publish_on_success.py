@@ -10,7 +10,6 @@ from automation.utils.interfaces import (
 from bson.objectid import ObjectId
 from discord_utils import publish_on_success
 from dotenv import load_dotenv
-from utils.credentials import get_mongo_credentials
 
 from .utils.analyzer_setup import launch_db_access
 
@@ -33,9 +32,9 @@ def test_publish_on_success_check_notification_choreographies():
         {"_id": ObjectId(platform_id)}
     )
 
-    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
+    db_access.db_mongo_client.drop_database(platform_id)    
+    db_access.db_mongo_client.drop_database(guild_id)    
     db_access.db_mongo_client["Saga"].drop_collection("sagas")
-    db_access.db_mongo_client[guild_id].drop_collection("guildmembers")
     db_access.db_mongo_client[at_db].drop_collection(at_collection)
 
     act_param = {
@@ -107,7 +106,7 @@ def test_publish_on_success_check_notification_choreographies():
             },
             "status": "IN_PROGRESS",
             "data": {
-                "platformId": ObjectId(platform_id),
+                "platformId": platform_id,
                 "created": False,
                 "discordId": expected_owner_id,
                 "message": "data is ready",
@@ -249,7 +248,7 @@ def test_publish_on_success_check_notification_choreographies():
         .replace(hour=0, minute=0, second=0, microsecond=0)
     )
 
-    db_access.db_mongo_client[guild_id]["memberactivities"].insert_many(
+    db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(
         [
             {
                 "date": date_yesterday,
