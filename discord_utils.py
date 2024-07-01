@@ -4,7 +4,7 @@ from analyzer_init import AnalyzerInit
 from automation.automation_workflow import AutomationWorkflow
 from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
 from utils.credentials import get_mongo_credentials
-from utils.get_guild_utils import get_guild_community_ids
+from utils.get_guild_utils import get_platform_guild_id, get_platform_name
 from utils.rabbitmq import RabbitMQSingleton
 from utils.transactions_ordering import sort_transactions
 
@@ -17,7 +17,7 @@ def analyzer_recompute(sagaId: str):
         )
     else:
         platform_id = saga.data["platformId"]
-        guildId = get_guild_community_ids(platform_id)
+        guildId = get_platform_guild_id(platform_id)
 
         logging.info("Initializing the analyzer")
         analyzer_init = AnalyzerInit(guildId)
@@ -46,7 +46,7 @@ def analyzer_run_once(sagaId: str):
         logging.warn(f"Saga not found!, stopping the run_once for sagaId: {sagaId}")
     else:
         platform_id = saga.data["platformId"]
-        guildId = get_guild_community_ids(platform_id)
+        guildId = get_platform_guild_id(platform_id)
 
         analyzer_init = AnalyzerInit(guildId)
         analyzer = analyzer_init.get_analyzer()
@@ -92,9 +92,8 @@ def publish_on_success(connection, result, *args, **kwargs):
         (transactions_ordered, tx_not_started_count) = sort_transactions(transactions)
 
         platform_id = saga.data["platformId"]
-        guildId = get_guild_community_ids(platform_id)
 
-        msg = f"GUILDID: {guildId}: "
+        msg = f"PLATFORMID: {platform_id}: "
         if tx_not_started_count != 0:
             tx = transactions_ordered[0]
 
@@ -107,8 +106,12 @@ def publish_on_success(connection, result, *args, **kwargs):
                 content={"uuid": sagaId, "data": saga.data},
             )
 
-        automation_workflow = AutomationWorkflow()
-        automation_workflow.start(guild_id=guildId)
+        guildId = get_platform_guild_id(platform_id)
+        platform_name = get_platform_name(platform_id)
+        # working specifically for discord
+        if platform_name == "discord":
+            automation_workflow = AutomationWorkflow()
+            automation_workflow.start(guild_id=guildId, platform_id=platform_id)
 
     except Exception as exp:
         logging.info(f"Exception occured in job on_success callback: {exp}")

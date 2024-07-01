@@ -5,6 +5,7 @@ from discord_analyzer.metrics.heatmaps import Heatmaps
 from discord_analyzer.metrics.neo4j_analytics import Neo4JAnalytics
 from discord_analyzer.metrics.utils.analyzer_db_manager import AnalyzerDBManager
 from discord_analyzer.metrics.utils.platform import Platform
+from discord_analyzer.schemas import GraphSchema
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
 
 
@@ -24,14 +25,17 @@ class TCAnalyzer(AnalyzerDBManager):
         logging.basicConfig()
         logging.getLogger().setLevel(logging.INFO)
 
+        self.platform_id = platform_id
+
         # hard-coded for now
         # TODO: define a structure and make it read from db
         self.analyzer_config = DiscordAnalyzerConfig()
 
-        self.neo4j_analytics = Neo4JAnalytics()
         self.platform_utils = Platform(platform_id)
-        self.platform_id = platform_id
         self.community_id = self.platform_utils.get_community_id()
+
+        self.graph_schema = GraphSchema(platform=self.analyzer_config.platform)
+        self.neo4j_analytics = Neo4JAnalytics(platform_id, self.graph_schema)
 
     def run_once(self):
         """Run analysis once (Wrapper)"""
@@ -56,8 +60,8 @@ class TCAnalyzer(AnalyzerDBManager):
 
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
-            guild_id=self.platform_id,
-            community_id=self.community_id,
+            platform_id=self.platform_id,
+            graph_schema=self.graph_schema,
             remove_memberactivities=False,
             remove_heatmaps=False,
         )
@@ -86,13 +90,13 @@ class TCAnalyzer(AnalyzerDBManager):
 
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
-            guild_id=self.platform_id,
-            community_id=self.community_id,
+            platform_id=self.platform_id,
+            graph_schema=self.graph_schema,
             remove_heatmaps=False,
             remove_memberactivities=False,
         )
 
-        self.neo4j_analytics.compute_metrics(guildId=self.platform_id, from_start=False)
+        self.neo4j_analytics.compute_metrics(from_start=False)
 
         self.platform_utils.update_isin_progress()
 
@@ -135,8 +139,8 @@ class TCAnalyzer(AnalyzerDBManager):
 
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
-            guild_id=self.platform_id,
-            community_id=self.community_id,
+            platform_id=self.platform_id,
+            graph_schema=self.graph_schema,
             remove_memberactivities=False,
             remove_heatmaps=True,
         )
@@ -171,13 +175,13 @@ class TCAnalyzer(AnalyzerDBManager):
         logging.info(f"Storing analytics data for platform: {self.platform_id}!")
         self.DB_connections.store_analytics_data(
             analytics_data=analytics_data,
-            guild_id=self.platform_id,
-            community_id=self.community_id,
+            platform_id=self.platform_id,
+            graph_schema=self.graph_schema,
             remove_memberactivities=True,
             remove_heatmaps=False,
         )
 
-        self.neo4j_analytics.compute_metrics(guildId=self.platform_id, from_start=True)
+        self.neo4j_analytics.compute_metrics(from_start=True)
         self.platform_utils.update_isin_progress()
 
     def check_platform(self):

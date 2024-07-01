@@ -7,8 +7,8 @@ from .utils.remove_and_setup_guild import setup_db_guild
 
 class TestMemberActivitiesActionsAllActivities(TestCase):
     def setUp(self) -> None:
-        self.guildId = "1234"
-        self.db_access = launch_db_access(self.guildId)
+        self.platformId = "1234"
+        self.db_access = launch_db_access(self.platformId)
 
     def test_single_user_action(self):
         """

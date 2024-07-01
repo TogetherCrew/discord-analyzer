@@ -99,26 +99,26 @@ class TestPlatformBaseConfig(unittest.TestCase):
                 }
             ],
         }
-        heatmaps_config = PlatformConfigBase.from_dict(data)
-        self.assertEqual(heatmaps_config.platform, "discord")
-        self.assertEqual(heatmaps_config.resource_identifier, "chat_id")
-        self.assertEqual(len(heatmaps_config.hourly_analytics), 1)
-        self.assertEqual(heatmaps_config.hourly_analytics[0].name, "thr_messages")
-        self.assertEqual(heatmaps_config.hourly_analytics[0].type, ActivityType.ACTION)
+        analyzer_config = PlatformConfigBase.from_dict(data)
+        self.assertEqual(analyzer_config.platform, "discord")
+        self.assertEqual(analyzer_config.resource_identifier, "chat_id")
+        self.assertEqual(len(analyzer_config.hourly_analytics), 1)
+        self.assertEqual(analyzer_config.hourly_analytics[0].name, "thr_messages")
+        self.assertEqual(analyzer_config.hourly_analytics[0].type, ActivityType.ACTION)
         self.assertEqual(
-            heatmaps_config.hourly_analytics[0].direction, ActivityDirection.EMITTER
+            analyzer_config.hourly_analytics[0].direction, ActivityDirection.EMITTER
         )
-        self.assertFalse(heatmaps_config.hourly_analytics[0].member_activities_used)
+        self.assertFalse(analyzer_config.hourly_analytics[0].member_activities_used)
         self.assertEqual(
-            heatmaps_config.hourly_analytics[0].rawmemberactivities_condition,
+            analyzer_config.hourly_analytics[0].rawmemberactivities_condition,
             {"thread_id": {"$ne": None}},
         )
-        self.assertEqual(len(heatmaps_config.raw_analytics), 1)
-        self.assertEqual(heatmaps_config.raw_analytics[0].name, "replied_per_acc")
+        self.assertEqual(len(analyzer_config.raw_analytics), 1)
+        self.assertEqual(analyzer_config.raw_analytics[0].name, "replied_per_acc")
         self.assertEqual(
-            heatmaps_config.raw_analytics[0].type, ActivityType.INTERACTION
+            analyzer_config.raw_analytics[0].type, ActivityType.INTERACTION
         )
         self.assertEqual(
-            heatmaps_config.raw_analytics[0].direction, ActivityDirection.RECEIVER
+            analyzer_config.raw_analytics[0].direction, ActivityDirection.RECEIVER
         )
-        self.assertTrue(heatmaps_config.raw_analytics[0].member_activities_used)
+        self.assertTrue(analyzer_config.raw_analytics[0].member_activities_used)

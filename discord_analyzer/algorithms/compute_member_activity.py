@@ -282,7 +282,7 @@ def compute_member_activity(
                 nx.set_node_attributes(graph_out, node_att, "acc_name")
 
                 # store results in dictionary
-                network_dict[last_date] = graph_out
+                network_dict[last_date - timedelta(days=1)] = graph_out
     # else if there was no past data
     else:
         max_range = 0

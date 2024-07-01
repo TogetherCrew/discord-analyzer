@@ -100,9 +100,6 @@ class MemberActivities:
         date_range: list[datetime] = [first_date, last_date]
 
         if load_past_data:
-            # num_days_to_load = (
-            #       max([CON_T_THR, VITAL_T_THR, STILL_T_THR, PAUSED_T_THR])+1
-            # ) * WINDOW_D
             period_size = self.window_config["period_size"]
             num_days_to_load = (
                 max(

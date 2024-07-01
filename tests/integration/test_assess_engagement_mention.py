@@ -3,11 +3,11 @@ from unittest import TestCase
 
 from discord_analyzer.algorithms.utils.member_activity_utils import assess_engagement
 from discord_analyzer.metrics.utils.analyzer_db_manager import AnalyzerDBManager
-from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
 from .utils.analyzer_setup import launch_db_access
 from .utils.remove_and_setup_guild import setup_db_guild
 from discord_analyzer.metrics.heatmaps import Heatmaps
+from discord_analyzer.schemas import GraphSchema
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
 
 
@@ -44,10 +44,11 @@ class TestAssessEngagementMentions(TestCase):
         analytics_data = {}
         analytics_data["heatmaps"] = heatmaps_data
         analytics_data["memberactivities"] = (None, None)
+        grpah_schema = GraphSchema(platform=self.heatmaps.analyzer_config.platform)
         self.db_connections.store_analytics_data(
-            guild_id=self.heatmaps.platform_id,
+            platform_id=self.heatmaps.platform_id,
             analytics_data=analytics_data,
-            community_id="123",
+            graph_schema=grpah_schema,
             remove_memberactivities=False,
             remove_heatmaps=False,
         )

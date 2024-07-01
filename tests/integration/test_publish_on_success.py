@@ -10,7 +10,6 @@ from automation.utils.interfaces import (
 from bson.objectid import ObjectId
 from discord_utils import publish_on_success
 from dotenv import load_dotenv
-from utils.credentials import get_mongo_credentials
 
 from .utils.analyzer_setup import launch_db_access
 
@@ -33,9 +32,9 @@ def test_publish_on_success_check_notification_choreographies():
         {"_id": ObjectId(platform_id)}
     )
 
-    db_access.db_mongo_client[guild_id].drop_collection("memberactivities")
+    db_access.db_mongo_client.drop_database(platform_id)    
+    db_access.db_mongo_client.drop_database(guild_id)    
     db_access.db_mongo_client["Saga"].drop_collection("sagas")
-    db_access.db_mongo_client[guild_id].drop_collection("guildmembers")
     db_access.db_mongo_client[at_db].drop_collection(at_collection)
 
     act_param = {
@@ -80,19 +79,6 @@ def test_publish_on_success_check_notification_choreographies():
         }
     )
 
-    # Adding sample memberactivities
-    date_yesterday = (
-        (datetime.now() - timedelta(days=1))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
-    )
-
-    date_two_past_days = (
-        (datetime.now() - timedelta(days=2))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
-    )
-
     db_access.db_mongo_client["Saga"]["sagas"].insert_one(
         {
             "choreography": {
@@ -120,7 +106,7 @@ def test_publish_on_success_check_notification_choreographies():
             },
             "status": "IN_PROGRESS",
             "data": {
-                "platformId": ObjectId(platform_id),
+                "platformId": platform_id,
                 "created": False,
                 "discordId": expected_owner_id,
                 "message": "data is ready",
@@ -254,17 +240,15 @@ def test_publish_on_success_check_notification_choreographies():
 
     date_yesterday = (
         (datetime.now() - timedelta(days=1))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
+        .replace(hour=0, minute=0, second=0, microsecond=0)
     )
 
     date_two_past_days = (
         (datetime.now() - timedelta(days=2))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
+        .replace(hour=0, minute=0, second=0, microsecond=0)
     )
 
-    db_access.db_mongo_client[guild_id]["memberactivities"].insert_many(
+    db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(
         [
             {
                 "date": date_yesterday,
@@ -314,19 +298,6 @@ def test_publish_on_success_check_notification_choreographies():
             },
         ]
     )
-
-    # preparing the data for publish_on_success function
-    mongo_creds = get_mongo_credentials()
-    user = mongo_creds["user"]
-    password = mongo_creds["password"]
-    host = mongo_creds["host"]
-    port = mongo_creds["port"]
-    connection_uri = f"mongodb://{user}:{password}@{host}:{port}"
-    mongo_creds = {
-        "connection_str": connection_uri,
-        "db_name": "Saga",
-        "collection_name": "sagas",
-    }
 
     sample_args_data = saga_id
     publish_on_success(None, None, sample_args_data)

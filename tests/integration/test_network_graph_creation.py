@@ -166,13 +166,13 @@ def test_network_graph_create():
 
     results = neo4j_ops.gds.run_cypher(
         f"""
-        MATCH (a:DiscordAccount) -[:IS_MEMBER] -> (g:Guild {{guildId: '{guildId}'}})
-        MATCH (a)-[r:INTERACTED_WITH]-> (b:DiscordAccount)
+        MATCH (a:{user_label}) -[:{is_member}] -> (g:{platform_label} {{guildId: '{platform_id}'}})
+        MATCH (a)-[r{interacted_with}]-> (b:{user_label})
         RETURN
-            a.userId as fromUserId,
+            a.id as fromUserId,
             r.weight as weight,
             r.date as date,
-            b.userId as toUserId
+            b.id as toUserId
         """
     )
     print(desired_outputs)
