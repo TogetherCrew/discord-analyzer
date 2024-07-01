@@ -1,4 +1,4 @@
-from discord_analyzer.analysis.activity_hourly import parse_reaction
+from discord_analyzer.algorithms.activity_hourly import parse_reaction
 
 
 def test_parse_raction_no_input():

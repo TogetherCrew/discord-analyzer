@@ -1,11 +1,10 @@
 import copy
 from typing import Any
+from datetime import datetime
 
-from discord_analyzer.DB_operations.mongodb_access import DB_access
-from discord_analyzer.DB_operations.mongodb_query import MongodbQuery
 from numpy import diag_indices_from, ndarray
-from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
+from utils.mongo import MongoSingleton
 from .utils.compute_interaction_mtx_utils import (
     generate_interaction_matrix,
     prepare_per_account,
@@ -14,25 +13,38 @@ from .utils.compute_interaction_mtx_utils import (
 
 def compute_interaction_matrix_discord(
     acc_names: list[str],
-    dates: list[str],
-    channels: list[str],
-    db_access: DB_access,
-    **kwargs,
+    date_range: tuple[datetime, datetime],
+    resources: list[str],
+    resource_identifier: str,
+    platform_id: str,
+    interactions: list[str],
+    actions: list[str],
 ) -> dict[str, ndarray]:
     """
     Computes interaction matrix from discord data
 
-    Input:
-    --------
-    acc_names - [str] : list of all account names to be considered for analysis
-    dates - [str] : list of all dates to be considered for analysis
-    channels - [str] : list of all channel ids to be considered for analysis
-    db_access - obj : database access object
-    **kwargs :
-        activities - list[Activity] :
-            the list of activities to generate the matrix for
-            default is to include all activity types
-            minimum length is 1
+    Parameters:
+    -------------
+    acc_names : list[str]
+        list of all account names to be considered for analysis
+    date_range : list[datetime, datetime]
+        a list with length 2
+        the first index is starting date range
+        the seocnd index is ending date range
+    resources : list[str]
+        list of all resource id to be considered for analysis
+    resource_identifier : str
+        the identifier for resource ids
+        could be `channel_id` for discord
+    platform_id : str
+        the platform to fetch its data from
+    interactions : list[str]
+        the list of interaction activities to generate the matrix for
+        minimum length is 1
+    actions : list[str]
+        the list of action activities to generate the matrix for
+        we would assume actions as self-interactions in matrix
+        minimum length is 1
 
     Output:
     ---------
@@ -40,79 +52,58 @@ def compute_interaction_matrix_discord(
         keys are representative of an activity
         and the 2d matrix representing the interactions for the activity
     """
-    activities = kwargs.get(
-        "activities",
-        [
-            DiscordActivity.Mention,
-            DiscordActivity.Reply,
-            DiscordActivity.Reaction,
-            DiscordActivity.Lone_msg,
-            DiscordActivity.Thread_msg,
-        ],
-    )
-    feature_projection = {
-        "channelId": 0,
-        "replier": 0,
-        "replied": 0,
-        "mentioner": 0,
-        "mentioned": 0,
-        "reacter": 0,
-        "reacted": 0,
-        "__v": 0,
-        "_id": 0,
+    client = MongoSingleton.get_instance().get_client()
+    feature_projection: dict[str, bool] = {
+        activity: True for activity in actions + interactions
     }
 
-    # intiate query
-    query = MongodbQuery()
+    feature_projection = {
+        **feature_projection,
+        "user": True,
+    }
+    query = {
+        "$and": [
+            {"user": {"$in": acc_names}},
+            {resource_identifier: {"$in": resources}},
+            {
+                "date": {
+                    "$gte": date_range[0],
+                    "$lt": date_range[1],
+                }
+            },
+        ]
+    }
 
-    # set up query dictionary
-    query_dict = query.create_query_filter_account_channel_dates(
-        acc_names=acc_names,
-        channels=channels,
-        dates=list(dates),
-        date_key="date",
-        channel_key="channelId",
-        account_key="account_name",
-    )
-
-    # create cursor for db
-    cursor = db_access.query_db_find(
-        table="heatmaps", query=query_dict, feature_projection=feature_projection
+    cursor = client[platform_id]["heatmaps"].find(
+        query,
+        feature_projection,
     )
     db_results = list(cursor)
 
     per_acc_query_result = prepare_per_account(db_results=db_results)
-    per_acc_interaction = process_non_reactions(per_acc_query_result)
+    per_acc_interaction = process_actions(
+        per_acc_query_result, skip_fields=[*interactions, "user", "_id"]
+    )
 
     # And now compute the interactions per account_name (`acc`)
     int_mat = {}
     # computing `int_mat` per activity
-    for activity in activities:
+    for activity in interactions + actions:
         int_mat[activity] = generate_interaction_matrix(
             per_acc_interactions=per_acc_interaction,
             acc_names=acc_names,
             activities=[activity],
         )
-        # a person interacting to themselves is not counted as activity
-        if activity in [
-            DiscordActivity.Reply,
-            DiscordActivity.Reaction,
-            DiscordActivity.Mention,
-        ]:
+        # removing self-interactions
+        if activity in interactions:
             int_mat[activity][diag_indices_from(int_mat[activity])] = 0
 
     return int_mat
 
 
-def process_non_reactions(
+def process_actions(
     heatmaps_data_per_acc: dict[str, list[dict[str, Any]]],
-    skip_fields: list[str] = [
-        "reacted_per_acc",
-        "mentioner_per_acc",
-        "replied_per_acc",
-        "account_name",
-        "date",
-    ],
+    skip_fields: list[str],
 ) -> dict[str, list[dict[str, Any]]]:
     """
     process the non-interactions heatmap data to be like interaction
@@ -145,7 +136,7 @@ def process_non_reactions(
                 action_count = sum(document[action])
                 if action_count:
                     document[action] = [
-                        [{"account": account, "count": sum(document[action])}]
+                        {"account": account, "count": sum(document[action])}
                     ]
                 else:
                     # action count was zero

@@ -1,8 +1,8 @@
-from pymongo import MongoClient
+from utils.mongo import MongoSingleton
 
 
 class DB_access:
-    def __init__(self, db_name, connection_string) -> None:
+    def __init__(self, db_name) -> None:
         """
         set-up the MongoDB database access
 
@@ -22,7 +22,7 @@ class DB_access:
            the connection string used to connect to MongoDB
         """
 
-        client = self._get_mongoClient(connection_string)
+        client = MongoSingleton.get_instance().get_client()
         self.db_name = db_name
         #   if db_name is None:
         #       self.db_client = None
@@ -30,25 +30,6 @@ class DB_access:
         #       self.db_client = client[db_name]
 
         self.db_mongo_client = client
-
-    def _get_mongoClient(self, connection_string):
-        """
-        get the database instance
-
-        Parameters:
-        ------------
-        connection_string : string
-           the url of connection
-        Returns:
-        ---------
-        client : MongoClient
-           the mongodb client access
-        """
-        client = MongoClient(
-            connection_string, serverSelectionTimeoutMS=10000, connectTimeoutMS=200000
-        )
-
-        return client
 
     def _db_call(self, calling_function, query, feature_projection=None, sorting=None):
         """

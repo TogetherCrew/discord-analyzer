@@ -1,6 +1,6 @@
 import os
 
-from discord_analyzer.rn_analyzer import RnDaoAnalyzer
+from discord_analyzer.tc_analyzer import TCAnalyzer
 from dotenv import load_dotenv
 from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
 from tc_core_analyzer_lib.utils.activity import DiscordActivity
@@ -67,19 +67,8 @@ def generate_mock_graph(int_matrix, acc_names):
 def store_mock_data_in_neo4j(graph_dict, guildId, community_id):
     # CREDS
     load_dotenv()
-    user = os.getenv("MONGODB_USER")
-    password = os.getenv("MONGODB_PASS")
-    host = os.getenv("MONGODB_HOST")
-    port = os.getenv("MONGODB_PORT")
 
-    analyzer = RnDaoAnalyzer(guildId)
-
-    analyzer.set_mongo_database_info(
-        mongo_db_host=host,
-        mongo_db_password=password,
-        mongo_db_user=user,
-        mongo_db_port=port,
-    )
+    analyzer = TCAnalyzer(guildId)
     analyzer.database_connect()
 
     guilds_data = {}

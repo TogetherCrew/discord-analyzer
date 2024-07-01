@@ -1,8 +1,8 @@
 import logging
 from datetime import date, datetime, timedelta
 
-from discord_analyzer.analyzer.heatmaps import AnalyticsHourly, AnalyticsRaw
-from discord_analyzer.analyzer.heatmaps.heatmaps_utils import HeatmapsUtils
+from discord_analyzer.metrics.heatmaps import AnalyticsHourly, AnalyticsRaw
+from discord_analyzer.metrics.heatmaps.heatmaps_utils import HeatmapsUtils
 from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
 from utils.mongo import MongoSingleton
 
@@ -92,9 +92,10 @@ class Heatmaps:
                     index += 1
 
                     author_id = author["id"]
+                    doc_date = analytics_date.date()
                     document = {
                         self.analyzer_config.resource_identifier: resource_id,
-                        "date": analytics_date.date(),
+                        "date": datetime(doc_date.year, doc_date.month, doc_date.day),
                         "user": author_id,
                     }
                     hourly_analytics = self._process_hourly_analytics(

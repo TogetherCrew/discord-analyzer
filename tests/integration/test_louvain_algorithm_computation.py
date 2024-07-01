@@ -1,4 +1,4 @@
-from discord_analyzer.analysis.neo4j_analysis.louvain import Louvain
+from discord_analyzer.algorithms.neo4j_analysis.louvain import Louvain
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 

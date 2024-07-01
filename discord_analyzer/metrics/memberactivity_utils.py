@@ -1,12 +1,12 @@
 import logging
 
 from dateutil import parser
-from discord_analyzer.DB_operations.mongo_neo4j_ops import MongoNeo4jDB
+from utils.mongo import MongoSingleton
 
 
 class MemberActivityUtils:
-    def __init__(self, DB_connection: MongoNeo4jDB) -> None:
-        self.DB_connection = DB_connection
+    def __init__(self) -> None:
+        self.client = MongoSingleton.get_instance().get_client()
 
     def refine_memberactivities_data(self, all_member_activities, first_date):
         """
@@ -21,10 +21,9 @@ class MemberActivityUtils:
             the first date of saving date
             we would use this to specify the exact data activity to save
         """
-
         data_to_save = []
         for activity in all_member_activities:
-            if first_date is None or parser.parse(activity["date"]) > first_date:
+            if first_date is None or activity["date"] > first_date:
                 data_to_save.append(activity)
 
         return data_to_save
@@ -33,9 +32,7 @@ class MemberActivityUtils:
     def get_one_guild(self, guild):
         """Get one guild setting from guilds collection by guild"""
 
-        result = self.DB_connection.mongoOps.mongo_db_access.db_mongo_client["Core"][
-            "platforms"
-        ].find_one({"metadata.id": guild})
+        result = self.client["Core"]["platforms"].find_one({"metadata.id": guild})
         return result
 
     # get all user accounts during date_range in guild from rawinfo data
@@ -43,25 +40,23 @@ class MemberActivityUtils:
         self,
         guildId: str,
     ) -> list[str]:
+        all_users: list[str]
+
         # check guild is exist
-
-        client = self.DB_connection.mongoOps.mongo_db_access.db_mongo_client
-
-        if guildId not in client.list_database_names():
-            logging.error(f"Database {guildId} doesn't exist")
-            logging.error(f"Existing databases: {client.list_database_names()}")
-            logging.info("Continuing")
-            return []
-
-        cursor = client[guildId]["guildmembers"].find(
-            {
-                "isBot": {"$ne": True},
-            },
-            {"discordId": 1, "_id": 0},
-        )
-
-        users_data = list(cursor)
-        all_users = list(map(lambda x: x["discordId"], users_data))
+        if guildId not in self.client.list_database_names():
+            logging.error(
+                f"Database {guildId} doesn't exist! Returning empty array for users"
+            )
+            all_users = []
+        else:
+            cursor = self.client[guildId]["rawmembers"].find(
+                {
+                    "is_bot": {"$ne": True},
+                },
+                {"id": 1, "_id": 0},
+            )
+            users_data = list(cursor)
+            all_users = list(map(lambda x: x["id"], users_data))
 
         return all_users
 

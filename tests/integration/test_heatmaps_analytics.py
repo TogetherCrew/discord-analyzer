@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from unittest import TestCase
 
-from discord_analyzer.analyzer.heatmaps import Heatmaps
+from discord_analyzer.metrics.heatmaps import Heatmaps
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
 from utils.mongo import MongoSingleton
 
@@ -28,7 +28,9 @@ class TestHeatmapsAnalytics(TestCase):
         self.mongo_client[platform_id].drop_collection("rawmembers")
 
     def tearDown(self) -> None:
-        self.mongo_client[self.heatmaps.platform_id].drop_collection("rawmemberactivities")
+        self.mongo_client[self.heatmaps.platform_id].drop_collection(
+            "rawmemberactivities"
+        )
         self.mongo_client[self.heatmaps.platform_id].drop_collection("rawmembers")
 
     def test_heatmaps_single_day_from_start(self):
@@ -147,7 +149,8 @@ class TestHeatmapsAnalytics(TestCase):
                 self.assertEqual(sum(analytics[i]["lone_messages"]), 1)
                 self.assertEqual(sum(analytics[i]["replier"]), 1)
                 self.assertEqual(sum(analytics[i]["replied"]), 1)
-                self.assertEqual(sum(analytics[i]["mentioner"]), 1)
+                # 4 people
+                self.assertEqual(sum(analytics[i]["mentioner"]), 4)
                 self.assertEqual(sum(analytics[i]["mentioned"]), 2)
                 self.assertEqual(sum(analytics[i]["reacter"]), 0)
                 self.assertEqual(sum(analytics[i]["reacted"]), 1)

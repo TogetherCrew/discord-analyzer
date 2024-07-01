@@ -1,7 +1,7 @@
 from datetime import datetime
 from unittest import TestCase
 
-from discord_analyzer.analyzer.heatmaps.analytics_hourly import AnalyticsHourly
+from discord_analyzer.metrics.heatmaps.analytics_hourly import AnalyticsHourly
 from utils.mongo import MongoSingleton
 
 
@@ -18,7 +18,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
                 "author_id": 9000,
                 "date": datetime(2023, 1, 1),
                 "source_id": "10000",
-                "metadata": {"threadId": 7000, "channelId": 2000},
+                "metadata": {"thread_id": 7000, "channel_id": 2000},
                 "actions": [{"name": "message", "type": "receiver"}],
                 "interactions": [
                     {
@@ -38,8 +38,9 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
             author_id=9000,
         )
 
+        # mentioning 2 people at hour 0
         expected_analytics = [
-            1,
+            2,
             0,
             0,
             0,
@@ -74,7 +75,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
                 "author_id": 9000,
                 "date": datetime(2023, 1, 1),
                 "source_id": "10000",
-                "metadata": {"threadId": 7000, "channelId": 2000},
+                "metadata": {"thread_id": 7000, "channel_id": 2000},
                 "actions": [{"name": "message", "type": "receiver"}],
                 "interactions": [
                     {
@@ -88,7 +89,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
                 "author_id": 9001,
                 "date": datetime(2023, 1, 1),
                 "source_id": "10000",
-                "metadata": {"threadId": 7000, "channelId": 2000},
+                "metadata": {"thread_id": 7000, "channel_id": 2000},
                 "actions": [{"name": "message", "type": "receiver"}],
                 "interactions": [
                     {
@@ -109,7 +110,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
         )
 
         expected_analytics = [
-            1,
+            2,
             0,
             0,
             0,
@@ -144,7 +145,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
                 "author_id": 9000,
                 "date": datetime(2023, 1, 1),
                 "source_id": "10000",
-                "metadata": {"threadId": 7000, "channelId": 2000},
+                "metadata": {"thread_id": 7000, "channel_id": 2000},
                 "actions": [{"name": "message", "type": "receiver"}],
                 "interactions": [
                     {
@@ -158,7 +159,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
                 "author_id": 9000,
                 "date": datetime(2023, 1, 1),
                 "source_id": "10000",
-                "metadata": {"threadId": 7000, "channelId": 2000},
+                "metadata": {"thread_id": 7000, "channel_id": 2000},
                 "actions": [{"name": "message", "type": "receiver"}],
                 "interactions": [
                     {
@@ -172,7 +173,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
                 "author_id": 9001,
                 "date": datetime(2023, 1, 2),
                 "source_id": "10000",
-                "metadata": {"threadId": 7000, "channelId": 2000},
+                "metadata": {"thread_id": 7000, "channel_id": 2000},
                 "actions": [{"name": "message", "type": "receiver"}],
                 "interactions": [
                     {
@@ -193,7 +194,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
         )
 
         expected_analytics = [
-            2,
+            4,
             0,
             0,
             0,
@@ -228,7 +229,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
                 "author_id": 9001,
                 "date": datetime(2023, 1, 1),
                 "source_id": "10000",
-                "metadata": {"threadId": 7000, "channelId": 2000},
+                "metadata": {"thread_id": 7000, "channel_id": 2000},
                 "actions": [{"name": "message", "type": "receiver"}],
                 "interactions": [
                     {
@@ -242,7 +243,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
                 "author_id": 9001,
                 "date": datetime(2023, 1, 2),
                 "source_id": "10000",
-                "metadata": {"threadId": 7000, "channelId": 2000},
+                "metadata": {"thread_id": 7000, "channel_id": 2000},
                 "actions": [{"name": "message", "type": "receiver"}],
                 "interactions": [
                     {
@@ -256,7 +257,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
                 "author_id": 9001,
                 "date": datetime(2023, 1, 2),
                 "source_id": "10000",
-                "metadata": {"threadId": 7000, "channelId": 2000},
+                "metadata": {"thread_id": 7000, "channel_id": 2000},
                 "actions": [{"name": "message", "type": "receiver"}],
                 "interactions": [
                     {
@@ -277,7 +278,7 @@ class TestHeatmapsAnalyticsBaseNoFilter(TestCase):
         )
 
         expected_analytics = [
-            2,
+            4,
             0,
             0,
             0,

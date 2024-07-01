@@ -141,13 +141,13 @@ class MemberActivityPastUtils:
 
         return all_joined_day
 
-    def create_past_history_query(self, date_range):
+    def create_past_history_query(self, date_range: tuple[datetime, datetime]):
         """
         create a query to retreive the data that are not analyzed
 
         Parameters:
         -------------
-        date_range: list
+        date_range: tuple[datetime, datetime]
             a list of length 2, the first index has the start of the interval
             and the second index is end of the interval
 
@@ -156,8 +156,8 @@ class MemberActivityPastUtils:
         query : dictionary
             the query representing the dictionary of filters
         """
-        date_interval_start = datetime.strptime(date_range[0], "%y/%m/%d").isoformat()
-        date_interval_end = datetime.strptime(date_range[1], "%y/%m/%d").isoformat()
+        date_interval_start = date_range[0]
+        date_interval_end = date_range[1]
 
         query = {
             "date": {
@@ -169,7 +169,12 @@ class MemberActivityPastUtils:
 
         return query
 
-    def convert_back_to_old_schema(self, retrieved_data, date_start, window_param):
+    def convert_back_to_old_schema(
+        self,
+        retrieved_data: list[dict],
+        date_start: datetime,
+        window_param: dict[str, str],
+    ) -> dict:
         """
         convert the retrieved data back to the old schema we had, to do the analysis
 
@@ -181,7 +186,8 @@ class MemberActivityPastUtils:
             the starting point of analysis
         days_after_analysis_start : int
             the day count after analysis which are available in DB
-        window_param : tuple of int with len 2
+        window_param : dict[str, str]
+            the window parameters containing the step_size and period_size
 
         Returns:
         ----------
@@ -215,9 +221,9 @@ class MemberActivityPastUtils:
 
         for idx in range(len(retrieved_data)):
             db_record = retrieved_data[idx]
-            parser.parse(db_record["date"]) - timedelta(
-                days=window_param["period_size"]
-            )
+            # parser.parse(db_record["date"]) - timedelta(
+            #     days=window_param["period_size"]
+            # )
 
             for activity in activity_dict.keys():
                 try:
@@ -243,7 +249,7 @@ class MemberActivityPastUtils:
         return activity_dict
 
     def _get_accounts_per_date(
-        self, joined_acc, date, date_key="joinedAt", account_key="discordId"
+        self, joined_acc, date, date_key="joined_at", account_key="id"
     ):
         """
         get the accounts for a special date
@@ -274,7 +280,9 @@ class MemberActivityPastUtils:
 
         return account_names
 
-    def _get_joined_accounts(self, date_range) -> list[dict[str, Any]]:
+    def _get_joined_accounts(
+        self, date_range: tuple[datetime, datetime]
+    ) -> list[dict[str, Any]]:
         """
         get the joined accounts for a time interval to a date range
 
@@ -291,11 +299,11 @@ class MemberActivityPastUtils:
             an array of dictionaries
             each dictionary has `account` and `joinDate` member
         """
-        query = {"joinedAt": {"$gte": date_range[0], "$lte": date_range[1]}}
-        feature_projection = {"joinedAt": 1, "discordId": 1, "_id": 0}
+        query = {"joined_at": {"$gte": date_range[0], "$lte": date_range[1]}}
+        feature_projection = {"joined_at": 1, "id": 1, "_id": 0}
 
         # quering the db now
-        cursor = self.db_access.query_db_find("guildmembers", query, feature_projection)
+        cursor = self.db_access.query_db_find("rawmembers", query, feature_projection)
 
         data = list(cursor)
 

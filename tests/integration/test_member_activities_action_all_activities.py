@@ -35,40 +35,36 @@ class TestMemberActivitiesActionsAllActivities(TestCase):
         setup_db_guild(
             self.db_access,
             platform_id,
-            self.guildId,
             discordId_list=users_id_list,
             days_ago_period=35,
             action=action,
+            resources=["123"],
         )
-        self.db_access.db_mongo_client[self.guildId]["heatmaps"].delete_many({})
-        self.db_access.db_mongo_client[self.guildId].create_collection("heatmaps")
+        self.db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
 
         rawinfo_samples = []
         for i in range(35 * 24):
+            author = "user1"
             sample = {
-                "type": 0,
-                "author": "user1",
-                "content": f"test message {i}",
-                "user_mentions": [],
-                "role_mentions": [],
-                "reactions": [],
-                "replied_user": None,
-                "createdDate": (datetime.now() - timedelta(hours=i)),
-                "messageId": f"11188143219343360{i}",
-                "channelId": "1020707129214111827",
-                "channelName": "general",
-                "threadId": None,
-                "threadName": None,
-                "isGeneratedByWebhook": False,
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": author,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "123",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
             }
             rawinfo_samples.append(sample)
 
-        self.db_access.db_mongo_client[self.guildId]["rawinfos"].insert_many(
+        self.db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
             rawinfo_samples
         )
-        analyzer = setup_analyzer(self.guildId)
+        analyzer = setup_analyzer(platform_id)
         analyzer.recompute_analytics()
-        cursor = self.db_access.db_mongo_client[self.guildId]["memberactivities"].find(
+        cursor = self.db_access.db_mongo_client[platform_id]["memberactivities"].find(
             {},
             {
                 "_id": 0,

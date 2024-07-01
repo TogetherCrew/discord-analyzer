@@ -17,20 +17,22 @@ class TestPlatformBaseConfig(unittest.TestCase):
             member_activities_used=False,
             direction=ActivityDirection.RECEIVER,
             rawmemberactivities_condition={"thread_id": {"$ne": None}},
+            activity_name="actions",
         )
         expected_dict = {
             "name": "thr_messages",
-            "type": "action",
+            "type": "actions",
             "member_activities_used": False,
             "direction": "receiver",
             "rawmemberactivities_condition": {"thread_id": {"$ne": None}},
+            "activity_name": "actions",
         }
         self.assertEqual(analytics.to_dict(), expected_dict)
 
     def test_analytics_from_dict(self):
         data = {
             "name": "thr_messages",
-            "type": "action",
+            "type": "actions",
             "member_activities_used": False,
             "direction": "emitter",
             "rawmemberactivities_condition": {"thread_id": {"$ne": None}},
@@ -82,7 +84,7 @@ class TestPlatformBaseConfig(unittest.TestCase):
             "hourly_analytics": [
                 {
                     "name": "thr_messages",
-                    "type": "action",
+                    "type": "actions",
                     "member_activities_used": False,
                     "rawmemberactivities_condition": {"thread_id": {"$ne": None}},
                     "direction": "emitter",
@@ -91,7 +93,7 @@ class TestPlatformBaseConfig(unittest.TestCase):
             "raw_analytics": [
                 {
                     "name": "replied_per_acc",
-                    "type": "interaction",
+                    "type": "interactions",
                     "member_activities_used": True,
                     "direction": "receiver",
                 }

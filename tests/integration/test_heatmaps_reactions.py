@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from discord_analyzer.analyzer.heatmaps import Heatmaps
+from discord_analyzer.metrics.heatmaps import Heatmaps
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
 from utils.mongo import MongoSingleton
 
@@ -121,7 +121,7 @@ def test_reacted_messages():
                 ]
                 prepared_rawmemberactivities.extend(prepared_rawdata)
                 channelIds.add(chId)
-                dates.add(data_date.date())
+                dates.add(data_date.replace(hour=0, minute=0, second=0, microsecond=0))
 
     database["rawmemberactivities"].insert_many(prepared_rawmemberactivities)
     database["rawmembers"].insert_many(prepared_rawmembers)

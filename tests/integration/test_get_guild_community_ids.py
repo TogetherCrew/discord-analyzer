@@ -20,7 +20,7 @@ class TestGetGuildId(TestCase):
                     "id": "999888877766655",
                     "icon": "111111111111111111111111",
                     "name": "A guild",
-                    "selectedChannels": [
+                    "resources": [
                         "11111111",
                         "22222222",
                         "33333333",

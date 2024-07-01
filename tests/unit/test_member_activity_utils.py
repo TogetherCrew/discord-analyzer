@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from discord_analyzer.analysis.utils.member_activity_history_utils import (
+from discord_analyzer.algorithms.utils.member_activity_history_utils import (
     MemberActivityPastUtils,
 )
 
@@ -13,9 +13,9 @@ def test_zero_joined():
 
     all_joined_day = {}
     joined_acc = [
-        {"joinedAt": (start_dt + timedelta(days=5)), "discordId": "000000000"},
-        {"joinedAt": (start_dt + timedelta(days=6)), "discordId": "000000001"},
-        {"joinedAt": (start_dt + timedelta(days=8)), "discordId": "000000002"},
+        {"joined_at": (start_dt + timedelta(days=5)), "id": "000000000"},
+        {"joined_at": (start_dt + timedelta(days=6)), "id": "000000001"},
+        {"joined_at": (start_dt + timedelta(days=8)), "id": "000000002"},
     ]
 
     member_activitiy_utils = MemberActivityPastUtils(db_access=db_access)
@@ -56,9 +56,9 @@ def test_single_joined():
     }
 
     joined_acc = [
-        {"joinedAt": (start_dt + timedelta(days=0)), "discordId": "000000002"},
-        {"joinedAt": (start_dt + timedelta(days=1)), "discordId": "000000003"},
-        {"joinedAt": (start_dt + timedelta(days=2)), "discordId": "000000004"},
+        {"joined_at": (start_dt + timedelta(days=0)), "id": "000000002"},
+        {"joined_at": (start_dt + timedelta(days=1)), "id": "000000003"},
+        {"joined_at": (start_dt + timedelta(days=2)), "id": "000000004"},
     ]
 
     member_activitiy_utils = MemberActivityPastUtils(db_access=db_access)
@@ -96,11 +96,11 @@ def test_multiple_joined():
     }
 
     joined_acc = [
-        {"joinedAt": (start_dt + timedelta(days=0)), "discordId": "000000004"},
-        {"joinedAt": (start_dt + timedelta(days=0)), "discordId": "000000005"},
-        {"joinedAt": (start_dt + timedelta(days=2)), "discordId": "000000006"},
-        {"joinedAt": (start_dt + timedelta(days=2)), "discordId": "000000007"},
-        {"joinedAt": (start_dt + timedelta(days=2)), "discordId": "000000008"},
+        {"joined_at": (start_dt + timedelta(days=0)), "id": "000000004"},
+        {"joined_at": (start_dt + timedelta(days=0)), "id": "000000005"},
+        {"joined_at": (start_dt + timedelta(days=2)), "id": "000000006"},
+        {"joined_at": (start_dt + timedelta(days=2)), "id": "000000007"},
+        {"joined_at": (start_dt + timedelta(days=2)), "id": "000000008"},
     ]
 
     member_activitiy_utils = MemberActivityPastUtils(db_access=db_access)

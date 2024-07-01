@@ -8,23 +8,25 @@ def test_mention_active_members_from_rawinfo():
     """
     test whether the people are being mentioned are active or not
     the shouldn't considered as active as we're not counting them
-    the rawinfos is used
+    the rawmemberactivities is used
     """
     # first create the collections
-    guildId = "1234"
     platform_id = "515151515151515151515151"
-    db_access = launch_db_access(guildId)
+    db_access = launch_db_access(platform_id)
 
     acc_id = [
         "user1",
         "user2",
     ]
     setup_db_guild(
-        db_access, platform_id, guildId, discordId_list=acc_id, days_ago_period=7
+        db_access=db_access,
+        platform_id=platform_id,
+        discordId_list=acc_id,
+        days_ago_period=7,
     )
 
-    db_access.db_mongo_client[guildId].create_collection("heatmaps")
-    db_access.db_mongo_client[guildId].create_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].create_collection("heatmaps")
+    db_access.db_mongo_client[platform_id].create_collection("memberactivities")
 
     # generating rawinfo samples
     rawinfo_samples = []
@@ -32,27 +34,53 @@ def test_mention_active_members_from_rawinfo():
     # generating random rawinfo data
     # all user1 mentioning user2
     for i in range(150):
-        sample = {
-            "type": 0,
-            "author": "user1",
-            "content": f"test{i}",
-            "user_mentions": ["user2"],
-            "role_mentions": [],
-            "reactions": [],
-            "replied_user": None,
-            "createdDate": (datetime.now() - timedelta(hours=i)),
-            "messageId": f"11188143219343360{i}",
-            "channelId": "1020707129214111827",
-            "channelName": "general",
-            "threadId": None,
-            "threadName": None,
-            "isGeneratedByWebhook": False,
-        }
-        rawinfo_samples.append(sample)
+        author = "user1"
+        mentioned_user = "user2"
+        sample = [
+            {
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": author,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [
+                    {
+                        "name": "mention",
+                        "type": "emitter",
+                        "users_engaged_id": [mentioned_user],
+                    }
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
+            },
+            {
+                "actions": [],
+                "author_id": mentioned_user,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [
+                    {
+                        "name": "mention",
+                        "type": "receiver",
+                        "users_engaged_id": [author],
+                    }
+                ],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
+            },
+        ]
+        rawinfo_samples.extend(sample)
 
-    db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
+        rawinfo_samples
+    )
 
-    analyzer = setup_analyzer(guildId)
+    analyzer = setup_analyzer(platform_id)
     analyzer.run_once()
 
     memberactivities_cursor = db_access.query_db_find(

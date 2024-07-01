@@ -8,9 +8,8 @@ def test_two_weeks_period_active_members():
     """
     test all_active members for the two weeks period in the new schema
     """
-    guildId = "1234567"
-    platform_id = "515151515151515151515151"
-    db_access = launch_db_access(guildId)
+    platform_id = "60d5ec44f9a3c2b6d7e2d11a"
+    db_access = launch_db_access(platform_id)
 
     acc_id = [
         "user0",
@@ -24,100 +23,154 @@ def test_two_weeks_period_active_members():
     setup_db_guild(
         db_access,
         platform_id,
-        guildId,
         discordId_list=acc_id,
         days_ago_period=connected_days_before,
+        resources=["1020707129214111827", "general_id"],
     )
 
-    db_access.db_mongo_client[guildId].create_collection("heatmaps")
-    db_access.db_mongo_client[guildId].create_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("rawmemberactivities")
 
     # generating rawinfo samples
     rawinfo_samples = []
 
     # A message from user0 to user1 on day 0 of past two weeks
     sample = {
-        "type": 19,
-        "author": acc_id[0],
-        "content": "test_message_0",
-        "user_mentions": [],
-        "role_mentions": [],
-        "reactions": [],
-        "replied_user": acc_id[1],
-        "createdDate": (datetime.now() - timedelta(days=14)),
-        "messageId": "111881432193433601",
-        "channelId": "1020707129214111827",
-        "channelName": "general",
-        "threadId": None,
-        "threadName": None,
-        "isGeneratedByWebhook": False,
+        "actions": [{"name": "message", "type": "emitter"}],
+        "author_id": acc_id[0],
+        "date": datetime.now() - timedelta(days=14),
+        "interactions": [
+            {"name": "reply", "type": "emitter", "users_engaged_id": [acc_id[1]]}
+        ],
+        "metadata": {
+            "bot_activity": False,
+            "channel_id": "general_id",
+            "thread_id": None,
+        },
+        "source_id": "111881432193433601",
+    }
+    sample2 = {
+        "actions": [],
+        "author_id": acc_id[1],
+        "date": datetime.now() - timedelta(days=14),
+        "interactions": [
+            {"name": "reply", "type": "receiver", "users_engaged_id": [acc_id[0]]}
+        ],
+        "metadata": {
+            "bot_activity": False,
+            "channel_id": "general_id",
+            "thread_id": None,
+        },
+        "source_id": "111881432193433601",
     }
 
     rawinfo_samples.append(sample)
+    rawinfo_samples.append(sample2)
 
     # A message from user1 to user0 on day 0 of past two weeks
     sample = {
-        "type": 19,
-        "author": acc_id[1],
-        "content": "test_message_1",
-        "user_mentions": [],
-        "role_mentions": [],
-        "reactions": [],
-        "replied_user": acc_id[0],
-        "createdDate": (datetime.now() - timedelta(days=14)),
-        "messageId": "111881432193433602",
-        "channelId": "1020707129214111827",
-        "channelName": "general",
-        "threadId": None,
-        "threadName": None,
-        "isGeneratedByWebhook": False,
+        "actions": [{"name": "message", "type": "emitter"}],
+        "author_id": acc_id[1],
+        "date": datetime.now() - timedelta(days=14),
+        "interactions": [
+            {"name": "reply", "type": "emitter", "users_engaged_id": [acc_id[0]]}
+        ],
+        "metadata": {
+            "bot_activity": False,
+            "channel_id": "1020707129214111827",
+            "thread_id": None,
+        },
+        "source_id": "111881432193433602",
+    }
+    sample2 = {
+        "actions": [],
+        "author_id": acc_id[0],
+        "date": datetime.now() - timedelta(days=14),
+        "interactions": [
+            {"name": "reply", "type": "receiver", "users_engaged_id": [acc_id[1]]}
+        ],
+        "metadata": {
+            "bot_activity": False,
+            "channel_id": "general_id",
+            "thread_id": None,
+        },
+        "source_id": "111881432193433602",
     }
 
     rawinfo_samples.append(sample)
+    rawinfo_samples.append(sample2)
 
     # A message from user2 to user3 on day 3 of past two weeks
     sample = {
-        "type": 19,
-        "author": acc_id[2],
-        "content": "test_message_1",
-        "user_mentions": [],
-        "role_mentions": [],
-        "reactions": [],
-        "replied_user": acc_id[3],
-        "createdDate": (datetime.now() - timedelta(days=(14 - 3))),
-        "messageId": "111881432193433603",
-        "channelId": "1020707129214111827",
-        "channelName": "general",
-        "threadId": None,
-        "threadName": None,
-        "isGeneratedByWebhook": False,
+        "actions": [{"name": "message", "type": "emitter"}],
+        "author_id": acc_id[2],
+        "date": datetime.now() - timedelta(days=(14 - 3)),
+        "interactions": [
+            {"name": "reply", "type": "emitter", "users_engaged_id": [acc_id[3]]}
+        ],
+        "metadata": {
+            "bot_activity": False,
+            "channel_id": "1020707129214111827",
+            "thread_id": None,
+        },
+        "source_id": "111881432193433603",
+    }
+    sample2 = {
+        "actions": [],
+        "author_id": acc_id[3],
+        "date": datetime.now() - timedelta(days=(14 - 3)),
+        "interactions": [
+            {"name": "reply", "type": "receiver", "users_engaged_id": [acc_id[2]]}
+        ],
+        "metadata": {
+            "bot_activity": False,
+            "channel_id": "1020707129214111827",
+            "thread_id": None,
+        },
+        "source_id": "111881432193433603",
     }
 
     rawinfo_samples.append(sample)
+    rawinfo_samples.append(sample2)
 
     # A message from user3 to user2 on day 3 of past two weeks
     sample = {
-        "type": 19,
-        "author": acc_id[3],
-        "content": "test_message_1",
-        "user_mentions": [],
-        "role_mentions": [],
-        "reactions": [],
-        "replied_user": acc_id[2],
-        "createdDate": (datetime.now() - timedelta(days=(14 - 3))),
-        "messageId": "111881432193433604",
-        "channelId": "1020707129214111827",
-        "channelName": "general",
-        "threadId": None,
-        "threadName": None,
-        "isGeneratedByWebhook": False,
+        "actions": [{"name": "message", "type": "emitter"}],
+        "author_id": acc_id[3],
+        "date": datetime.now() - timedelta(days=(14 - 3)),
+        "interactions": [
+            {"name": "reply", "type": "emitter", "users_engaged_id": [acc_id[2]]}
+        ],
+        "metadata": {
+            "bot_activity": False,
+            "channel_id": "1020707129214111827",
+            "thread_id": None,
+        },
+        "source_id": "111881432193433604",
     }
-
+    sample2 = {
+        "actions": [],
+        "author_id": acc_id[2],
+        "date": datetime.now() - timedelta(days=(14 - 3)),
+        "interactions": [
+            {"name": "reply", "type": "receiver", "users_engaged_id": [acc_id[3]]}
+        ],
+        "metadata": {
+            "bot_activity": False,
+            "channel_id": "1020707129214111827",
+            "thread_id": None,
+        },
+        "source_id": "111881432193433604",
+    }
     rawinfo_samples.append(sample)
+    rawinfo_samples.append(sample2)
 
-    db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
+        rawinfo_samples
+    )
 
-    analyzer = setup_analyzer(guildId)
+    analyzer = setup_analyzer(platform_id)
     analyzer.run_once()
 
     memberactivities_cursor = db_access.query_db_find(
@@ -132,7 +185,7 @@ def test_two_weeks_period_active_members():
     date_now = datetime.now()
 
     for activities in memberactivities:
-        date = datetime.fromisoformat(activities["date"]).date()
+        date = activities["date"].date()
         # print("date: ", date)
         # 14 days minues 7
         if date == (date_now - timedelta(days=14)).date():

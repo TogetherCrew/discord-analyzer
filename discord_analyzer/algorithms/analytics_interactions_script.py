@@ -5,11 +5,11 @@ from warnings import warn
 
 def per_account_interactions(
     cursor_list,
-    dict_keys=["replier_accounts", "reacter_accounts", "mentioner_accounts"],
+    dict_keys,
 ):
     """
-    get per account interactions as `mentioner_accounts`,
-    `reacter_accounts`, and `replier_accounts` (summing)
+    get per account interactions for each heatmaps fields
+
     Parameters:
     ------------
     cursor_list : list
@@ -23,7 +23,6 @@ def per_account_interactions(
         the dictionary of each feature having summed the counts per hour,
           the dictionary of features is returned
     """
-
     data_processed = {}
     all_interaction_accounts = {}
 
@@ -36,9 +35,9 @@ def per_account_interactions(
         # flatten the list
         samples_flattened = list(itertools.chain(*samples))
 
-        for _, sample in enumerate(samples_flattened):
-            account_name = sample[0]["account"]
-            interaction_count = sample[0]["count"]
+        for sample in samples_flattened:
+            account_name = sample["account"]
+            interaction_count = sample["count"]
 
             if account_name not in temp_dict.keys():
                 temp_dict[account_name] = interaction_count

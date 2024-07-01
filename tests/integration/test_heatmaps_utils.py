@@ -1,7 +1,7 @@
 from datetime import datetime
 from unittest import TestCase
 
-from discord_analyzer.analyzer.heatmaps.heatmaps_utils import HeatmapsUtils
+from discord_analyzer.metrics.heatmaps.heatmaps_utils import HeatmapsUtils
 from utils.mongo import MongoSingleton
 
 

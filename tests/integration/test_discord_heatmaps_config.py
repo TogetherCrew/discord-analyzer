@@ -48,12 +48,12 @@ class TestDiscordAnalyzerConfig(TestCase):
                 self.assertIsNone(anlaytics.rawmemberactivities_condition)
             elif anlaytics.name == "mentioner":
                 self.assertEqual(anlaytics.type, ActivityType.INTERACTION)
-                self.assertEqual(anlaytics.direction, ActivityDirection.RECEIVER)
+                self.assertEqual(anlaytics.direction, ActivityDirection.EMITTER)
                 self.assertEqual(anlaytics.member_activities_used, False)
                 self.assertIsNone(anlaytics.rawmemberactivities_condition)
             elif anlaytics.name == "mentioned":
                 self.assertEqual(anlaytics.type, ActivityType.INTERACTION)
-                self.assertEqual(anlaytics.direction, ActivityDirection.EMITTER)
+                self.assertEqual(anlaytics.direction, ActivityDirection.RECEIVER)
                 self.assertEqual(anlaytics.member_activities_used, False)
                 self.assertIsNone(anlaytics.rawmemberactivities_condition)
             elif anlaytics.name == "reacter":
@@ -79,7 +79,7 @@ class TestDiscordAnalyzerConfig(TestCase):
             elif analytics.name == "mentioner_per_acc":
                 self.assertTrue(analytics.member_activities_used)
                 self.assertEqual(analytics.type, ActivityType.INTERACTION)
-                self.assertEqual(analytics.direction, ActivityDirection.RECEIVER)
+                self.assertEqual(analytics.direction, ActivityDirection.EMITTER)
             elif analytics.name == "reacted_per_acc":
                 self.assertTrue(analytics.member_activities_used)
                 self.assertEqual(analytics.type, ActivityType.INTERACTION)

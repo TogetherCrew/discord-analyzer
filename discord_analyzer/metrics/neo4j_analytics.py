@@ -1,12 +1,12 @@
 # A wrapper to compute the neo4j metrics in cron-job
 import logging
 
-from discord_analyzer.analysis.neo4j_analysis.analyzer_node_stats import NodeStats
-from discord_analyzer.analysis.neo4j_analysis.centrality import Centerality
-from discord_analyzer.analysis.neo4j_analysis.local_clustering_coefficient import (
+from discord_analyzer.algorithms.neo4j_analysis.analyzer_node_stats import NodeStats
+from discord_analyzer.algorithms.neo4j_analysis.centrality import Centerality
+from discord_analyzer.algorithms.neo4j_analysis.local_clustering_coefficient import (
     LocalClusteringCoeff,
 )
-from discord_analyzer.analysis.neo4j_analysis.louvain import Louvain
+from discord_analyzer.algorithms.neo4j_analysis.louvain import Louvain
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 

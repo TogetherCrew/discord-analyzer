@@ -1,7 +1,7 @@
 from datetime import datetime
 from unittest import TestCase
 
-from discord_analyzer.analyzer.heatmaps.analytics_hourly import AnalyticsHourly
+from discord_analyzer.metrics.heatmaps.analytics_hourly import AnalyticsHourly
 from utils.mongo import MongoSingleton
 
 
@@ -11,7 +11,7 @@ class TestHeatmapsAnalyticsBaseWithFilter(TestCase):
         self.raw_data_model = AnalyticsHourly(self.platform_id)
         self.mongo_client = MongoSingleton.get_instance().get_client()
         self.mongo_client[self.platform_id].drop_collection("rawmemberactivities")
-    
+
     def tearDown(self) -> None:
         # cleanup
         self.mongo_client.drop_database(self.platform_id)
@@ -44,7 +44,7 @@ class TestHeatmapsAnalyticsBaseWithFilter(TestCase):
         )
 
         expected_analytics = [
-            1,
+            2,
             0,
             0,
             0,

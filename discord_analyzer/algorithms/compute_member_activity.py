@@ -11,11 +11,11 @@ from datetime import datetime, timedelta
 import networkx as nx
 import numpy as np
 from dateutil.relativedelta import relativedelta
-from discord_analyzer.analysis.member_activity_history import check_past_history
-from discord_analyzer.analysis.utils.member_activity_history_utils import (
+from discord_analyzer.algorithms.member_activity_history import check_past_history
+from discord_analyzer.algorithms.utils.member_activity_history_utils import (
     MemberActivityPastUtils,
 )
-from discord_analyzer.analysis.utils.member_activity_utils import (
+from discord_analyzer.algorithms.utils.member_activity_utils import (
     assess_engagement,
     convert_to_dict,
     get_joined_accounts,
@@ -25,14 +25,16 @@ from discord_analyzer.analysis.utils.member_activity_utils import (
     update_activities,
 )
 from discord_analyzer.DB_operations.mongodb_access import DB_access
+from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
 
 
 def compute_member_activity(
-    db_name: str,
-    connection_string: str,
-    channels: list[str],
+    platform_id: str,
+    resources: list[str],
+    resource_identifier: str,
     acc_names: list[str],
-    date_range: tuple[str, str],
+    date_range: list[datetime],
+    analyzer_config: PlatformConfigBase,
     window_param: dict[str, int],
     act_param: dict[str, int],
     load_past_data=True,
@@ -42,11 +44,13 @@ def compute_member_activity(
 
     Parameters
     ------------
-    db_name: (str) - guild id
-    connection_string: (str) - connection to db string
-    channels: [str] - list of all channel ids that should be analysed
+    platform_id: (str) - platform id
+    resources: [str] - list of all resource ids that should be analysed
     acc_names: [str] - list of all account names that should be analysed
-    date_range: [str] - list of first and last date to be analysed (one output per date)
+    date_range: tuple[datetime, datetime] - tuple of first and last date to be analysed (one output per date)
+    analyzer_config : PlatformConfigBase
+        the config for the analyzer to use.
+        representing which analytics to compute
     window_param: dict[str, int] -
         "period_size": window size in days. default = 7
         "step_size": step size of sliding window in days. default = 1
@@ -105,14 +109,10 @@ def compute_member_activity(
         whether to load past data or not, default is True
         if True, will load the past data, if data was available in given range
     """
-    guild_msg = f"GUILDID: {db_name}:"
-
-    # make empty results output array
-
-    # # # DATABASE SETTINGS # # #
+    platform_msg = f"PLATFORM_ID: {platform_id}:"
 
     # set up database access
-    db_access = DB_access(db_name, connection_string)
+    db_access = DB_access(platform_id)
 
     # specify the features not to be returned
 
@@ -156,10 +156,7 @@ def compute_member_activity(
         )
     else:
         past_activities_data = {}
-        new_date_range = [
-            datetime.strptime(date_range[0], "%y/%m/%d"),
-            datetime.strptime(date_range[1], "%y/%m/%d"),
-        ]
+        new_date_range = [date_range[0], date_range[1]]
         starting_key = 0
 
     # if in past there was an activity, we'll update the dictionaries
@@ -218,30 +215,18 @@ def compute_member_activity(
         # (won't affect the loop but will affect codes after it)
         if max_range < 0:
             max_range = 0
-        if acc_names != [] and channels != []:
+        if acc_names != [] and resources != []:
             for w_i in range(max_range):
                 msg_info = "MEMBERACTIVITY ANALYTICS: PROGRESS"
-                msg = f"{guild_msg} {msg_info} {w_i + 1}/{max_range}"
+                msg = f"{platform_msg} {msg_info} {w_i + 1}/{max_range}"
                 logging.info(msg)
                 new_window_i = w_i + starting_key
 
                 last_date = (
                     new_date_range[0]
                     + relativedelta(days=window_param["step_size"] * w_i)
-                    + relativedelta(days=window_param["period_size"] - 1)
+                    + relativedelta(days=window_param["period_size"])
                 )
-
-                # make list of all dates in window
-                date_list_w = []
-                for x in range(window_param["period_size"]):
-                    date_list_w.append(last_date - relativedelta(days=x))
-
-                # make empty array for date string values
-                date_list_w_str = np.zeros_like(date_list_w)
-
-                # turn date time values into string
-                for i in range(len(date_list_w_str)):
-                    date_list_w_str[i] = date_list_w[i].strftime("%Y-%m-%d")
 
                 window_start = last_date - relativedelta(
                     days=window_param["period_size"]
@@ -249,20 +234,20 @@ def compute_member_activity(
 
                 # updating account names for past 7 days
                 acc_names = get_users_past_window(
-                    window_start_date=window_start.strftime("%Y-%m-%d"),
-                    window_end_date=last_date.strftime("%Y-%m-%d"),
-                    collection=db_access.db_mongo_client[db_name]["heatmaps"],
+                    window_start_date=window_start,
+                    window_end_date=last_date,
+                    collection=db_access.db_mongo_client[platform_id]["heatmaps"],
                 )
 
                 if acc_names == []:
                     time_window_str = f"{window_start.strftime('%Y-%m-%d')} - "
                     time_window_str += last_date.strftime("%Y-%m-%d")
                     logging.warning(
-                        f"{guild_msg} No data for the time window {time_window_str}"
+                        f"{platform_msg} No data for the time window {time_window_str}"
                     )
                     logging.info(
-                        """Getting latest joined instead!
-                                 So we could compute other activity types!"""
+                        "Getting latest joined instead! "
+                        "So we could compute other activity types!"
                     )
 
                     # will get 5 users just to make sure
@@ -274,11 +259,16 @@ def compute_member_activity(
                     accounts=acc_names,
                     action_params=act_param,
                     period_size=window_param["period_size"],
-                    db_access=db_access,
-                    channels=channels,
-                    analyze_dates=date_list_w_str,
+                    platform_id=platform_id,
+                    resources=resources,
+                    resource_identifier=resource_identifier,
+                    analyze_dates=(
+                        last_date - timedelta(days=window_param["period_size"]),
+                        last_date,
+                    ),
                     activities_name=activities_name,
                     activity_dict=activity_dict,
+                    analyzer_config=analyzer_config,
                 )
 
                 # make empty dict for node attributes
@@ -297,8 +287,8 @@ def compute_member_activity(
     else:
         max_range = 0
 
-    start_dt = datetime.strptime(date_range[0], "%y/%m/%d")
-    end_dt = datetime.strptime(date_range[1], "%y/%m/%d")
+    start_dt = date_range[0]
+    end_dt = date_range[1]
 
     # get the accounts with their joining date
     joined_acc_dict = get_joined_accounts(
@@ -311,7 +301,7 @@ def compute_member_activity(
         analytics_day_range=window_param["period_size"] - 1,
         joined_acc_dict=joined_acc_dict,
         load_past=load_past_data,
-        empty_channel_acc=(len(channels) != 0 and len(acc_names) != 0),
+        empty_channel_acc=(len(resources) != 0 and len(acc_names) != 0),
     )
 
     return [network_dict, activity_dict_per_date]

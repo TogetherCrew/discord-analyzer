@@ -19,7 +19,7 @@ def test_networkgraph_one_year_period_run_once_available_analytics():
     guildId = "1234"
     community_id = "aabbccddeeff001122334455"
     platform_id = "515151515151515151515151"
-    db_access = launch_db_access(guildId)
+    db_access = launch_db_access(platform_id)
     neo4j_ops = Neo4jOps.get_instance()
 
     neo4j_ops.gds.run_cypher(
@@ -36,14 +36,13 @@ def test_networkgraph_one_year_period_run_once_available_analytics():
     setup_db_guild(
         db_access,
         platform_id,
-        guildId,
         discordId_list=acc_id,
         days_ago_period=360,
         community_id=community_id,
     )
 
-    db_access.db_mongo_client[guildId].create_collection("heatmaps")
-    db_access.db_mongo_client[guildId].create_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
     # filling memberactivities with some data
     # filling heatmaps with some data
@@ -51,7 +50,7 @@ def test_networkgraph_one_year_period_run_once_available_analytics():
     memberactivity_data = create_empty_memberactivities_data(
         datetime.now() - timedelta(days=354), count=350
     )
-    db_access.db_mongo_client[guildId]["memberactivities"].insert_many(
+    db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(
         memberactivity_data
     )
 
@@ -61,7 +60,7 @@ def test_networkgraph_one_year_period_run_once_available_analytics():
     heatmaps_data = create_empty_heatmaps_data(
         datetime.now() - timedelta(days=360), count=356
     )
-    db_access.db_mongo_client[guildId]["heatmaps"].insert_many(heatmaps_data)
+    db_access.db_mongo_client[platform_id]["heatmaps"].insert_many(heatmaps_data)
 
     # generating rawinfo samples
     rawinfo_samples = []
@@ -88,9 +87,11 @@ def test_networkgraph_one_year_period_run_once_available_analytics():
         }
         rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
+        rawinfo_samples
+    )
 
-    analyzer = setup_analyzer(guildId)
+    analyzer = setup_analyzer(platform_id)
     analyzer.run_once()
 
     results = neo4j_ops.gds.run_cypher(

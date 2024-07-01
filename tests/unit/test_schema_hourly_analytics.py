@@ -42,10 +42,11 @@ class TestHourlyAnalytics(TestCase):
         )
         expected_dict = {
             "name": "analytics1",
-            "type": "action",
+            "type": "actions",
             "member_activities_used": True,
             "rawmemberactivities_condition": {"key": "value"},
             "direction": "emitter",
+            "activity_name": None,
         }
         self.assertEqual(analytics.to_dict(), expected_dict)
 
@@ -58,16 +59,17 @@ class TestHourlyAnalytics(TestCase):
         )
         expected_dict = {
             "name": "analytics1",
-            "type": "interaction",
+            "type": "interactions",
             "member_activities_used": True,
             "direction": "receiver",
+            "activity_name": None,
         }
         self.assertEqual(analytics.to_dict(), expected_dict)
 
     def test_from_dict_with_metadata(self):
         data = {
             "name": "analytics1",
-            "type": "action",
+            "type": "actions",
             "member_activities_used": True,
             "rawmemberactivities_condition": {"key": "value"},
             "direction": "emitter",
@@ -82,7 +84,7 @@ class TestHourlyAnalytics(TestCase):
     def test_from_dict_without_metadata(self):
         data = {
             "name": "analytics1",
-            "type": "interaction",
+            "type": "interactions",
             "member_activities_used": True,
             "direction": "receiver",
         }

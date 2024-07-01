@@ -66,7 +66,7 @@ def test_publish_on_success_check_notification_choreographies():
                 "id": guild_id,
                 "icon": "111111111111111111111111",
                 "name": "A guild",
-                "selectedChannels": ["4455178"],
+                "resources": ["4455178"],
                 "window": window,
                 "action": act_param,
                 "period": datetime.now() - timedelta(days=10),

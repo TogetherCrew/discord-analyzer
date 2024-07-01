@@ -9,7 +9,6 @@ from discord_analyzer.DB_operations.mongodb_access import DB_access
 def setup_db_guild(
     db_access: DB_access,
     platform_id: str,
-    guildId: str = "1234",
     discordId_list: list[str] = ["973993299281076285"],
     discordId_isbot: list[bool] = [False],
     dates: Optional[list[datetime]] = None,
@@ -19,16 +18,17 @@ def setup_db_guild(
     """
     Remove the guild from Core databse and then insert it there
     also drop the guildId database and re-create
-      it then create the guildmembers collection in it
+      it then create the rawmembers collection in it
 
     `discordId_isbot` is representative if each user is bot or not
     `community_id` can be passed in kwargs. default is `aabbccddeeff001122334455`
     """
     community_id = kwargs.get("community_id", "aabbccddeeff001122334455")
+    resources = kwargs.get("resources", ["1020707129214111827"])
     db_access.db_mongo_client["Core"]["platforms"].delete_one(
         {"_id": ObjectId(platform_id)}
     )
-    db_access.db_mongo_client.drop_database(guildId)
+    db_access.db_mongo_client.drop_database(platform_id)
 
     action = kwargs.get(
         "action",
@@ -49,6 +49,7 @@ def setup_db_guild(
         },
     )
 
+    guildId = "1234"
     db_access.db_mongo_client["Core"]["platforms"].insert_one(
         {
             "_id": ObjectId(platform_id),
@@ -57,10 +58,12 @@ def setup_db_guild(
                 "id": guildId,
                 "icon": "111111111111111111111111",
                 "name": "A guild",
-                "selectedChannels": ["1020707129214111827"],
+                "resources": resources,
                 "window": {"period_size": 7, "step_size": 1},
                 "action": action,
-                "period": datetime.now() - timedelta(days=days_ago_period),
+                "period": (datetime.now() - timedelta(days=days_ago_period)).replace(
+                    hour=0, minute=0, second=0, microsecond=0
+                ),
             },
             "community": ObjectId(community_id),
             "disconnectedAt": None,
@@ -89,14 +92,12 @@ def setup_db_guild(
         user_data = zip(discordId_list, discordId_isbot)
 
     for idx, (discordId, isbot) in enumerate(user_data):
-        db_access.db_mongo_client[guildId]["guildmembers"].insert_one(
+        db_access.db_mongo_client[platform_id]["rawmembers"].insert_one(
             {
-                "discordId": discordId,
-                "username": f"sample_user_{idx}",
-                "roles": ["1012430565959553145"],
-                "joinedAt": dates_using[idx],
-                "avatar": "3ddd6e429f75d6a711d0a58ba3060694",
-                "isBot": isbot,
-                "discriminator": "0",
+                "id": discordId,
+                "joined_at": dates_using[idx],
+                "left_at": None,
+                "is_bot": isbot,
+                "options": {},
             }
         )

@@ -36,14 +36,13 @@ def test_networkgraph_35_days_period_recompute_available_analytics():
     setup_db_guild(
         db_access,
         platform_id,
-        guildId,
         discordId_list=acc_id,
         days_ago_period=35,
         community_id=community_id,
     )
 
-    db_access.db_mongo_client[guildId].create_collection("heatmaps")
-    db_access.db_mongo_client[guildId].create_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
     # filling memberactivities with some data
     # filling heatmaps with some data
@@ -51,7 +50,7 @@ def test_networkgraph_35_days_period_recompute_available_analytics():
     memberactivity_data = create_empty_memberactivities_data(
         datetime.now() - timedelta(days=28), count=27
     )
-    db_access.db_mongo_client[guildId]["memberactivities"].insert_many(
+    db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(
         memberactivity_data
     )
 
@@ -61,7 +60,7 @@ def test_networkgraph_35_days_period_recompute_available_analytics():
     heatmaps_data = create_empty_heatmaps_data(
         datetime.now() - timedelta(days=35), count=34
     )
-    db_access.db_mongo_client[guildId]["heatmaps"].insert_many(heatmaps_data)
+    db_access.db_mongo_client[platform_id]["heatmaps"].insert_many(heatmaps_data)
 
     # generating rawinfo samples
     rawinfo_samples = []
@@ -88,9 +87,11 @@ def test_networkgraph_35_days_period_recompute_available_analytics():
         }
         rawinfo_samples.append(sample)
 
-    db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
+        rawinfo_samples
+    )
 
-    analyzer = setup_analyzer(guildId)
+    analyzer = setup_analyzer(platform_id)
     analyzer.recompute_analytics()
 
     results = neo4j_ops.gds.run_cypher(
