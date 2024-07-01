@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 import numpy as np
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
+from .utils.analyzer_setup import launch_db_access
 from .utils.setup_platform import setup_platform
 
 

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 import numpy as np
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
+from .utils.analyzer_setup import launch_db_access
 from .utils.mock_heatmaps import create_empty_heatmaps_data
 from .utils.mock_memberactivities import create_empty_memberactivities_data
 from .utils.setup_platform import setup_platform
