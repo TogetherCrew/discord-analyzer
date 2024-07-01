@@ -1,5 +1,3 @@
-import os
-
 from discord_analyzer.DB_operations.mongodb_access import DB_access
 from dotenv import load_dotenv
 
