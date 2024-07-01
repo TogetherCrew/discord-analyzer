@@ -4,9 +4,10 @@ from typing import Optional
 import numpy as np
 from bson.objectid import ObjectId
 from discord_analyzer.DB_operations.mongodb_access import DB_access
+from discord_analyzer.tc_analyzer import TCAnalyzer
 
 
-def setup_db_guild(
+def setup_platform(
     db_access: DB_access,
     platform_id: str,
     discordId_list: list[str] = ["973993299281076285"],
@@ -14,7 +15,7 @@ def setup_db_guild(
     dates: Optional[list[datetime]] = None,
     days_ago_period: int = 30,
     **kwargs,
-):
+) -> TCAnalyzer:
     """
     Remove the guild from Core databse and then insert it there
     also drop the guildId database and re-create
@@ -29,6 +30,14 @@ def setup_db_guild(
         {"_id": ObjectId(platform_id)}
     )
     db_access.db_mongo_client.drop_database(platform_id)
+
+    period = (datetime.now() - timedelta(days=days_ago_period)).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    )
+    window = kwargs.get(
+        "window",
+        {"period_size": 7, "step_size": 1},
+    )
 
     action = kwargs.get(
         "action",
@@ -59,11 +68,9 @@ def setup_db_guild(
                 "icon": "111111111111111111111111",
                 "name": "A guild",
                 "resources": resources,
-                "window": {"period_size": 7, "step_size": 1},
+                "window": window,
                 "action": action,
-                "period": (datetime.now() - timedelta(days=days_ago_period)).replace(
-                    hour=0, minute=0, second=0, microsecond=0
-                ),
+                "period": period,
             },
             "community": ObjectId(community_id),
             "disconnectedAt": None,
@@ -72,6 +79,14 @@ def setup_db_guild(
             "createdAt": datetime(2023, 11, 1),
             "updatedAt": datetime(2023, 11, 1),
         }
+    )
+
+    analyzer = TCAnalyzer(
+        platform_id,
+        resources=resources,
+        period=period,
+        action=action,
+        window=window,
     )
 
     if dates is None:
@@ -101,3 +116,6 @@ def setup_db_guild(
                 "options": {},
             }
         )
+
+
+    return analyzer

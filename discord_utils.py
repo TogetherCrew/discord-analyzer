@@ -26,7 +26,7 @@ def analyzer_recompute(sagaId: str):
 
         def recompute_wrapper(**kwargs):
             logging.info("recompute wrapper")
-            analyzer.recompute_analytics()
+            analyzer.recompute()
 
         def publish_wrapper(**kwargs):
             pass

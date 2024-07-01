@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from unittest import TestCase
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
-from .utils.remove_and_setup_guild import setup_db_guild
+from .utils.analyzer_setup import launch_db_access
+from .utils.setup_platform import setup_platform
 
 
 class TestMemberActivitiesActionsAllActive(TestCase):
@@ -13,7 +13,7 @@ class TestMemberActivitiesActionsAllActive(TestCase):
     def test_single_user_action(self):
         self.db_access.db_mongo_client[self.platform_id].drop_collection("heatmaps")
         users_id_list = ["user1"]
-        setup_db_guild(
+        analyzer = analyzer = setup_platform(
             self.db_access,
             self.platform_id,
             discordId_list=users_id_list,
@@ -40,8 +40,8 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         self.db_access.db_mongo_client[self.platform_id][
             "rawmemberactivities"
         ].insert_many(rawinfo_samples)
-        analyzer = setup_analyzer(self.platform_id)
-        analyzer.recompute_analytics()
+
+        analyzer.recompute()
         cursor = self.db_access.db_mongo_client[self.platform_id][
             "memberactivities"
         ].find({}, {"_id": 0, "all_active": 1})
@@ -55,7 +55,7 @@ class TestMemberActivitiesActionsAllActive(TestCase):
     def test_lone_msg_action(self):
         users_id_list = ["user1", "user2", "user3"]
 
-        setup_db_guild(
+        analyzer = setup_platform(
             self.db_access,
             self.platform_id,
             discordId_list=users_id_list,
@@ -84,8 +84,8 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         self.db_access.db_mongo_client[self.platform_id][
             "rawmemberactivities"
         ].insert_many(rawinfo_samples)
-        analyzer = setup_analyzer(self.platform_id)
-        analyzer.recompute_analytics()
+
+        analyzer.recompute()
         cursor = self.db_access.db_mongo_client[self.platform_id][
             "memberactivities"
         ].find({}, {"_id": 0, "all_active": 1})
@@ -98,7 +98,7 @@ class TestMemberActivitiesActionsAllActive(TestCase):
 
     def test_thr_message_action(self):
         users_id_list = ["user1", "user2", "user3", "user4"]
-        setup_db_guild(
+        analyzer = setup_platform(
             self.db_access,
             self.platform_id,
             discordId_list=users_id_list,
@@ -127,8 +127,8 @@ class TestMemberActivitiesActionsAllActive(TestCase):
         self.db_access.db_mongo_client[self.platform_id][
             "rawmemberactivities"
         ].insert_many(rawinfo_samples)
-        analyzer = setup_analyzer(self.platform_id)
-        analyzer.recompute_analytics()
+
+        analyzer.recompute()
         cursor = self.db_access.db_mongo_client[self.platform_id][
             "memberactivities"
         ].find({}, {"_id": 0, "all_active": 1, "date": 1})

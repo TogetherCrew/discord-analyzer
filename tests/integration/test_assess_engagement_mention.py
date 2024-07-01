@@ -5,7 +5,7 @@ from discord_analyzer.algorithms.utils.member_activity_utils import assess_engag
 from discord_analyzer.metrics.utils.analyzer_db_manager import AnalyzerDBManager
 
 from .utils.analyzer_setup import launch_db_access
-from .utils.remove_and_setup_guild import setup_db_guild
+from .utils.setup_platform import setup_platform
 from discord_analyzer.metrics.heatmaps import Heatmaps
 from discord_analyzer.schemas import GraphSchema
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
@@ -75,7 +75,7 @@ class TestAssessEngagementMentions(TestCase):
         }
         platform_id = "515151515151515151515151"
 
-        setup_db_guild(
+        setup_platform(
             self.db_access,
             platform_id,
             discordId_list=users_id_list,

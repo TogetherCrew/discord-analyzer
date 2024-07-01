@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 
 from bson.objectid import ObjectId
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
+from .utils.analyzer_setup import launch_db_access
+from .utils.setup_platform import setup_platform
 
 
 def test_analyzer_member_activities_from_start_empty_memberactivities():
@@ -19,42 +20,12 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
     db_access.db_mongo_client["Core"].drop_collection("platforms")
     db_access.db_mongo_client.drop_database(platform_id)
 
-    action = {
-        "INT_THR": 1,
-        "UW_DEG_THR": 1,
-        "PAUSED_T_THR": 1,
-        "CON_T_THR": 4,
-        "CON_O_THR": 3,
-        "EDGE_STR_THR": 5,
-        "UW_THR_DEG_THR": 5,
-        "VITAL_T_THR": 4,
-        "VITAL_O_THR": 3,
-        "STILL_T_THR": 2,
-        "STILL_O_THR": 2,
-        "DROP_H_THR": 2,
-        "DROP_I_THR": 1,
-    }
-
-    db_access.db_mongo_client["Core"]["platforms"].insert_one(
-        {
-            "_id": ObjectId(platform_id),
-            "name": "discord",
-            "metadata": {
-                "id": guildId,
-                "icon": "111111111111111111111111",
-                "name": "A guild",
-                "resources": ["1020707129214111827"],
-                "window": {"period_size": 7, "step_size": 1},
-                "action": action,
-                "period": datetime.now() - timedelta(days=30),
-            },
-            "community": ObjectId("aabbccddeeff001122334455"),
-            "disconnectedAt": None,
-            "connectedAt": (datetime.now() - timedelta(days=40)),
-            "isInProgress": True,
-            "createdAt": datetime(2023, 11, 1),
-            "updatedAt": datetime(2023, 11, 1),
-        }
+    analyzer = setup_platform(
+        db_access,
+        platform_id,
+        discordId_list=["3451791"],
+        days_ago_period=30,
+        community_id="aabbccddeeff001122334455",
     )
     db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
@@ -93,8 +64,7 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
         rawinfo_samples
     )
 
-    analyzer = setup_analyzer(platform_id)
-    analyzer.recompute_analytics()
+    analyzer.recompute()
 
     memberactivities_data = db_access.db_mongo_client[platform_id][
         "memberactivities"

@@ -100,7 +100,7 @@ def test_analyzer_init():
 
     tc_discord_analyzer = analyzer.get_analyzer()
 
-    tc_discord_analyzer.recompute_analytics()
+    tc_discord_analyzer.recompute()
 
     heatmaps_data = mongo_client[guildId]["heatmaps"].find_one({})
     assert heatmaps_data is not None

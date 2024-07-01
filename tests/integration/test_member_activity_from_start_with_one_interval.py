@@ -1,8 +1,8 @@
 # test analyzing memberactivities
 from datetime import datetime, timedelta
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
-from .utils.remove_and_setup_guild import setup_db_guild
+from .utils.analyzer_setup import launch_db_access
+from .utils.setup_platform import setup_platform
 
 
 def test_analyzer_from_start_one_interval():
@@ -14,7 +14,7 @@ def test_analyzer_from_start_one_interval():
     guildId = "1234"
     db_access = launch_db_access(platform_id)
 
-    setup_db_guild(db_access, platform_id, discordId_list=["user_0"])
+    analyzer = setup_platform(db_access, platform_id, discordId_list=["user_0"])
 
     rawinfo_samples = []
 
@@ -41,8 +41,7 @@ def test_analyzer_from_start_one_interval():
     db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
-    analyzer = setup_analyzer(platform_id)
-    analyzer.recompute_analytics()
+    analyzer.recompute()
 
     memberactivities_data = db_access.db_mongo_client[platform_id][
         "memberactivities"

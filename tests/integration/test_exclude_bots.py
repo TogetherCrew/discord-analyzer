@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 
 import numpy as np
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
-from .utils.remove_and_setup_guild import setup_db_guild
+from .utils.analyzer_setup import launch_db_access
+from .utils.setup_platform import setup_platform
 
 
 def test_excluding_bots_heatmaps():
@@ -26,7 +26,7 @@ def test_excluding_bots_heatmaps():
 
     # A guild connected at 35 days ago
     connected_days_before = 35
-    setup_db_guild(
+    analyzer = setup_platform(
         db_access,
         platform_id,
         discordId_list=acc_id,
@@ -87,7 +87,6 @@ def test_excluding_bots_heatmaps():
         rawinfo_samples
     )
 
-    analyzer = setup_analyzer(platform_id)
     analyzer.run_once()
 
     db_access.db_mongo_client[platform_id]

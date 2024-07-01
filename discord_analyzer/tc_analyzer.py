@@ -1,5 +1,6 @@
 import logging
 
+from datetime import datetime
 from discord_analyzer.metrics.analyzer_memberactivities import MemberActivities
 from discord_analyzer.metrics.heatmaps import Heatmaps
 from discord_analyzer.metrics.neo4j_analytics import Neo4JAnalytics
@@ -7,38 +8,73 @@ from discord_analyzer.metrics.utils.analyzer_db_manager import AnalyzerDBManager
 from discord_analyzer.metrics.utils.platform import Platform
 from discord_analyzer.schemas import GraphSchema
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
+from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
+from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
 
 
 class TCAnalyzer(AnalyzerDBManager):
     """
-    TCAnalyzer
+    TogetherCrew's Analyzer
     class that handles database connections and data analysis
     """
 
     def __init__(
         self,
         platform_id: str,
+        resources: list[str],
+        period: datetime,
+        action: dict[str, int],
+        window: dict[str, int],
+        analyzer_config: PlatformConfigBase = DiscordAnalyzerConfig(),
     ):
         """
-        Class initiation function
+        analyze the platform's data
+        producing heatmaps, memberactivities, and graph analytics
+
+        Parameters
+        -----------
+        platform_id : str
+            platform to analyze its data
+        resources : list[str]
+            the resources id for filtering on data
+        period : datetime
+            the period to compute the analytics for
+        action : dict[str, int]
+            Parameters for computing different memberactivities
+        window : dict[str, int]
+            Parameters for the whole analyzer, includes the step size and window size
+        analyzer_config : PlatformConfigBase
+            the config for analyzer to use
         """
         logging.basicConfig()
         logging.getLogger().setLevel(logging.INFO)
 
         self.platform_id = platform_id
-
-        # hard-coded for now
-        # TODO: define a structure and make it read from db
-        self.analyzer_config = DiscordAnalyzerConfig()
+        self.resources = resources
+        self.period = period
+        self.action = action
+        self.window = window
+        self.analyzer_config = analyzer_config
 
         self.platform_utils = Platform(platform_id)
         self.community_id = self.platform_utils.get_community_id()
 
-        self.graph_schema = GraphSchema(platform=self.analyzer_config.platform)
+        self.graph_schema = GraphSchema(platform=analyzer_config.platform)
         self.neo4j_analytics = Neo4JAnalytics(platform_id, self.graph_schema)
 
+        # connect to Neo4j & MongoDB database
+        self.database_connect()
+
+    
+    def analyze(self, recompute: bool) -> None:
+        # TODO: merge run_one and recompute codes
+        if recompute:
+            self.run_once()
+        else:
+            self.recompute()
+
     def run_once(self):
-        """Run analysis once (Wrapper)"""
+        """Run analysis and append to previous anlaytics"""
         # check if the platform was available
         # if not, will raise an error
         self.check_platform()
@@ -47,8 +83,8 @@ class TCAnalyzer(AnalyzerDBManager):
 
         heatmaps_analysis = Heatmaps(
             platform_id=self.platform_id,
-            period=self.platform_utils.get_platform_period(),
-            resources=self.platform_utils.get_platform_resources(),
+            period=self.period,
+            resources=self.resources,
             analyzer_config=self.analyzer_config,
         )
         heatmaps_data = heatmaps_analysis.start(from_start=False)
@@ -66,14 +102,13 @@ class TCAnalyzer(AnalyzerDBManager):
             remove_heatmaps=False,
         )
 
-        window, action = self.platform_utils.get_platform_analyzer_params()
         memberactivity_analysis = MemberActivities(
             platform_id=self.platform_id,
-            resources=self.platform_utils.get_platform_resources(),
-            action_config=action,
-            window_config=window,
+            resources=self.resources,
+            action_config=self.action,
+            window_config=self.window,
             analyzer_config=self.analyzer_config,
-            analyzer_period=self.platform_utils.get_platform_period(),
+            analyzer_period=self.period,
         )
         (
             member_activities_data,
@@ -100,24 +135,10 @@ class TCAnalyzer(AnalyzerDBManager):
 
         self.platform_utils.update_isin_progress()
 
-    def recompute_analytics(self):
+    def recompute(self):
         """
-        recompute the memberactivities (and heatmaps in case needed)
-         for a new selection of channels
-
-
-        - first it would update the channel selection in Core.Platform
-
-        - Second the memebracitivites collection
-         of the input guildId would become empty
-
-        - Third we would have the analytics running again on the
-         new channel selection (analytics would be inserted in memebractivities)
-
-
-        Returns:
-        ---------
-        `None`
+        recompute the analytics (heatmaps + memberactivities + graph analytics)
+        for a new selection of channels
         """
         # check if the platform was available
         # if not, will raise an error
@@ -126,8 +147,8 @@ class TCAnalyzer(AnalyzerDBManager):
         logging.info(f"Analyzing the Heatmaps data for platform: {self.platform_id}!")
         heatmaps_analysis = Heatmaps(
             platform_id=self.platform_id,
-            period=self.platform_utils.get_platform_period(),
-            resources=self.platform_utils.get_platform_resources(),
+            period=self.period,
+            resources=self.resources,
             analyzer_config=self.analyzer_config,
         )
         heatmaps_data = heatmaps_analysis.start(from_start=True)
@@ -149,14 +170,13 @@ class TCAnalyzer(AnalyzerDBManager):
         logging.info(
             f"Analyzing the MemberActivities data for platform: {self.platform_id}!"
         )
-        window, action = self.platform_utils.get_platform_analyzer_params()
         memberactivity_analysis = MemberActivities(
             platform_id=self.platform_id,
-            resources=self.platform_utils.get_platform_resources(),
-            action_config=action,
-            window_config=window,
+            resources=self.resources,
+            action_config=self.action,
+            window_config=self.window,
             analyzer_config=self.analyzer_config,
-            analyzer_period=self.platform_utils.get_platform_period(),
+            analyzer_period=self.period,
         )
         (
             member_activities_data,

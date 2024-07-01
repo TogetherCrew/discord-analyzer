@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 
 import numpy as np
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
-from .utils.remove_and_setup_guild import setup_db_guild
+from .utils.analyzer_setup import launch_db_access
+from .utils.setup_platform import setup_platform
 
 
 def test_analyzer_three_month_period_run_once_empty_analytics():
@@ -21,7 +21,7 @@ def test_analyzer_three_month_period_run_once_empty_analytics():
         "973993299281076286",
     ]
 
-    setup_db_guild(db_access, platform_id, discordId_list=acc_id, days_ago_period=90)
+    analyzer = setup_platform(db_access, platform_id, discordId_list=acc_id, days_ago_period=90)
 
     db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
@@ -75,7 +75,6 @@ def test_analyzer_three_month_period_run_once_empty_analytics():
         rawinfo_samples
     )
 
-    analyzer = setup_analyzer(platform_id)
     analyzer.run_once()
 
     memberactivities_cursor = db_access.query_db_find(

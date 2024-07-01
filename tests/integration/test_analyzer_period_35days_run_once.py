@@ -3,10 +3,10 @@ from datetime import datetime, timedelta
 
 import numpy as np
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
+from .utils.analyzer_setup import launch_db_access
 from .utils.mock_heatmaps import create_empty_heatmaps_data
 from .utils.mock_memberactivities import create_empty_memberactivities_data
-from .utils.remove_and_setup_guild import setup_db_guild
+from .utils.setup_platform import setup_platform
 
 
 def test_analyzer_40days_period_run_once_available_analytics_overlapping_period():
@@ -24,7 +24,7 @@ def test_analyzer_40days_period_run_once_available_analytics_overlapping_period(
         "user2",
     ]
 
-    setup_db_guild(db_access, platform_id, discordId_list=acc_id, days_ago_period=40)
+    analyzer = setup_platform(db_access, platform_id, discordId_list=acc_id, days_ago_period=40)
 
     db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
@@ -97,7 +97,6 @@ def test_analyzer_40days_period_run_once_available_analytics_overlapping_period(
         rawinfo_samples
     )
 
-    analyzer = setup_analyzer(platform_id)
     analyzer.run_once()
 
     memberactivities_cursor = db_access.query_db_find(

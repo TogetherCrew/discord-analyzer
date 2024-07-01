@@ -6,7 +6,7 @@ from tc_neo4j_lib.neo4j_ops import Neo4jOps
 from .utils.analyzer_setup import launch_db_access, setup_analyzer
 from .utils.mock_heatmaps import create_empty_heatmaps_data
 from .utils.mock_memberactivities import create_empty_memberactivities_data
-from .utils.remove_and_setup_guild import setup_db_guild
+from .utils.setup_platform import setup_platform
 
 
 def test_networkgraph_35_days_period_recompute_available_analytics():
@@ -33,7 +33,7 @@ def test_networkgraph_35_days_period_recompute_available_analytics():
         "973993299281076286",
     ]
 
-    setup_db_guild(
+    analyzer = setup_platform(
         db_access,
         platform_id,
         discordId_list=acc_id,
@@ -111,8 +111,7 @@ def test_networkgraph_35_days_period_recompute_available_analytics():
         rawinfo_samples
     )
 
-    analyzer = setup_analyzer(platform_id)
-    analyzer.recompute_analytics()
+    analyzer.recompute()
 
     graph_schema = analyzer.graph_schema
     platform_label = graph_schema.platform_label

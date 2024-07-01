@@ -2,17 +2,15 @@ from datetime import datetime, timedelta
 
 from discord_analyzer.metrics.memberactivity_utils import MemberActivityUtils
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
-from .utils.remove_and_setup_guild import setup_db_guild
+from .utils.analyzer_setup import launch_db_access
+from .utils.setup_platform import setup_platform
 
 
 def test_utils_get_members():
     platform_id = "515151515151515151515151"
-    guildId = "1012430565959553145"
     users = ["user_0"]
     db_access = launch_db_access(platform_id)
-    setup_db_guild(db_access, platform_id, discordId_list=users, days_ago_period=7)
-    analyzer = setup_analyzer(platform_id)
+    _ = setup_platform(db_access, platform_id, discordId_list=users, days_ago_period=7)
 
     rawinfo_samples = []
     for i in range(150):
