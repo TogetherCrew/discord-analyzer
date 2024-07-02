@@ -1,6 +1,6 @@
 import logging
-
 from datetime import datetime
+
 from tc_analyzer_lib.metrics.analyzer_memberactivities import MemberActivities
 from tc_analyzer_lib.metrics.heatmaps import Heatmaps
 from tc_analyzer_lib.metrics.neo4j_analytics import Neo4JAnalytics
@@ -9,7 +9,6 @@ from tc_analyzer_lib.metrics.utils.platform import Platform
 from tc_analyzer_lib.schemas import GraphSchema
 from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
 from tc_analyzer_lib.schemas.platform_configs.config_base import PlatformConfigBase
-from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
 
 
 class TCAnalyzer(AnalyzerDBManager):

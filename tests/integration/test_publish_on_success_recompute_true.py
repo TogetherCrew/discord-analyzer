@@ -1,15 +1,15 @@
 import os
 from datetime import datetime, timedelta
 
+from bson.objectid import ObjectId
+from dotenv import load_dotenv
 from tc_analyzer_lib.automation.utils.interfaces import (
     Automation,
     AutomationAction,
     AutomationReport,
     AutomationTrigger,
 )
-from bson.objectid import ObjectId
 from tc_analyzer_lib.publish_on_success import publish_on_success
-from dotenv import load_dotenv
 
 from .utils.analyzer_setup import launch_db_access
 

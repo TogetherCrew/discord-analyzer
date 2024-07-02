@@ -4,12 +4,12 @@ from typing import Any
 
 import numpy as np
 import pymongo
+from networkx import DiGraph
 from tc_analyzer_lib.algorithms.compute_interaction_matrix_discord import (
     compute_interaction_matrix_discord,
 )
 from tc_analyzer_lib.DB_operations.mongodb_access import DB_access
 from tc_analyzer_lib.schemas.platform_configs.config_base import PlatformConfigBase
-from networkx import DiGraph
 from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
 
 

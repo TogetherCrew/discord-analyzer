@@ -1,8 +1,8 @@
 import logging
 
-from tc_analyzer_lib.DB_operations.mongodb_access import DB_access
 from pymongo.read_concern import ReadConcern
 from pymongo.write_concern import WriteConcern
+from tc_analyzer_lib.DB_operations.mongodb_access import DB_access
 
 
 class MongoDBOps:

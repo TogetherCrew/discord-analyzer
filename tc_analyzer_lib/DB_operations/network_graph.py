@@ -3,8 +3,8 @@
 import datetime
 
 import networkx
-from tc_neo4j_lib import Query
 from tc_analyzer_lib.schemas import GraphSchema
+from tc_neo4j_lib import Query
 
 
 class NetworkGraph:

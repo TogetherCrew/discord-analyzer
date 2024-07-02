@@ -10,6 +10,9 @@ from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 @pytest.mark.skip("To be updated to platform centric!")
 def test_network_graph_create():
+    """
+    testing the mock graph generation
+    """
     from .utils.mock_graph import generate_mock_graph, store_mock_data_in_neo4j
 
     community_id = "4321"
@@ -160,21 +163,21 @@ def test_network_graph_create():
 
     # DATABASE SAVING
 
-    store_mock_data_in_neo4j(
-        graph_dict=graph_dict, guildId=guildId, community_id=community_id
-    )
+    # store_mock_data_in_neo4j(
+    #     graph_dict=graph_dict, guildId=guildId, community_id=community_id
+    # )
 
-    results = neo4j_ops.gds.run_cypher(
-        f"""
-        MATCH (a:{user_label}) -[:{is_member}] -> (g:{platform_label} {{guildId: '{platform_id}'}})
-        MATCH (a)-[r{interacted_with}]-> (b:{user_label})
-        RETURN
-            a.id as fromUserId,
-            r.weight as weight,
-            r.date as date,
-            b.id as toUserId
-        """
-    )
-    print(desired_outputs)
-    print(results)
-    assert desired_outputs in results.values
+    # results = neo4j_ops.gds.run_cypher(
+    #     f"""
+    #     MATCH (a:{user_label}) -[:{is_member}] -> (g:{platform_label} {{guildId: '{platform_id}'}})
+    #     MATCH (a)-[r{interacted_with}]-> (b:{user_label})
+    #     RETURN
+    #         a.id as fromUserId,
+    #         r.weight as weight,
+    #         r.date as date,
+    #         b.id as toUserId
+    #     """
+    # )
+    # print(desired_outputs)
+    # print(results)
+    # assert desired_outputs in results.values

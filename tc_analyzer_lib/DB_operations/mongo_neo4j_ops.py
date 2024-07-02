@@ -2,8 +2,8 @@ import logging
 
 from tc_analyzer_lib.DB_operations.mongodb_interaction import MongoDBOps
 from tc_analyzer_lib.DB_operations.network_graph import NetworkGraph
-from tc_neo4j_lib.neo4j_ops import Neo4jOps, Query
 from tc_analyzer_lib.schemas import GraphSchema
+from tc_neo4j_lib.neo4j_ops import Neo4jOps, Query
 
 
 class MongoNeo4jDB:

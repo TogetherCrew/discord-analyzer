@@ -1,9 +1,9 @@
-from bson import ObjectId
-from unittest import TestCase
 from datetime import datetime, timedelta
+from unittest import TestCase
 
-from tc_analyzer_lib.utils.mongo import MongoSingleton
+from bson import ObjectId
 from tc_analyzer_lib.utils.get_guild_utils import get_platform_community_owner
+from tc_analyzer_lib.utils.mongo import MongoSingleton
 
 
 class TestGetGuildOwner(TestCase):

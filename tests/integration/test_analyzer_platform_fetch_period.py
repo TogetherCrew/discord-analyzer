@@ -1,9 +1,9 @@
-from bson import ObjectId
 from datetime import datetime
 from unittest import TestCase
 
-from tc_analyzer_lib.utils.mongo import MongoSingleton
+from bson import ObjectId
 from tc_analyzer_lib.metrics.utils import Platform
+from tc_analyzer_lib.utils.mongo import MongoSingleton
 
 
 class TestPlatformUtilsFetchPeriod(TestCase):

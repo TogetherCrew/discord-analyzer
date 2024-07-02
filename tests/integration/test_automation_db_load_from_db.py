@@ -2,8 +2,8 @@ import os
 import unittest
 from datetime import datetime, timedelta
 
-from tc_analyzer_lib.automation.utils.model import AutomationDB
 from dotenv import load_dotenv
+from tc_analyzer_lib.automation.utils.model import AutomationDB
 from tc_analyzer_lib.utils.mongo import MongoSingleton
 
 

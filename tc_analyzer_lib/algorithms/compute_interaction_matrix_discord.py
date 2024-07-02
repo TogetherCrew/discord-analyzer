@@ -1,10 +1,10 @@
 import copy
-from typing import Any
 from datetime import datetime
+from typing import Any
 
 from numpy import diag_indices_from, ndarray
-
 from tc_analyzer_lib.utils.mongo import MongoSingleton
+
 from .utils.compute_interaction_mtx_utils import (
     generate_interaction_matrix,
     prepare_per_account,

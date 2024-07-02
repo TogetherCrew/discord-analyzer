@@ -1,7 +1,7 @@
-from bson import ObjectId
-from unittest import TestCase
 from datetime import datetime, timedelta
+from unittest import TestCase
 
+from bson import ObjectId
 from tc_analyzer_lib.metrics.utils import Platform
 from tc_analyzer_lib.utils.mongo import MongoSingleton
 

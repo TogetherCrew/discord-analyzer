@@ -1,6 +1,6 @@
-from bson import ObjectId
 from datetime import datetime
 
+from bson import ObjectId
 from tc_analyzer_lib.utils.mongo import MongoSingleton
 
 

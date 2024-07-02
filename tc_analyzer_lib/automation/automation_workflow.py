@@ -1,9 +1,9 @@
 import logging
 from typing import Any
 
+from pybars import Compiler
 from tc_analyzer_lib.automation.utils.automation_base import AutomationBase
 from tc_analyzer_lib.automation.utils.model import AutomationDB
-from pybars import Compiler
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
 

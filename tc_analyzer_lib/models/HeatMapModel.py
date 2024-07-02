@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 from datetime import datetime
 
-from tc_analyzer_lib.models.BaseModel import BaseModel
 from pymongo import DESCENDING
 from pymongo.database import Database
+from tc_analyzer_lib.models.BaseModel import BaseModel
 
 
 class HeatMapModel(BaseModel):

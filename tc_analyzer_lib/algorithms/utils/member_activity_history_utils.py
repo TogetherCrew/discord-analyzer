@@ -2,9 +2,8 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any
 
-from dateutil import parser
-from tc_analyzer_lib.DB_operations.mongodb_access import DB_access
 from numpy import array
+from tc_analyzer_lib.DB_operations.mongodb_access import DB_access
 
 
 class MemberActivityPastUtils:

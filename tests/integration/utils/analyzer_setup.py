@@ -1,5 +1,5 @@
-from tc_analyzer_lib.DB_operations.mongodb_access import DB_access
 from dotenv import load_dotenv
+from tc_analyzer_lib.DB_operations.mongodb_access import DB_access
 
 
 def launch_db_access(platform_id: str):

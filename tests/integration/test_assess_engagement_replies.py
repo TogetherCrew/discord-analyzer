@@ -2,13 +2,13 @@ from datetime import datetime, timedelta
 from unittest import TestCase
 
 from tc_analyzer_lib.algorithms.utils.member_activity_utils import assess_engagement
+from tc_analyzer_lib.metrics.heatmaps import Heatmaps
 from tc_analyzer_lib.metrics.utils.analyzer_db_manager import AnalyzerDBManager
+from tc_analyzer_lib.schemas import GraphSchema
+from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
 
 from .utils.analyzer_setup import launch_db_access
 from .utils.setup_platform import setup_platform
-from tc_analyzer_lib.metrics.heatmaps import Heatmaps
-from tc_analyzer_lib.schemas import GraphSchema
-from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
 
 
 class TestAssessEngagementReplies(TestCase):

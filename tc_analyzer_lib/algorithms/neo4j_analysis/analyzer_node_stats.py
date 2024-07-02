@@ -42,7 +42,6 @@ class NodeStats:
         self.projection_utils = ProjectionUtils(self.platform_id, self.graph_schema)
 
     def compute_stats(self, from_start: bool) -> None:
-
         # possible dates to do the computations
         possible_dates = self.projection_utils.get_dates()
 

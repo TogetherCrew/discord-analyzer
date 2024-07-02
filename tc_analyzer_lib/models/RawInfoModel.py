@@ -3,9 +3,9 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any
 
-from tc_analyzer_lib.models.BaseModel import BaseModel
 from pymongo import ASCENDING
 from pymongo.database import Database
+from tc_analyzer_lib.models.BaseModel import BaseModel
 
 
 class RawInfoModel(BaseModel):

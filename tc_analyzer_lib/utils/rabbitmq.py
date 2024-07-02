@@ -1,8 +1,8 @@
 import logging
 
+from tc_analyzer_lib.utils.credentials import get_rabbit_mq_credentials
 from tc_messageBroker import RabbitMQ
 from tc_messageBroker.rabbit_mq.queue import Queue
-from tc_analyzer_lib.utils.credentials import get_rabbit_mq_credentials
 
 
 class RabbitMQAccess:

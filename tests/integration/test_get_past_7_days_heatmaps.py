@@ -1,9 +1,7 @@
 from datetime import datetime, timedelta
 
 import numpy as np
-from tc_analyzer_lib.algorithms.utils.member_activity_utils import (
-    get_users_past_window,
-)
+from tc_analyzer_lib.algorithms.utils.member_activity_utils import get_users_past_window
 
 from .utils.analyzer_setup import launch_db_access
 

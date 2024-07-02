@@ -2,9 +2,9 @@ import os
 import unittest
 from datetime import datetime, timezone
 
+from dotenv import load_dotenv
 from tc_analyzer_lib.automation.utils.interfaces import Automation
 from tc_analyzer_lib.automation.utils.model import AutomationDB
-from dotenv import load_dotenv
 from tc_analyzer_lib.utils.mongo import MongoSingleton
 
 

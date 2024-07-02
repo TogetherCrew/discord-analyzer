@@ -1,6 +1,6 @@
-from bson import ObjectId
 from unittest import TestCase
 
+from bson import ObjectId
 from tc_analyzer_lib.metrics.utils import Platform
 from tc_analyzer_lib.utils.mongo import MongoSingleton
 
@@ -130,25 +130,6 @@ class TestAnalyzerUtilsPlatform(TestCase):
         # no platform was available
         with self.assertRaises(ValueError):
             platform_obj.get_community_id()
-
-    def test_get_community_id_single_platform_available(self):
-        platform_id = "60d5ec44f9a3c2b6d7e2d11a"
-        expected_community_id = "77d5ec44f6a3c2b6d7e2d11a"
-
-        self.client["Core"]["platforms"].insert_one(
-            {
-                "_id": ObjectId(platform_id),
-                "name": "discord",
-                "community": ObjectId(expected_community_id),
-                "metadata": {
-                    "isInProgress": True,
-                },
-            }
-        )
-        platform_obj = Platform(platform_id)
-        community_id = platform_obj.get_community_id()
-
-        self.assertEqual(expected_community_id, community_id)
 
     def test_get_community_id_single_platform_available(self):
         platform_id = "60d5ec44f9a3c2b6d7e2d11a"

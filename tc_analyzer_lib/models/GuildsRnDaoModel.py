@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
-from tc_analyzer_lib.models.BaseModel import BaseModel
 from pymongo.database import Database
+from tc_analyzer_lib.models.BaseModel import BaseModel
 
 
 class GuildsRnDaoModel(BaseModel):
