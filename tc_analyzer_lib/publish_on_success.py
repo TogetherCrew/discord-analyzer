@@ -2,9 +2,9 @@ import logging
 
 from tc_analyzer_lib.automation.automation_workflow import AutomationWorkflow
 from tc_analyzer_lib.utils.get_guild_utils import (
+    get_platform_community_owner,
     get_platform_guild_id,
     get_platform_name,
-    get_platform_community_owner,
 )
 from tc_analyzer_lib.utils.rabbitmq import RabbitMQAccess
 from tc_messageBroker.rabbit_mq.event import Event
