@@ -10,12 +10,10 @@ from automation.utils.interfaces import (
 from bson.objectid import ObjectId
 from discord_analyzer.publish_on_success import publish_on_success
 from dotenv import load_dotenv
-import pytest
 
 from .utils.analyzer_setup import launch_db_access
 
 
-@pytest.mark.skip("Disable for testing purposes!")
 def test_publish_on_success_recompute_true_check_notification_choreographies():
     """
     test the publish on success functions
