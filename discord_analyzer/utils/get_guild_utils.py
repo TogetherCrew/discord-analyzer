@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 def get_platform_guild_id(platform_id: str) -> str:

@@ -3,7 +3,7 @@ from unittest import TestCase
 from datetime import datetime, timedelta
 
 from discord_analyzer.metrics.utils import Platform
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 class TestAnalyzerUtilsPlatform(TestCase):

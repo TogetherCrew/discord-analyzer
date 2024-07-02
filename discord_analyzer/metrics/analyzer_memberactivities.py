@@ -6,7 +6,7 @@ from discord_analyzer.metrics.memberactivity_utils import MemberActivityUtils
 from discord_analyzer.models.MemberActivityModel import MemberActivityModel
 from discord_analyzer.models.RawInfoModel import RawInfoModel
 from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 class MemberActivities:

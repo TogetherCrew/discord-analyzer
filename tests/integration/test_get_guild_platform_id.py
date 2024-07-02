@@ -2,8 +2,8 @@ from datetime import datetime
 from unittest import TestCase
 
 from bson.objectid import ObjectId
-from utils.get_guild_utils import get_guild_platform_id
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.get_guild_utils import get_guild_platform_id
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 class TestGetGuildId(TestCase):

@@ -3,12 +3,12 @@ import logging
 from automation.automation_workflow import AutomationWorkflow
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
-from utils.get_guild_utils import (
+from discord_analyzer.utils.get_guild_utils import (
     get_platform_guild_id,
     get_platform_name,
     get_platform_community_owner
 )
-from utils.rabbitmq import RabbitMQSingleton
+from discord_analyzer.utils.rabbitmq import RabbitMQSingleton
 
 
 def publish_on_success(platform_id: str, recompute: bool) -> None:

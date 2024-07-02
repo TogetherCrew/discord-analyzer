@@ -2,7 +2,7 @@ from datetime import datetime
 from unittest import TestCase
 
 from discord_analyzer.metrics.heatmaps.analytics_hourly import AnalyticsHourly
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 class TestHeatmapsRawAnalyticsVectorsActions(TestCase):

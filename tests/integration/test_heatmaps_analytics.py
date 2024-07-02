@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from discord_analyzer.metrics.heatmaps import Heatmaps
 from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 class TestHeatmapsAnalytics(TestCase):

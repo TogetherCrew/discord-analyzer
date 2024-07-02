@@ -2,7 +2,7 @@ import logging
 
 from tc_messageBroker import RabbitMQ
 from tc_messageBroker.rabbit_mq.queue import Queue
-from utils.credentials import get_rabbit_mq_credentials
+from discord_analyzer.utils.credentials import get_rabbit_mq_credentials
 
 
 class RabbitMQSingleton:

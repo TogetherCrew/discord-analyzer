@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from discord_analyzer.models.RawInfoModel import RawInfoModel
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 def test_rawinfo_get_day_entry_empty_data():

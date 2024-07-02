@@ -4,7 +4,7 @@ from datetime import datetime, time, timedelta
 
 import numpy as np
 from discord_analyzer.models.BaseModel import BaseModel
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 class RawMemberActivities(BaseModel):

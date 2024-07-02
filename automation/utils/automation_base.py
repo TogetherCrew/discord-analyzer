@@ -2,8 +2,8 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import uuid1
 
-from utils.mongo import MongoSingleton
-from utils.rabbitmq import RabbitMQSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
+from discord_analyzer.utils.rabbitmq import RabbitMQSingleton
 
 
 class AutomationBase:

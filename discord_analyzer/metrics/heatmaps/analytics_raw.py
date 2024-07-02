@@ -3,7 +3,7 @@ from datetime import date, datetime, time, timedelta
 from typing import Any
 
 from discord_analyzer.schemas import RawAnalyticsItem
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 class AnalyticsRaw:

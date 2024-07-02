@@ -4,7 +4,7 @@ from datetime import datetime
 
 from numpy import diag_indices_from, ndarray
 
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 from .utils.compute_interaction_mtx_utils import (
     generate_interaction_matrix,
     prepare_per_account,

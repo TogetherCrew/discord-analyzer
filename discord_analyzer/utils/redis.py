@@ -1,7 +1,7 @@
 import logging
 
 import redis
-from utils.credentials import get_redis_credentials
+from discord_analyzer.utils.credentials import get_redis_credentials
 
 
 class RedisSingleton:

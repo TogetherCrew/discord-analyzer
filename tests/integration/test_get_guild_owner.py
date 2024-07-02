@@ -2,8 +2,8 @@ from bson import ObjectId
 from unittest import TestCase
 from datetime import datetime, timedelta
 
-from utils.mongo import MongoSingleton
-from utils.get_guild_utils import get_platform_community_owner
+from discord_analyzer.utils.mongo import MongoSingleton
+from discord_analyzer.utils.get_guild_utils import get_platform_community_owner
 
 
 class TestGetGuildOwner(TestCase):

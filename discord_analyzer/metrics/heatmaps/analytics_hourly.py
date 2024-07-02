@@ -2,7 +2,7 @@ from datetime import date, datetime, time, timedelta
 from typing import Any
 
 import numpy as np
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 class AnalyticsHourly:

@@ -1,5 +1,5 @@
-from utils.get_automation_env import get_automations_env
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.get_automation_env import get_automations_env
+from discord_analyzer.utils.mongo import MongoSingleton
 
 from .interfaces import Automation
 

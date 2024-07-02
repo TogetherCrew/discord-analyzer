@@ -2,7 +2,7 @@ from bson import ObjectId
 from datetime import datetime
 from unittest import TestCase
 
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 from discord_analyzer.metrics.utils import Platform
 
 

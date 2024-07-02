@@ -1,7 +1,7 @@
 from bson import ObjectId
 from datetime import datetime
 
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 class Platform:

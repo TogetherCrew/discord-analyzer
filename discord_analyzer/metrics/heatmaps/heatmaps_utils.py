@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pymongo.cursor import Cursor
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 class HeatmapsUtils:

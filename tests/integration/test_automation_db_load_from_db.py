@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 from automation.utils.model import AutomationDB
 from dotenv import load_dotenv
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 class TestAutomationDBLoadFromDB(unittest.TestCase):

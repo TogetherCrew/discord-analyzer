@@ -1,7 +1,7 @@
 import logging
 
 from dateutil import parser
-from utils.mongo import MongoSingleton
+from discord_analyzer.utils.mongo import MongoSingleton
 
 
 class MemberActivityUtils:
