@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from .utils.analyzer_setup import launch_db_access
 
 
-def test_publish_on_success_check_notification_choreographies():
+def test_publish_on_success_recompute_true_check_notification_choreographies():
     """
     test the publish on success functions
     we want to check the database if the notify choreographies are created
@@ -299,14 +299,13 @@ def test_publish_on_success_check_notification_choreographies():
         ]
     )
 
-    sample_args_data = saga_id
-    publish_on_success(None, None, sample_args_data)
+    publish_on_success(platform_id, recompute=True)
 
     notification_count = db_access.db_mongo_client["Saga"]["sagas"].count_documents(
         {"choreography.name": "DISCORD_NOTIFY_USERS"}
     )
 
-    assert notification_count == 4
+    assert notification_count == 5
 
     user1_doc = db_access.db_mongo_client["Saga"]["sagas"].find_one(
         {"data.discordId": "1111"}
@@ -331,3 +330,12 @@ def test_publish_on_success_check_notification_choreographies():
     expected_msg = "hey body! This users were messaged:\n"
     expected_msg += "- User1NickName\n- User2GlobalName\n- user3\n"
     assert user_cm_doc["data"]["message"] == expected_msg
+
+    job_finished_saga = db_access.db_mongo_client["Saga"]["sagas"].find_one(
+        {"data.discordId": "user_id"}
+    )
+    assert job_finished_saga["data"]["message"] == (
+            "Your data import into TogetherCrew is complete! "
+            "See your insights on your dashboard https://app.togethercrew.com/."
+            " If you have questions send a DM to katerinabc (Discord) or k_bc0 (Telegram)."
+        )
