@@ -3,7 +3,7 @@ import logging
 from automation.automation_workflow import AutomationWorkflow
 from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
 from utils.credentials import get_mongo_credentials
-from utils.get_guild_utils import get_platform_guild_id, get_platform_name
+from utils.get_guild_utils import get_platform_guild_id, get_platform_name, get_platform_community_owner
 from utils.rabbitmq import RabbitMQSingleton
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
@@ -57,10 +57,11 @@ def publish_on_success(platform_id: str, recompute: bool) -> None:
             "See your insights on your dashboard https://app.togethercrew.com/."
             " If you have questions send a DM to katerinabc (Discord) or k_bc0 (Telegram)."
         )
+        owner_discord_id = get_platform_community_owner(platform_id)
         data = {
             "platformId": platform_id,
             "created": False,
-            "discordId": "user_id",  # TODO: get the CM id
+            "discordId": owner_discord_id,
             "message": message,  # the message to send
             "userFallback": True,
         }

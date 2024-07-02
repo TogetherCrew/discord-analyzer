@@ -64,6 +64,11 @@ def get_platform_name(platform_id: str) -> str:
     -------------
     platform_id : str
         the platform id related to a platform
+
+    Returns
+    --------
+    platform_name : str
+        the platform name i.e.: `discord`, `telegram`, etc
     """
     client = MongoSingleton.get_instance().client
 
@@ -74,3 +79,39 @@ def get_platform_name(platform_id: str) -> str:
         raise AttributeError(f"platform with given platform_id: {platform_id} not found!")
 
     return platform["name"]
+
+def get_platform_community_owner(platform_id: str) -> str:
+    """
+    get the community owener discord id using the platform id
+
+    Parameters
+    -------------
+    platform_id : str
+        the platform id related to a platform
+
+    Returns
+    --------
+    owner_discord_id : str
+        the owner discord id 
+    """
+    client = MongoSingleton.get_instance().client
+
+    platform = client["Core"]["platforms"].find_one(
+        {"_id": ObjectId(platform_id)}, {"community": True}
+    )
+
+    if platform is None:
+        raise AttributeError(f"platform with given platform_id: {platform_id} not found!")
+
+    community_id = platform["community"]
+    community = client["Core"]["users"].find_one(
+        {"communities": community_id}, {"discordId": True}
+    )
+    if community is None:
+        raise AttributeError(
+            f"Community user with given community id: {community_id} not found!"
+        )
+    
+    owner_discord_id = community["discordId"]
+
+    return owner_discord_id

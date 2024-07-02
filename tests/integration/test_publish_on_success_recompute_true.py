@@ -28,10 +28,8 @@ def test_publish_on_success_recompute_true_check_notification_choreographies():
     at_db = os.getenv("AUTOMATION_DB_NAME")
     at_collection = os.getenv("AUTOMATION_DB_COLLECTION")
 
-    db_access.db_mongo_client["Core"]["platforms"].delete_one(
-        {"_id": ObjectId(platform_id)}
-    )
-
+    db_access.db_mongo_client["Core"].drop_collection("platforms")
+    db_access.db_mongo_client["Core"].drop_collection("users")
     db_access.db_mongo_client.drop_database(platform_id)    
     db_access.db_mongo_client.drop_database(guild_id)    
     db_access.db_mongo_client["Saga"].drop_collection("sagas")
@@ -56,6 +54,8 @@ def test_publish_on_success_recompute_true_check_notification_choreographies():
         "period_size": 7,
         "step_size": 1,
     }
+    community_id = "aabbccddeeff001122334455"
+    owner_discord_id = "123487878912"
 
     db_access.db_mongo_client["Core"]["platforms"].insert_one(
         {
@@ -70,7 +70,7 @@ def test_publish_on_success_recompute_true_check_notification_choreographies():
                 "action": act_param,
                 "period": datetime.now() - timedelta(days=10),
             },
-            "community": ObjectId("aabbccddeeff001122334455"),
+            "community": ObjectId(community_id),
             "disconnectedAt": None,
             "connectedAt": (datetime.now() - timedelta(days=10)),
             "isInProgress": True,
@@ -78,6 +78,18 @@ def test_publish_on_success_recompute_true_check_notification_choreographies():
             "updatedAt": datetime(2023, 11, 1),
         }
     )
+
+    db_access.db_mongo_client["Core"]["users"].insert_one(
+        {
+            "_id": ObjectId(platform_id),
+            "discordId": owner_discord_id,
+            "communities": [ObjectId(community_id)],
+            "createdAt": datetime(2023, 12, 1),
+            "updatedAt": datetime(2023, 12, 1),
+            "tcaAt": datetime(2023, 12, 2),
+        }
+    )
+    
 
     db_access.db_mongo_client["Saga"]["sagas"].insert_one(
         {
@@ -332,7 +344,7 @@ def test_publish_on_success_recompute_true_check_notification_choreographies():
     assert user_cm_doc["data"]["message"] == expected_msg
 
     job_finished_saga = db_access.db_mongo_client["Saga"]["sagas"].find_one(
-        {"data.discordId": "user_id"}
+        {"data.discordId": owner_discord_id}
     )
     assert job_finished_saga["data"]["message"] == (
             "Your data import into TogetherCrew is complete! "
