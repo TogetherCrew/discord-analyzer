@@ -30,8 +30,8 @@ def test_publish_on_success_recompute_true_check_notification_choreographies():
 
     db_access.db_mongo_client["Core"].drop_collection("platforms")
     db_access.db_mongo_client["Core"].drop_collection("users")
-    db_access.db_mongo_client.drop_database(platform_id)    
-    db_access.db_mongo_client.drop_database(guild_id)    
+    db_access.db_mongo_client.drop_database(platform_id)
+    db_access.db_mongo_client.drop_database(guild_id)
     db_access.db_mongo_client["Saga"].drop_collection("sagas")
     db_access.db_mongo_client[at_db].drop_collection(at_collection)
 
@@ -89,7 +89,6 @@ def test_publish_on_success_recompute_true_check_notification_choreographies():
             "tcaAt": datetime(2023, 12, 2),
         }
     )
-    
 
     db_access.db_mongo_client["Saga"]["sagas"].insert_one(
         {
@@ -250,14 +249,12 @@ def test_publish_on_success_recompute_true_check_notification_choreographies():
 
     db_access.db_mongo_client[at_db][at_collection].insert_one(automation.to_dict())
 
-    date_yesterday = (
-        (datetime.now() - timedelta(days=1))
-        .replace(hour=0, minute=0, second=0, microsecond=0)
+    date_yesterday = (datetime.now() - timedelta(days=1)).replace(
+        hour=0, minute=0, second=0, microsecond=0
     )
 
-    date_two_past_days = (
-        (datetime.now() - timedelta(days=2))
-        .replace(hour=0, minute=0, second=0, microsecond=0)
+    date_two_past_days = (datetime.now() - timedelta(days=2)).replace(
+        hour=0, minute=0, second=0, microsecond=0
     )
 
     db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(
@@ -347,7 +344,7 @@ def test_publish_on_success_recompute_true_check_notification_choreographies():
         {"data.discordId": owner_discord_id}
     )
     assert job_finished_saga["data"]["message"] == (
-            "Your data import into TogetherCrew is complete! "
-            "See your insights on your dashboard https://app.togethercrew.com/."
-            " If you have questions send a DM to katerinabc (Discord) or k_bc0 (Telegram)."
-        )
+        "Your data import into TogetherCrew is complete! "
+        "See your insights on your dashboard https://app.togethercrew.com/."
+        " If you have questions send a DM to katerinabc (Discord) or k_bc0 (Telegram)."
+    )

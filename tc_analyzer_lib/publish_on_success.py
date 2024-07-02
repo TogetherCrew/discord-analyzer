@@ -6,7 +6,7 @@ from tc_messageBroker.rabbit_mq.queue import Queue
 from tc_analyzer_lib.utils.get_guild_utils import (
     get_platform_guild_id,
     get_platform_name,
-    get_platform_community_owner
+    get_platform_community_owner,
 )
 from tc_analyzer_lib.utils.rabbitmq import RabbitMQAccess
 
@@ -32,7 +32,7 @@ def publish_on_success(platform_id: str, recompute: bool) -> None:
 
     guild_id = get_platform_guild_id(platform_id)
     platform_name = get_platform_name(platform_id)
-    
+
     automation_workflow = AutomationWorkflow()
     # working specifically for discord
     if platform_name == "discord" and recompute:

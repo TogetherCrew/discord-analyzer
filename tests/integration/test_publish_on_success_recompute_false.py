@@ -32,8 +32,8 @@ def test_publish_on_success_recompute_false_check_notification_choreographies():
         {"_id": ObjectId(platform_id)}
     )
 
-    db_access.db_mongo_client.drop_database(platform_id)    
-    db_access.db_mongo_client.drop_database(guild_id)    
+    db_access.db_mongo_client.drop_database(platform_id)
+    db_access.db_mongo_client.drop_database(guild_id)
     db_access.db_mongo_client["Saga"].drop_collection("sagas")
     db_access.db_mongo_client[at_db].drop_collection(at_collection)
 
@@ -238,14 +238,12 @@ def test_publish_on_success_recompute_false_check_notification_choreographies():
 
     db_access.db_mongo_client[at_db][at_collection].insert_one(automation.to_dict())
 
-    date_yesterday = (
-        (datetime.now() - timedelta(days=1))
-        .replace(hour=0, minute=0, second=0, microsecond=0)
+    date_yesterday = (datetime.now() - timedelta(days=1)).replace(
+        hour=0, minute=0, second=0, microsecond=0
     )
 
-    date_two_past_days = (
-        (datetime.now() - timedelta(days=2))
-        .replace(hour=0, minute=0, second=0, microsecond=0)
+    date_two_past_days = (datetime.now() - timedelta(days=2)).replace(
+        hour=0, minute=0, second=0, microsecond=0
     )
 
     db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(

@@ -21,7 +21,9 @@ def test_analyzer_week_period_run_once_empty_analytics():
         "user_1",
     ]
 
-    analyzer = setup_platform(db_access, platform_id, discordId_list=acc_id, days_ago_period=7)
+    analyzer = setup_platform(
+        db_access, platform_id, discordId_list=acc_id, days_ago_period=7
+    )
 
     db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")

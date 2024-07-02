@@ -21,7 +21,9 @@ def test_analyzer_month_period_recompute_empty_analytics():
         "973993299281076286",
     ]
 
-    analyzer = setup_platform(db_access, platform_id, discordId_list=acc_id, days_ago_period=30)
+    analyzer = setup_platform(
+        db_access, platform_id, discordId_list=acc_id, days_ago_period=30
+    )
 
     db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")

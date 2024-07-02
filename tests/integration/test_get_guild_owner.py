@@ -90,7 +90,8 @@ class TestGetGuildOwner(TestCase):
         owner = get_platform_community_owner(platform_id=self.platform_id)
 
         self.assertEqual(
-            owner, expected_owner_discord_id,
+            owner,
+            expected_owner_discord_id,
         )
 
     def test_multiple_platforms(self):
@@ -130,9 +131,7 @@ class TestGetGuildOwner(TestCase):
 
         owner = get_platform_community_owner(platform_id=self.platform_id)
 
-        self.assertEqual(
-            owner, expected_owner_discord_id
-        )
+        self.assertEqual(owner, expected_owner_discord_id)
 
     def test_multiple_platforms_available(self):
         expected_owner_discord_id = "1234567891"
@@ -213,6 +212,4 @@ class TestGetGuildOwner(TestCase):
 
         owner = get_platform_community_owner(platform_id=self.platform_id)
 
-        self.assertEqual(
-            owner, expected_owner_discord_id
-        )
+        self.assertEqual(owner, expected_owner_discord_id)

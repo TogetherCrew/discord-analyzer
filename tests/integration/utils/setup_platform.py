@@ -117,5 +117,4 @@ def setup_platform(
             }
         )
 
-
     return analyzer

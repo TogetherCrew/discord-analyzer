@@ -65,7 +65,6 @@ class TCAnalyzer(AnalyzerDBManager):
         # connect to Neo4j & MongoDB database
         self.database_connect()
 
-    
     def analyze(self, recompute: bool) -> None:
         # TODO: merge run_one and recompute codes
         if recompute:

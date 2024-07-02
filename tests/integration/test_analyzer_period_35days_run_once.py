@@ -24,7 +24,9 @@ def test_analyzer_40days_period_run_once_available_analytics_overlapping_period(
         "user2",
     ]
 
-    analyzer = setup_platform(db_access, platform_id, discordId_list=acc_id, days_ago_period=40)
+    analyzer = setup_platform(
+        db_access, platform_id, discordId_list=acc_id, days_ago_period=40
+    )
 
     db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
     db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
