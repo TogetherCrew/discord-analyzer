@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from discord_analyzer.automation.utils.interfaces import (
+from tc_analyzer_lib.automation.utils.interfaces import (
     Automation,
     AutomationAction,
     AutomationReport,

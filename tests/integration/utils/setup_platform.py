@@ -3,8 +3,8 @@ from typing import Optional
 
 import numpy as np
 from bson.objectid import ObjectId
-from discord_analyzer.DB_operations.mongodb_access import DB_access
-from discord_analyzer.tc_analyzer import TCAnalyzer
+from tc_analyzer_lib.DB_operations.mongodb_access import DB_access
+from tc_analyzer_lib.tc_analyzer import TCAnalyzer
 
 
 def setup_platform(

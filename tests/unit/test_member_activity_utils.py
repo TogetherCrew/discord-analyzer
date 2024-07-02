@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from discord_analyzer.algorithms.utils.member_activity_history_utils import (
+from tc_analyzer_lib.algorithms.utils.member_activity_history_utils import (
     MemberActivityPastUtils,
 )
 

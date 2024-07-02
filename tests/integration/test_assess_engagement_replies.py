@@ -1,14 +1,14 @@
 from datetime import datetime, timedelta
 from unittest import TestCase
 
-from discord_analyzer.algorithms.utils.member_activity_utils import assess_engagement
-from discord_analyzer.metrics.utils.analyzer_db_manager import AnalyzerDBManager
+from tc_analyzer_lib.algorithms.utils.member_activity_utils import assess_engagement
+from tc_analyzer_lib.metrics.utils.analyzer_db_manager import AnalyzerDBManager
 
 from .utils.analyzer_setup import launch_db_access
 from .utils.setup_platform import setup_platform
-from discord_analyzer.metrics.heatmaps import Heatmaps
-from discord_analyzer.schemas import GraphSchema
-from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
+from tc_analyzer_lib.metrics.heatmaps import Heatmaps
+from tc_analyzer_lib.schemas import GraphSchema
+from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
 
 
 class TestAssessEngagementReplies(TestCase):

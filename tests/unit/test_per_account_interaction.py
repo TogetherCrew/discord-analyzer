@@ -1,4 +1,4 @@
-from discord_analyzer.algorithms.analytics_interactions_script import (
+from tc_analyzer_lib.algorithms.analytics_interactions_script import (
     per_account_interactions,
 )
 

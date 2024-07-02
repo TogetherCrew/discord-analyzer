@@ -1,6 +1,6 @@
 import os
 
-from discord_analyzer.tc_analyzer import TCAnalyzer
+from tc_analyzer_lib.tc_analyzer import TCAnalyzer
 from dotenv import load_dotenv
 from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
 from tc_core_analyzer_lib.utils.activity import DiscordActivity

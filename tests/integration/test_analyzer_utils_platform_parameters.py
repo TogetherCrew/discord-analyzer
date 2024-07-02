@@ -2,8 +2,8 @@ from bson import ObjectId
 from unittest import TestCase
 from datetime import datetime, timedelta
 
-from discord_analyzer.metrics.utils import Platform
-from discord_analyzer.utils.mongo import MongoSingleton
+from tc_analyzer_lib.metrics.utils import Platform
+from tc_analyzer_lib.utils.mongo import MongoSingleton
 
 
 class TestAnalyzerUtilsPlatform(TestCase):

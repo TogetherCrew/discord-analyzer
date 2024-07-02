@@ -1,4 +1,4 @@
-from discord_analyzer.algorithms.utils.compute_interaction_mtx_utils import (
+from tc_analyzer_lib.algorithms.utils.compute_interaction_mtx_utils import (
     prepare_per_account,
 )
 

@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 from unittest import TestCase
 
-from discord_analyzer.metrics.heatmaps.analytics_raw import AnalyticsRaw
-from discord_analyzer.schemas import ActivityDirection, RawAnalyticsItem
-from discord_analyzer.utils.mongo import MongoSingleton
+from tc_analyzer_lib.metrics.heatmaps.analytics_raw import AnalyticsRaw
+from tc_analyzer_lib.schemas import ActivityDirection, RawAnalyticsItem
+from tc_analyzer_lib.utils.mongo import MongoSingleton
 
 
 class TestHeatmapsRawAnalytics(TestCase):

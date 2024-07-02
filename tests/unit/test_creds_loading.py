@@ -1,4 +1,4 @@
-from discord_analyzer.utils.credentials import (
+from tc_analyzer_lib.utils.credentials import (
     get_mongo_credentials,
     get_rabbit_mq_credentials,
     get_redis_credentials,

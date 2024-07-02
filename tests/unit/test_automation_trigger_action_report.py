@@ -1,6 +1,6 @@
 import unittest
 
-from discord_analyzer.automation.utils.interfaces import (
+from tc_analyzer_lib.automation.utils.interfaces import (
     AutomationAction,
     AutomationReport,
     AutomationTrigger,

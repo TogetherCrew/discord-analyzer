@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 import numpy as np
-from discord_analyzer.algorithms.compute_interaction_matrix_discord import (
+from tc_analyzer_lib.algorithms.compute_interaction_matrix_discord import (
     process_actions,
 )
 

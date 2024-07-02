@@ -1,4 +1,4 @@
-from discord_analyzer.algorithms.utils.member_activity_utils import convert_to_dict
+from tc_analyzer_lib.algorithms.utils.member_activity_utils import convert_to_dict
 
 
 def test_empty():

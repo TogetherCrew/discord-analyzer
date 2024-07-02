@@ -1,4 +1,4 @@
-from discord_analyzer.DB_operations.mongodb_access import DB_access
+from tc_analyzer_lib.DB_operations.mongodb_access import DB_access
 from dotenv import load_dotenv
 
 

@@ -1,8 +1,8 @@
 from datetime import datetime
 from unittest import TestCase
 
-from discord_analyzer.metrics.heatmaps.heatmaps_utils import HeatmapsUtils
-from discord_analyzer.utils.mongo import MongoSingleton
+from tc_analyzer_lib.metrics.heatmaps.heatmaps_utils import HeatmapsUtils
+from tc_analyzer_lib.utils.mongo import MongoSingleton
 
 
 class TestHeatmapsUtils(TestCase):

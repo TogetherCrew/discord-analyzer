@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from discord_analyzer.automation.utils.automation_base import AutomationBase
+from tc_analyzer_lib.automation.utils.automation_base import AutomationBase
 
 from .utils.analyzer_setup import launch_db_access
 

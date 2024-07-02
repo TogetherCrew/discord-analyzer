@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from discord_analyzer.metrics.memberactivity_utils import MemberActivityUtils
+from tc_analyzer_lib.metrics.memberactivity_utils import MemberActivityUtils
 
 from .utils.analyzer_setup import launch_db_access
 from .utils.setup_platform import setup_platform

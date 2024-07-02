@@ -1,12 +1,12 @@
 import unittest
 
-from discord_analyzer.schemas import (
+from tc_analyzer_lib.schemas import (
     ActivityDirection,
     ActivityType,
     HourlyAnalytics,
     RawAnalytics,
 )
-from discord_analyzer.schemas.platform_configs.config_base import PlatformConfigBase
+from tc_analyzer_lib.schemas.platform_configs.config_base import PlatformConfigBase
 
 
 class TestPlatformBaseConfig(unittest.TestCase):

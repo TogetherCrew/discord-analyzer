@@ -1,6 +1,6 @@
 import numpy as np
-from discord_analyzer.metrics.neo4j_analytics import Neo4JAnalytics
-from discord_analyzer.schemas import GraphSchema
+from tc_analyzer_lib.metrics.neo4j_analytics import Neo4JAnalytics
+from tc_analyzer_lib.schemas import GraphSchema
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 

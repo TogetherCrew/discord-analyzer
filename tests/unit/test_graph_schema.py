@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from discord_analyzer.schemas import GraphSchema
+from tc_analyzer_lib.schemas import GraphSchema
 
 
 class TestGraphSchema(TestCase):

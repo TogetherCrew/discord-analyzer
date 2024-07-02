@@ -2,8 +2,8 @@ from bson import ObjectId
 from datetime import datetime
 from unittest import TestCase
 
-from discord_analyzer.utils.mongo import MongoSingleton
-from discord_analyzer.metrics.utils import Platform
+from tc_analyzer_lib.utils.mongo import MongoSingleton
+from tc_analyzer_lib.metrics.utils import Platform
 
 
 class TestPlatformUtilsFetchPeriod(TestCase):

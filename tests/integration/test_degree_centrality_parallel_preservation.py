@@ -1,6 +1,6 @@
 # the nodes of the graph are partially connected
-from discord_analyzer.algorithms.neo4j_analysis.centrality import Centerality
-from discord_analyzer.schemas import GraphSchema
+from tc_analyzer_lib.algorithms.neo4j_analysis.centrality import Centerality
+from tc_analyzer_lib.schemas import GraphSchema
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
 
