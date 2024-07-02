@@ -1,3 +1,4 @@
+# fmt: off
 # test out local clustering coefficient with all nodes connected
 # from datetime import datetime, timedelta
 
@@ -181,3 +182,5 @@
     # print(desired_outputs)
     # print(results)
     # assert desired_outputs in results.values
+
+# fmt: on
