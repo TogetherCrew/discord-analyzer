@@ -2,10 +2,10 @@ import os
 import unittest
 from datetime import datetime, timezone
 
-from automation.utils.interfaces import Automation
-from automation.utils.model import AutomationDB
 from dotenv import load_dotenv
-from utils.mongo import MongoSingleton
+from tc_analyzer_lib.automation.utils.interfaces import Automation
+from tc_analyzer_lib.automation.utils.model import AutomationDB
+from tc_analyzer_lib.utils.mongo import MongoSingleton
 
 
 class TestAutomationDBSaveToDB(unittest.TestCase):

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from automation.automation_workflow import AutomationWorkflow
-from automation.utils.interfaces import (
+from tc_analyzer_lib.automation.automation_workflow import AutomationWorkflow
+from tc_analyzer_lib.automation.utils.interfaces import (
     Automation,
     AutomationAction,
     AutomationReport,
@@ -16,9 +16,10 @@ def test_automation_fire_message_check_mongodb_document_messages_ngu_strategy():
     check the created messages in saga
     """
     guild_id = "1234"
-    db_access = launch_db_access(guild_id)
+    platform_id = "515151515151515151515151"
+    db_access = launch_db_access(platform_id)
 
-    db_access.db_mongo_client[guild_id].drop_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
     db_access.db_mongo_client["Saga"].drop_collection("sagas")
     db_access.db_mongo_client[guild_id].drop_collection("guildmembers")
     db_access.db_mongo_client["Automation"].drop_collection("automations")
@@ -140,19 +141,15 @@ def test_automation_fire_message_check_mongodb_document_messages_ngu_strategy():
         automation.to_dict()
     )
 
-    date_yesterday = (
-        (datetime.now() - timedelta(days=1))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
+    date_yesterday = (datetime.now() - timedelta(days=1)).replace(
+        hour=0, minute=0, second=0, microsecond=0
     )
 
-    date_two_past_days = (
-        (datetime.now() - timedelta(days=2))
-        .replace(hour=0, minute=0, second=0)
-        .strftime("%Y-%m-%dT%H:%M:%S")
+    date_two_past_days = (datetime.now() - timedelta(days=2)).replace(
+        hour=0, minute=0, second=0, microsecond=0
     )
 
-    db_access.db_mongo_client[guild_id]["memberactivities"].insert_many(
+    db_access.db_mongo_client[platform_id]["memberactivities"].insert_many(
         [
             {
                 "date": date_yesterday,
@@ -204,7 +201,7 @@ def test_automation_fire_message_check_mongodb_document_messages_ngu_strategy():
     )
 
     automation_workflow = AutomationWorkflow()
-    automation_workflow.start(guild_id)
+    automation_workflow.start(platform_id, guild_id)
 
     count = db_access.db_mongo_client["Saga"]["sagas"].count_documents({})
     assert count == 4

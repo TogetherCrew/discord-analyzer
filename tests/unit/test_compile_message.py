@@ -1,6 +1,6 @@
 import unittest
 
-from automation.automation_workflow import AutomationWorkflow
+from tc_analyzer_lib.automation.automation_workflow import AutomationWorkflow
 
 
 class CompileTemplateMessage(unittest.TestCase):

@@ -1,4 +1,4 @@
-from discord_analyzer.analysis.utils.compute_interaction_mtx_utils import (
+from tc_analyzer_lib.algorithms.utils.compute_interaction_mtx_utils import (
     prepare_per_account,
 )
 
@@ -14,7 +14,7 @@ def test_empty_db_results():
 def test_single_document_db_results():
     db_results_sample = [
         {
-            "account_name": "968122690118512720",
+            "user": "968122690118512720",
             "reacted_per_acc": [[{"account": "795295822534148096", "count": 1}]],
             "mentioner_per_acc": [[{"account": "795295822534148096", "count": 1}]],
             "replied_per_acc": [],
@@ -30,13 +30,13 @@ def test_single_document_db_results():
 def test_multiple_document_single_acc_db_results():
     db_results_sample = [
         {
-            "account_name": "968122690118512720",
+            "user": "968122690118512720",
             "reacted_per_acc": [[{"account": "795295822534148096", "count": 1}]],
             "mentioner_per_acc": [[{"account": "795295822534148096", "count": 1}]],
             "replied_per_acc": [],
         },
         {
-            "account_name": "968122690118512720",
+            "user": "968122690118512720",
             "reacted_per_acc": [[{"account": "795295822534148096", "count": 1}]],
             "mentioner_per_acc": [[{"account": "795295822534148096", "count": 1}]],
             "replied_per_acc": [],
@@ -52,13 +52,13 @@ def test_multiple_document_single_acc_db_results():
 def test_single_document_multiple_acc_db_results():
     db_results_sample = [
         {
-            "account_name": "968122690118512720",
+            "user": "968122690118512720",
             "reacted_per_acc": [[{"account": "795295822534148096", "count": 1}]],
             "mentioner_per_acc": [[{"account": "795295822534148096", "count": 1}]],
             "replied_per_acc": [],
         },
         {
-            "account_name": "968122690118512721",
+            "user": "968122690118512721",
             "reacted_per_acc": [[{"account": "795295822534148096", "count": 1}]],
             "mentioner_per_acc": [[{"account": "795295822534148096", "count": 1}]],
             "replied_per_acc": [],
@@ -75,31 +75,31 @@ def test_single_document_multiple_acc_db_results():
 def test_multiple_document_multiple_acc_db_results():
     db_results_sample = [
         {
-            "account_name": "968122690118512720",
+            "user": "968122690118512720",
             "reacted_per_acc": [[{"account": "795295822534148096", "count": 9}]],
             "mentioner_per_acc": [[{"account": "795295822534148096", "count": 2}]],
             "replied_per_acc": [],
         },
         {
-            "account_name": "968122690118512720",
+            "user": "968122690118512720",
             "reacted_per_acc": [],
             "mentioner_per_acc": [],
             "replied_per_acc": [],
         },
         {
-            "account_name": "968122690118512721",
+            "user": "968122690118512721",
             "reacted_per_acc": [[{"account": "795295822534148096", "count": 3}]],
             "mentioner_per_acc": [[{"account": "795295822534148096", "count": 4}]],
             "replied_per_acc": [],
         },
         {
-            "account_name": "968122690118512721",
+            "user": "968122690118512721",
             "reacted_per_acc": [],
             "mentioner_per_acc": [],
             "replied_per_acc": [[{"account": "7952958225341480444", "count": 8}]],
         },
         {
-            "account_name": "968122690118512720",
+            "user": "968122690118512720",
             "reacted_per_acc": [],
             "mentioner_per_acc": [
                 [{"account": "7952958225341480444", "count": 5}],
@@ -114,19 +114,19 @@ def test_multiple_document_multiple_acc_db_results():
     assert list(results.keys()) == ["968122690118512720", "968122690118512721"]
     assert results["968122690118512720"] == [
         {
-            "account_name": "968122690118512720",
+            "user": "968122690118512720",
             "reacted_per_acc": [[{"account": "795295822534148096", "count": 9}]],
             "mentioner_per_acc": [[{"account": "795295822534148096", "count": 2}]],
             "replied_per_acc": [],
         },
         {
-            "account_name": "968122690118512720",
+            "user": "968122690118512720",
             "reacted_per_acc": [],
             "mentioner_per_acc": [],
             "replied_per_acc": [],
         },
         {
-            "account_name": "968122690118512720",
+            "user": "968122690118512720",
             "reacted_per_acc": [],
             "mentioner_per_acc": [
                 [{"account": "7952958225341480444", "count": 5}],
@@ -137,13 +137,13 @@ def test_multiple_document_multiple_acc_db_results():
     ]
     assert results["968122690118512721"] == [
         {
-            "account_name": "968122690118512721",
+            "user": "968122690118512721",
             "reacted_per_acc": [[{"account": "795295822534148096", "count": 3}]],
             "mentioner_per_acc": [[{"account": "795295822534148096", "count": 4}]],
             "replied_per_acc": [],
         },
         {
-            "account_name": "968122690118512721",
+            "user": "968122690118512721",
             "reacted_per_acc": [],
             "mentioner_per_acc": [],
             "replied_per_acc": [[{"account": "7952958225341480444", "count": 8}]],

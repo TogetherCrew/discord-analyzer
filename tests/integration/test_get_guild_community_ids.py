@@ -2,8 +2,8 @@ from datetime import datetime
 from unittest import TestCase
 
 from bson.objectid import ObjectId
-from utils.get_guild_utils import get_guild_community_ids
-from utils.mongo import MongoSingleton
+from tc_analyzer_lib.utils.get_guild_utils import get_platform_guild_id
+from tc_analyzer_lib.utils.mongo import MongoSingleton
 
 
 class TestGetGuildId(TestCase):
@@ -20,7 +20,7 @@ class TestGetGuildId(TestCase):
                     "id": "999888877766655",
                     "icon": "111111111111111111111111",
                     "name": "A guild",
-                    "selectedChannels": [
+                    "resources": [
                         "11111111",
                         "22222222",
                         "33333333",
@@ -41,7 +41,7 @@ class TestGetGuildId(TestCase):
             }
         )
 
-        guild_id = get_guild_community_ids(str(platform_id))
+        guild_id = get_platform_guild_id(str(platform_id))
         self.assertEqual(guild_id, "999888877766655")
 
     def test_no_document_raise_error(self):
@@ -51,4 +51,4 @@ class TestGetGuildId(TestCase):
         client.drop_database("Core")
 
         with self.assertRaises(AttributeError):
-            get_guild_community_ids(str(platform_id))
+            get_platform_guild_id(str(platform_id))

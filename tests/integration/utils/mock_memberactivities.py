@@ -14,7 +14,7 @@ def create_empty_memberactivities_data(
         date = start_date + timedelta(days=i)
         date = date.replace(hour=0, minute=0, second=0, microsecond=0)
         document = {
-            "date": date.isoformat(),
+            "date": date,
             "all_joined": [],
             "all_joined_day": [],
             "all_consistent": [],
