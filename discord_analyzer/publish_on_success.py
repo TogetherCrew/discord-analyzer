@@ -1,33 +1,20 @@
 import logging
 
 from automation.automation_workflow import AutomationWorkflow
-from tc_messageBroker.rabbit_mq.saga.saga_base import get_saga
-from utils.credentials import get_mongo_credentials
-from utils.get_guild_utils import get_platform_guild_id, get_platform_name, get_platform_community_owner
-from utils.rabbitmq import RabbitMQSingleton
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
-
-
-def get_saga_instance(sagaId: str):
-    mongo_creds = get_mongo_credentials()
-
-    saga = get_saga(
-        sagaId=sagaId,
-        connection_url=mongo_creds["connection_str"],
-        db_name="Saga",
-        collection="sagas",
-    )
-    if saga is None:
-        raise ValueError(f"Saga with sagaId: {sagaId} not found!")
-
-    return saga
+from utils.get_guild_utils import (
+    get_platform_guild_id,
+    get_platform_name,
+    get_platform_community_owner
+)
+from utils.rabbitmq import RabbitMQSingleton
 
 
 def publish_on_success(platform_id: str, recompute: bool) -> None:
     """
     publish a message to discord platform for a specific platform
-    telling the Community Manager (CM) the work is finished
+    telling the Community Manager (CM) the work is finished and run automation
 
     Note: this will work just for discord platform!
 
