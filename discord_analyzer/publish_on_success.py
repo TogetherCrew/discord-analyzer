@@ -1,6 +1,6 @@
 import logging
 
-from automation.automation_workflow import AutomationWorkflow
+from discord_analyzer.automation.automation_workflow import AutomationWorkflow
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue
 from discord_analyzer.utils.get_guild_utils import (

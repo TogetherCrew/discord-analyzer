@@ -1,4 +1,4 @@
-from automation.utils.automation_base import AutomationBase
+from discord_analyzer.automation.utils.automation_base import AutomationBase
 
 
 def test_subtract_users_empty_data():

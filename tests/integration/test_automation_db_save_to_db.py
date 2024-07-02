@@ -2,8 +2,8 @@ import os
 import unittest
 from datetime import datetime, timezone
 
-from automation.utils.interfaces import Automation
-from automation.utils.model import AutomationDB
+from discord_analyzer.automation.utils.interfaces import Automation
+from discord_analyzer.automation.utils.model import AutomationDB
 from dotenv import load_dotenv
 from discord_analyzer.utils.mongo import MongoSingleton
 

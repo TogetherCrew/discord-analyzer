@@ -2,7 +2,7 @@ import os
 import unittest
 from datetime import datetime, timedelta
 
-from automation.utils.model import AutomationDB
+from discord_analyzer.automation.utils.model import AutomationDB
 from dotenv import load_dotenv
 from discord_analyzer.utils.mongo import MongoSingleton
 

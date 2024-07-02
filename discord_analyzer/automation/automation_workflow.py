@@ -1,8 +1,8 @@
 import logging
 from typing import Any
 
-from automation.utils.automation_base import AutomationBase
-from automation.utils.model import AutomationDB
+from discord_analyzer.automation.utils.automation_base import AutomationBase
+from discord_analyzer.automation.utils.model import AutomationDB
 from pybars import Compiler
 from tc_messageBroker.rabbit_mq.event import Event
 from tc_messageBroker.rabbit_mq.queue import Queue

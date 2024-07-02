@@ -1,6 +1,6 @@
 import unittest
 
-from automation.automation_workflow import AutomationWorkflow
+from discord_analyzer.automation.automation_workflow import AutomationWorkflow
 
 
 class TestGetHandlerType(unittest.TestCase):

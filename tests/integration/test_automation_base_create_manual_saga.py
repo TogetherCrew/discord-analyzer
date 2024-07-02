@@ -1,6 +1,6 @@
 import unittest
 
-from automation.utils.automation_base import AutomationBase
+from discord_analyzer.automation.utils.automation_base import AutomationBase
 
 from .utils.analyzer_setup import launch_db_access
 

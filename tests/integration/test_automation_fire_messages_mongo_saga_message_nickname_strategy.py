@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from automation.automation_workflow import AutomationWorkflow
-from automation.utils.interfaces import (
+from discord_analyzer.automation.automation_workflow import AutomationWorkflow
+from discord_analyzer.automation.utils.interfaces import (
     Automation,
     AutomationAction,
     AutomationReport,
