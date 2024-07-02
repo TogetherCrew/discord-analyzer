@@ -8,7 +8,7 @@ from discord_analyzer.utils.get_guild_utils import (
     get_platform_name,
     get_platform_community_owner
 )
-from discord_analyzer.utils.rabbitmq import RabbitMQSingleton
+from discord_analyzer.utils.rabbitmq import RabbitMQAccess
 
 
 def publish_on_success(platform_id: str, recompute: bool) -> None:
@@ -37,7 +37,7 @@ def publish_on_success(platform_id: str, recompute: bool) -> None:
     # working specifically for discord
     if platform_name == "discord" and recompute:
         logging.info(f"{msg}Sending job finished message & starting automation!")
-        rabbitmq = RabbitMQSingleton.get_instance().get_client()
+        rabbitmq = RabbitMQAccess.get_instance().get_client()
 
         message = (
             "Your data import into TogetherCrew is complete! "

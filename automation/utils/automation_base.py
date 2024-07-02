@@ -3,7 +3,7 @@ from typing import Any
 from uuid import uuid1
 
 from discord_analyzer.utils.mongo import MongoSingleton
-from discord_analyzer.utils.rabbitmq import RabbitMQSingleton
+from discord_analyzer.utils.rabbitmq import RabbitMQAccess
 
 
 class AutomationBase:
@@ -12,7 +12,7 @@ class AutomationBase:
         utilities for automation workflow
         """
         self.mongo_client = MongoSingleton.get_instance().get_client()
-        self.rabbitmq = RabbitMQSingleton.get_instance().get_client()
+        self.rabbitmq = RabbitMQAccess.get_instance().get_client()
 
     def _get_users_from_guildmembers(
         self, guild_id: str, user_ids: list[str], strategy: str = "ngu"

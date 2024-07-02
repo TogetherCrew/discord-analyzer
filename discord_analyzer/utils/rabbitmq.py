@@ -5,27 +5,27 @@ from tc_messageBroker.rabbit_mq.queue import Queue
 from discord_analyzer.utils.credentials import get_rabbit_mq_credentials
 
 
-class RabbitMQSingleton:
+class RabbitMQAccess:
     __instance = None
 
     def __init__(self):
-        # if RabbitMQSingleton.__instance is not None:
+        # if RabbitMQAccess.__instance is not None:
         #     raise Exception("This class is a singleton!")
         # else:
         creds = get_rabbit_mq_credentials()
         self.client = self.create_rabbitmq_client(creds)
-        RabbitMQSingleton.__instance = self
+        RabbitMQAccess.__instance = self
 
     @staticmethod
     def get_instance():
-        # if RabbitMQSingleton.__instance is None:
+        # if RabbitMQAccess.__instance is None:
         try:
-            RabbitMQSingleton()
+            RabbitMQAccess()
             logging.info("RabbitMQ broker Connected Successfully!")
         except Exception as exp:
             logging.error(f"RabbitMQ broker not connected! exp: {exp}")
 
-        return RabbitMQSingleton.__instance
+        return RabbitMQAccess.__instance
 
     def get_client(self):
         return self.client
