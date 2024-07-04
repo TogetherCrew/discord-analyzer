@@ -2,8 +2,8 @@ from datetime import datetime
 from unittest import TestCase
 
 from bson.objectid import ObjectId
-from utils.get_guild_utils import get_guild_platform_id
-from utils.mongo import MongoSingleton
+from tc_analyzer_lib.utils.get_guild_utils import get_guild_platform_id
+from tc_analyzer_lib.utils.mongo import MongoSingleton
 
 
 class TestGetGuildId(TestCase):
@@ -21,7 +21,7 @@ class TestGetGuildId(TestCase):
                     "id": guild_id,
                     "icon": "111111111111111111111111",
                     "name": "A guild",
-                    "selectedChannels": [
+                    "resources": [
                         "11111111",
                         "22222222",
                         "33333333",

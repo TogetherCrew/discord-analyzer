@@ -1,43 +1,9 @@
-import os
-
-from discord_analyzer.DB_operations.mongodb_access import DB_access
-from discord_analyzer.rn_analyzer import RnDaoAnalyzer
 from dotenv import load_dotenv
+from tc_analyzer_lib.DB_operations.mongodb_access import DB_access
 
 
-def setup_analyzer(
-    guild_id: str,
-) -> RnDaoAnalyzer:
+def launch_db_access(platform_id: str):
     load_dotenv()
-
-    analyzer = RnDaoAnalyzer(guild_id)
-
-    user = os.getenv("MONGODB_USER", "")
-    password = os.getenv("MONGODB_PASS", "")
-    host = os.getenv("MONGODB_HOST", "")
-    port = os.getenv("MONGODB_PORT", "")
-
-    analyzer.set_mongo_database_info(
-        mongo_db_host=host,
-        mongo_db_password=password,
-        mongo_db_user=user,
-        mongo_db_port=port,
-    )
-
-    analyzer.database_connect()
-
-    return analyzer
-
-
-def launch_db_access(guildId: str):
-    load_dotenv()
-    user = os.getenv("MONGODB_USER")
-    password = os.getenv("MONGODB_PASS")
-    host = os.getenv("MONGODB_HOST")
-    port = os.getenv("MONGODB_PORT")
-
-    connection_str = f"mongodb://{user}:{password}@{host}:{port}"
-
-    db_access = DB_access(guildId, connection_str)
+    db_access = DB_access(platform_id)
     print("CONNECTED to MongoDB!")
     return db_access

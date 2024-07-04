@@ -1,7 +1,7 @@
-import os
+# import os
 
-from discord_analyzer import RnDaoAnalyzer
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
+# from tc_analyzer_lib.tc_analyzer import TCAnalyzer
 from tc_core_analyzer_lib.assess_engagement import EngagementAssessment
 from tc_core_analyzer_lib.utils.activity import DiscordActivity
 
@@ -64,36 +64,25 @@ def generate_mock_graph(int_matrix, acc_names):
     return graph
 
 
-def store_mock_data_in_neo4j(graph_dict, guildId, community_id):
-    # CREDS
-    load_dotenv()
-    user = os.getenv("MONGODB_USER")
-    password = os.getenv("MONGODB_PASS")
-    host = os.getenv("MONGODB_HOST")
-    port = os.getenv("MONGODB_PORT")
+# def store_mock_data_in_neo4j(graph_dict, guildId, community_id):
+#     # CREDS
+#     load_dotenv()
 
-    analyzer = RnDaoAnalyzer(guildId)
+#     analyzer = TCAnalyzer(guildId)
+#     analyzer.database_connect()
 
-    analyzer.set_mongo_database_info(
-        mongo_db_host=host,
-        mongo_db_password=password,
-        mongo_db_user=user,
-        mongo_db_port=port,
-    )
-    analyzer.database_connect()
+#     guilds_data = {}
 
-    guilds_data = {}
+#     guilds_data["heatmaps"] = None
+#     guilds_data["memberactivities"] = (
+#         None,
+#         graph_dict,
+#     )
 
-    guilds_data["heatmaps"] = None
-    guilds_data["memberactivities"] = (
-        None,
-        graph_dict,
-    )
-
-    analyzer.DB_connections.store_analytics_data(
-        analytics_data=guilds_data,
-        guild_id=guildId,
-        community_id=community_id,
-        remove_heatmaps=False,
-        remove_memberactivities=False,
-    )
+#     analyzer.DB_connections.store_analytics_data(
+#         analytics_data=guilds_data,
+#         guild_id=guildId,
+#         community_id=community_id,
+#         remove_heatmaps=False,
+#         remove_memberactivities=False,
+#     )

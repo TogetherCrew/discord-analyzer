@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from discord_analyzer.models.RawInfoModel import RawInfoModel
-from utils.mongo import MongoSingleton
+from tc_analyzer_lib.models.RawInfoModel import RawInfoModel
+from tc_analyzer_lib.utils.mongo import MongoSingleton
 
 
 def test_rawinfo_get_day_entry_empty_data():
@@ -13,7 +13,7 @@ def test_rawinfo_get_day_entry_empty_data():
     mongo_singleton = MongoSingleton.get_instance()
     client = mongo_singleton.get_client()
 
-    client[guildId].drop_collection("rawinfos")
+    client[guildId].drop_collection("rawmemberactivities")
 
     rawinfo_model = RawInfoModel(client[guildId])
 
@@ -32,7 +32,7 @@ def test_rawinfo_get_day_entry_data_avaialble():
     mongo_singleton = MongoSingleton.get_instance()
     client = mongo_singleton.get_client()
 
-    client[guildId].drop_collection("rawinfos")
+    client[guildId].drop_collection("rawmemberactivities")
 
     specific_midday = datetime(2023, 3, 3, 12)
 
@@ -104,7 +104,7 @@ def test_rawinfo_get_day_entry_data_avaialble():
         },
     ]
 
-    client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    client[guildId]["rawmemberactivities"].insert_many(rawinfo_samples)
 
     rawinfo_model = RawInfoModel(client[guildId])
 

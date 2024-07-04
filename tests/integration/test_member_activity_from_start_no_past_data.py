@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 
 from bson.objectid import ObjectId
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
+from .utils.analyzer_setup import launch_db_access
+from .utils.setup_platform import setup_platform
 
 
 def test_analyzer_member_activities_from_start_empty_memberactivities():
@@ -14,93 +15,61 @@ def test_analyzer_member_activities_from_start_empty_memberactivities():
     # first create the collections
     guildId = "1234"
     platform_id = "515151515151515151515151"
-    db_access = launch_db_access(guildId)
+    db_access = launch_db_access(platform_id)
 
-    db_access.db_mongo_client["Core"]["platforms"].delete_one({"metadata.id": guildId})
-    db_access.db_mongo_client.drop_database(guildId)
+    db_access.db_mongo_client["Core"].drop_collection("platforms")
+    db_access.db_mongo_client.drop_database(platform_id)
 
-    action = {
-        "INT_THR": 1,
-        "UW_DEG_THR": 1,
-        "PAUSED_T_THR": 1,
-        "CON_T_THR": 4,
-        "CON_O_THR": 3,
-        "EDGE_STR_THR": 5,
-        "UW_THR_DEG_THR": 5,
-        "VITAL_T_THR": 4,
-        "VITAL_O_THR": 3,
-        "STILL_T_THR": 2,
-        "STILL_O_THR": 2,
-        "DROP_H_THR": 2,
-        "DROP_I_THR": 1,
-    }
-
-    db_access.db_mongo_client["Core"]["platforms"].insert_one(
-        {
-            "_id": ObjectId(platform_id),
-            "name": "discord",
-            "metadata": {
-                "id": guildId,
-                "icon": "111111111111111111111111",
-                "name": "A guild",
-                "selectedChannels": ["1020707129214111827"],
-                "window": {"period_size": 7, "step_size": 1},
-                "action": action,
-                "period": datetime.now() - timedelta(days=30),
-            },
-            "community": ObjectId("aabbccddeeff001122334455"),
-            "disconnectedAt": None,
-            "connectedAt": (datetime.now() - timedelta(days=40)),
-            "isInProgress": True,
-            "createdAt": datetime(2023, 11, 1),
-            "updatedAt": datetime(2023, 11, 1),
-        }
+    analyzer = setup_platform(
+        db_access,
+        platform_id,
+        discordId_list=["3451791"],
+        days_ago_period=30,
+        community_id="aabbccddeeff001122334455",
     )
-    db_access.db_mongo_client[guildId].create_collection("heatmaps")
-    db_access.db_mongo_client[guildId].create_collection("memberactivities")
+    db_access.db_mongo_client[platform_id].drop_collection("heatmaps")
+    db_access.db_mongo_client[platform_id].drop_collection("memberactivities")
 
-    db_access.db_mongo_client[guildId]["guildmembers"].insert_one(
+    db_access.db_mongo_client[platform_id]["rawmembers"].insert_one(
         {
-            "discordId": "3451791",
-            "username": "sample_user",
-            "roles": ["99909821"],
-            "joinedAt": (datetime.now() - timedelta(days=10)),
-            "avatar": "3ddd6e429f75d6a711d0a58ba3060694",
-            "isBot": False,
-            "discriminator": "0",
+            "id": "3451791",
+            "joined_at": (datetime.now() - timedelta(days=10)),
+            "left_at": None,
+            "is_bot": False,
+            "options": {},
         }
     )
 
     rawinfo_samples = []
 
     for i in range(150):
-        sample = {
-            "type": 0,
-            "author": "3451791",
-            "content": "test10",
-            "user_mentions": [],
-            "role_mentions": [],
-            "reactions": [],
-            "replied_user": None,
-            "createdDate": (datetime.now() - timedelta(hours=i)),
-            "messageId": f"77776325{i}",
-            "channelId": "41414262",
-            "channelName": "general",
-            "threadId": None,
-            "threadName": None,
-            "isGeneratedByWebhook": False,
-        }
-        rawinfo_samples.append(sample)
+        author = "3451791"
+        samples = [
+            {
+                "actions": [{"name": "message", "type": "emitter"}],
+                "author_id": author,
+                "date": datetime.now() - timedelta(hours=i),
+                "interactions": [],
+                "metadata": {
+                    "bot_activity": False,
+                    "channel_id": "1020707129214111827",
+                    "thread_id": None,
+                },
+                "source_id": f"11188143219343360{i}",
+            },
+        ]
+        rawinfo_samples.extend(samples)
 
-    db_access.db_mongo_client[guildId]["rawinfos"].insert_many(rawinfo_samples)
+    db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
+        rawinfo_samples
+    )
 
-    analyzer = setup_analyzer(guildId)
-    analyzer.recompute_analytics()
+    analyzer.recompute()
 
-    memberactivities_data = db_access.db_mongo_client[guildId][
+    memberactivities_data = db_access.db_mongo_client[platform_id][
         "memberactivities"
     ].find_one({})
-    heatmaps_data = db_access.db_mongo_client[guildId]["heatmaps"].find_one({})
+    heatmaps_data = db_access.db_mongo_client[platform_id]["heatmaps"].find_one({})
     guild_document = db_access.db_mongo_client["Core"]["platforms"].find_one(
         {"metadata.id": guildId}
     )
