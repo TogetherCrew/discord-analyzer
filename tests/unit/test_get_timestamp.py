@@ -1,8 +1,8 @@
 import unittest
 from datetime import datetime, timezone
 
-from discord_analyzer.DB_operations.network_graph import NetworkGraph
-from discord_analyzer.schemas import GraphSchema
+from tc_analyzer_lib.DB_operations.network_graph import NetworkGraph
+from tc_analyzer_lib.schemas import GraphSchema
 
 
 class TestGetTimestamp(unittest.TestCase):

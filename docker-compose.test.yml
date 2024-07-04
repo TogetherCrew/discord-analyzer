@@ -42,6 +42,7 @@ services:
         condition: service_healthy
   mongo:
     image: "mongo:6.0.8"
+    restart: always
     attach: false
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
@@ -54,6 +55,7 @@ services:
       start_period: 40s
   neo4j:
     image: "neo4j:5.9.0"
+    restart: always
     attach: false
     environment:
       - NEO4J_AUTH=neo4j/password
@@ -67,6 +69,7 @@ services:
       start_period: 40s
   rabbitmq:
     image: "rabbitmq:3-management-alpine"
+    restart: always
     environment:
       - RABBITMQ_DEFAULT_USER=root
       - RABBITMQ_DEFAULT_PASS=pass

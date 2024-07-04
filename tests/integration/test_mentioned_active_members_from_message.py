@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
-from .utils.remove_and_setup_guild import setup_db_guild
+from .utils.analyzer_setup import launch_db_access
+from .utils.setup_platform import setup_platform
 
 
 def test_mention_active_members_from_rawinfo():
@@ -18,7 +18,7 @@ def test_mention_active_members_from_rawinfo():
         "user1",
         "user2",
     ]
-    setup_db_guild(
+    analyzer = setup_platform(
         db_access=db_access,
         platform_id=platform_id,
         discordId_list=acc_id,
@@ -80,7 +80,6 @@ def test_mention_active_members_from_rawinfo():
         rawinfo_samples
     )
 
-    analyzer = setup_analyzer(platform_id)
     analyzer.run_once()
 
     memberactivities_cursor = db_access.query_db_find(

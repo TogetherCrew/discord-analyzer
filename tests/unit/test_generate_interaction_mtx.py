@@ -1,5 +1,5 @@
-from discord_analyzer.algorithms.utils.activity import Activity
-from discord_analyzer.algorithms.utils.compute_interaction_mtx_utils import (
+from tc_analyzer_lib.algorithms.utils.activity import Activity
+from tc_analyzer_lib.algorithms.utils.compute_interaction_mtx_utils import (
     generate_interaction_matrix,
 )
 

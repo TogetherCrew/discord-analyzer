@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from discord_analyzer.schemas import ActivityDirection, ActivityType, HourlyAnalytics
+from tc_analyzer_lib.schemas import ActivityDirection, ActivityType, HourlyAnalytics
 
 
 class TestHourlyAnalytics(TestCase):

@@ -1,8 +1,8 @@
 from datetime import datetime
 from unittest import TestCase
 
-from discord_analyzer.metrics.heatmaps import Heatmaps
-from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
+from tc_analyzer_lib.metrics.heatmaps import Heatmaps
+from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
 
 
 class TestAnalyzerHeatmapsIterationCount(TestCase):

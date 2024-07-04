@@ -1,5 +1,5 @@
+from tc_analyzer_lib.utils.credentials import get_rabbit_mq_credentials
 from tc_messageBroker.message_broker import RabbitMQ
-from utils.credentials import get_rabbit_mq_credentials
 
 
 def test_rabbit_mq_connect():

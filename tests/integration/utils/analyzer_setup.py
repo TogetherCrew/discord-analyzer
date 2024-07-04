@@ -1,19 +1,5 @@
-import os
-
-from discord_analyzer.DB_operations.mongodb_access import DB_access
-from discord_analyzer.tc_analyzer import TCAnalyzer
 from dotenv import load_dotenv
-
-
-def setup_analyzer(
-    platform_id: str,
-) -> TCAnalyzer:
-    load_dotenv()
-
-    analyzer = TCAnalyzer(platform_id)
-    analyzer.database_connect()
-
-    return analyzer
+from tc_analyzer_lib.DB_operations.mongodb_access import DB_access
 
 
 def launch_db_access(platform_id: str):

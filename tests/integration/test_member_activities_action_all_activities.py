@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from unittest import TestCase
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
-from .utils.remove_and_setup_guild import setup_db_guild
+from .utils.analyzer_setup import launch_db_access
+from .utils.setup_platform import setup_platform
 
 
 class TestMemberActivitiesActionsAllActivities(TestCase):
@@ -32,7 +32,7 @@ class TestMemberActivitiesActionsAllActivities(TestCase):
         }
         platform_id = "515151515151515151515151"
 
-        setup_db_guild(
+        analyzer = setup_platform(
             self.db_access,
             platform_id,
             discordId_list=users_id_list,
@@ -62,8 +62,8 @@ class TestMemberActivitiesActionsAllActivities(TestCase):
         self.db_access.db_mongo_client[platform_id]["rawmemberactivities"].insert_many(
             rawinfo_samples
         )
-        analyzer = setup_analyzer(platform_id)
-        analyzer.recompute_analytics()
+
+        analyzer.recompute()
         cursor = self.db_access.db_mongo_client[platform_id]["memberactivities"].find(
             {},
             {

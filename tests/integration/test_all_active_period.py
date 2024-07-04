@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
-from .utils.remove_and_setup_guild import setup_db_guild
+from .utils.analyzer_setup import launch_db_access
+from .utils.setup_platform import setup_platform
 
 
 def test_two_weeks_period_active_members():
@@ -20,7 +20,7 @@ def test_two_weeks_period_active_members():
 
     # A guild connected at 35 days ago
     connected_days_before = 35
-    setup_db_guild(
+    analyzer = setup_platform(
         db_access,
         platform_id,
         discordId_list=acc_id,
@@ -170,7 +170,6 @@ def test_two_weeks_period_active_members():
         rawinfo_samples
     )
 
-    analyzer = setup_analyzer(platform_id)
     analyzer.run_once()
 
     memberactivities_cursor = db_access.query_db_find(

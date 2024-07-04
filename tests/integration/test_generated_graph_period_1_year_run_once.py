@@ -3,10 +3,10 @@ from datetime import datetime, timedelta, timezone
 import numpy as np
 from tc_neo4j_lib.neo4j_ops import Neo4jOps
 
-from .utils.analyzer_setup import launch_db_access, setup_analyzer
+from .utils.analyzer_setup import launch_db_access
 from .utils.mock_heatmaps import create_empty_heatmaps_data
 from .utils.mock_memberactivities import create_empty_memberactivities_data
-from .utils.remove_and_setup_guild import setup_db_guild
+from .utils.setup_platform import setup_platform
 
 
 def test_networkgraph_one_year_period_run_once_available_analytics():
@@ -33,7 +33,7 @@ def test_networkgraph_one_year_period_run_once_available_analytics():
         "973993299281076286",
     ]
 
-    setup_db_guild(
+    analyzer = setup_platform(
         db_access,
         platform_id,
         discordId_list=acc_id,
@@ -111,7 +111,6 @@ def test_networkgraph_one_year_period_run_once_available_analytics():
         rawinfo_samples
     )
 
-    analyzer = setup_analyzer(platform_id)
     analyzer.run_once()
 
     graph_schema = analyzer.graph_schema

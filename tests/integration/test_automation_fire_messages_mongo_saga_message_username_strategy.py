@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from automation.automation_workflow import AutomationWorkflow
-from automation.utils.interfaces import (
+from tc_analyzer_lib.automation.automation_workflow import AutomationWorkflow
+from tc_analyzer_lib.automation.utils.interfaces import (
     Automation,
     AutomationAction,
     AutomationReport,

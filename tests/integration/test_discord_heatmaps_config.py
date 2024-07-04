@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from discord_analyzer.schemas import ActivityDirection, ActivityType
-from discord_analyzer.schemas.platform_configs import DiscordAnalyzerConfig
+from tc_analyzer_lib.schemas import ActivityDirection, ActivityType
+from tc_analyzer_lib.schemas.platform_configs import DiscordAnalyzerConfig
 
 
 class TestDiscordAnalyzerConfig(TestCase):
