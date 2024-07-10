@@ -141,8 +141,8 @@ class Heatmaps:
                     # Adding the interacting users
                     for users_reacting in entry["reactions"]:
                         for user in users_reacting.split(",")[:-1]:
-                                if user not in account_list:
-                                    account_list.append(user)
+                            if user not in account_list:
+                                account_list.append(user)
 
                     if mentioned_users is not None:
                         for account in mentioned_users:
