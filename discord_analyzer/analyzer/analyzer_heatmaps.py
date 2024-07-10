@@ -100,6 +100,10 @@ class Heatmaps:
             guildId=guildId,
         )
 
+        account_list = get_userids(
+            db_mongo_client=self.DB_connections.mongoOps.mongo_db_access.db_mongo_client,
+            guildId=guildId,
+        )
         while last_date.date() < datetime.now().date():
             entries = rawinfo_c.get_day_entries(last_date, "ANALYZER HEATMAPS: ")
             if len(entries) == 0:
@@ -108,10 +112,6 @@ class Heatmaps:
                 continue
 
             prepared_list = []
-            account_list = get_userids(
-                db_mongo_client=self.DB_connections.mongoOps.mongo_db_access.db_mongo_client,
-                guildId=guildId,
-            )
 
             for entry in entries:
                 if "replied_user" not in entry:
@@ -134,7 +134,10 @@ class Heatmaps:
                             "mess_type": entry["type"],
                         }
                     )
-                    if entry["author"] not in account_list:
+                    if (
+                        entry["author"] not in account_list
+                        and entry["author"] not in bot_ids
+                    ):
                         account_list.append(entry["author"])
 
                     if entry["user_mentions"] is not None:
