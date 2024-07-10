@@ -165,8 +165,6 @@ def compute_member_activity(
         ]
         starting_key = 0
 
-    logging.info(f"{guild_msg} loading past data!")
-
     # if in past there was an activity, we'll update the dictionaries
     if past_activities_data != {}:
         activities = update_activities(
