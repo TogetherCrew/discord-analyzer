@@ -107,6 +107,8 @@ def compute_member_activity(
     """
     guild_msg = f"GUILDID: {db_name}:"
 
+    logging.info(f"{guild_msg} STARTING MEMBERACTIVITIES!")
+
     # make empty results output array
 
     # # # DATABASE SETTINGS # # #
@@ -148,6 +150,7 @@ def compute_member_activity(
         # past_activities_date is the data from past activities
         # new_date_range is defined to change the date_range with past data loaded
         # starting_key is the starting key of actuall analysis
+        logging.info(f"{guild_msg} loading past data")
         past_activities_data, new_date_range, starting_key = check_past_history(
             db_access=db_access,
             date_range=date_range,
@@ -170,11 +173,14 @@ def compute_member_activity(
         activity_dict = convert_to_dict(
             data=list(activities), dict_keys=activities_name
         )
+        logging.info(f"{guild_msg} dictionaries updated!")
 
     # if there was still a need to analyze some data in the range
     # also if there was some accounts and channels to be analyzed
     if new_date_range != []:
         # all_joined data
+
+        logging.info(f"{guild_msg} updating date range!")
 
         # if the date range wasn't as long as a date window,
         # no analytics for the days would be computed
@@ -186,6 +192,7 @@ def compute_member_activity(
             )
             new_date_range[0] = new_date_range[1] - timedelta(days=interval_before)
 
+        logging.info(f"{guild_msg} Updating joined members of past data!")
         member_activity_utils = MemberActivityPastUtils(db_access=db_access)
         (
             activity_dict["all_joined"],
@@ -198,7 +205,7 @@ def compute_member_activity(
             window_d=window_param["period_size"],
         )
 
-        # # # DEFINE SLIDING WINDOW RANGE # # #
+        logging.info(f"{guild_msg} defining sliding window range!")
 
         # determine window start times
         start_dt = new_date_range[0]
