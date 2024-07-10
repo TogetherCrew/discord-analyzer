@@ -100,10 +100,6 @@ class Heatmaps:
             guildId=guildId,
         )
 
-        account_list = get_userids(
-            db_mongo_client=self.DB_connections.mongoOps.mongo_db_access.db_mongo_client,
-            guildId=guildId,
-        )
         while last_date.date() < datetime.now().date():
             entries = rawinfo_c.get_day_entries(last_date, "ANALYZER HEATMAPS: ")
             if len(entries) == 0:
@@ -112,36 +108,38 @@ class Heatmaps:
                 continue
 
             prepared_list = []
+            account_list = []
 
             for entry in entries:
                 if "replied_user" not in entry:
                     reply = ""
                 else:
                     reply = entry["replied_user"]
+                    if reply not in account_list and reply not in bot_ids:
+                        account_list.append(reply)
 
                 # eliminating bots
-                if entry["author"] not in bot_ids:
+                author = entry["author"]
+                mentioned_users = entry["user_mentions"]
+                if author not in bot_ids:
                     prepared_list.append(
                         {
                             # .strftime('%Y-%m-%d %H:%M'),
                             "datetime": entry["createdDate"],
                             "channel": entry["channelId"],
-                            "author": entry["author"],
+                            "author": author,
                             "replied_user": reply,
-                            "user_mentions": entry["user_mentions"],
+                            "user_mentions": mentioned_users,
                             "reactions": entry["reactions"],
                             "threadId": entry["threadId"],
                             "mess_type": entry["type"],
                         }
                     )
-                    if (
-                        entry["author"] not in account_list
-                        and entry["author"] not in bot_ids
-                    ):
-                        account_list.append(entry["author"])
+                    if author not in account_list:
+                        account_list.append(author)
 
-                    if entry["user_mentions"] is not None:
-                        for account in entry["user_mentions"]:
+                    if mentioned_users is not None:
+                        for account in mentioned_users:
                             if account not in account_list and account not in bot_ids:
                                 account_list.append(account)
 
